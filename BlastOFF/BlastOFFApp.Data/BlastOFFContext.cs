@@ -1,17 +1,22 @@
 namespace BlastOFFApp.Data
 {
-    using System;
     using System.Data.Entity;
-    using System.Linq;
+
+    using BlastOFFApp.Data.Migrations;
+
+    using BlastOFFApp.Models.GalleryModels;
 
     public class BlastOFFContext : DbContext
     {
         public BlastOFFContext()
             : base("name=BlastOFFContext")
         {
-
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<BlastOFFContext, Configuration>());
         }
 
-        // public virtual DbSet<MyEntity> MyEntities { get; set; }
+        //Gallery Db sets
+        public virtual DbSet<Album> Albums { get; set; }
+
+        public virtual DbSet<Image> Images { get; set; }
     }
 }
