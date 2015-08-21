@@ -1,0 +1,49 @@
+The app contains three modules
+
+- Music albums
+- Twitter-like user functionality
+- Image gallery-like functionality
+
+Users have:
+
+- Posts(tweets)
+- Comments
+- Music albums
+- Images
+- Can follow other users
+- Can be followed by other users 
+- Notifications using SignalR
+
+Music albums:
+
+- Title
+- CreatedById
+- Can have image
+- Can have many songs
+- Can be followed by users
+- Songs
+- ViewsCounts
+
+	Songs:
+	- UploadedById
+	- AlbumId
+	- Artist
+	- FilePath
+	- ViewsCount
+	- Likes
+
+Image gallery:
+
+- CreatedById
+- Title
+- Cover image
+- ViewsCount
+- Images
+
+	Image:
+
+	- UploadedById
+	- GalleryId
+	- FilePath
+	- ViewsCount
+	- Likes
