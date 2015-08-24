@@ -23,8 +23,8 @@
 
             config.AddODataQueryFilter();
 
-            config.Formatters.JsonFormatter.SerializerSettings.PreserveReferencesHandling =
-                Newtonsoft.Json.PreserveReferencesHandling.None;
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
+               new CamelCasePropertyNamesContractResolver();
             config.Formatters.Remove(config.Formatters.XmlFormatter);
         }
     }
