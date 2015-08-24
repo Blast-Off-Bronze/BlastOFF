@@ -43,6 +43,10 @@
   <ItemGroup>
     <Compile Include="GalleryModels\Album.cs" />
     <Compile Include="GalleryModels\Image.cs" />
+    <Compile Include="MusicModels\MusicAlbum.cs" />
+    <Compile Include="MusicModels\MusicAlbumLike.cs" />
+    <Compile Include="MusicModels\Song.cs" />
+    <Compile Include="MusicModels\SongLike.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
