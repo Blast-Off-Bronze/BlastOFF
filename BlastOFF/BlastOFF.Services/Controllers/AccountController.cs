@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 using BlastOFF.Services.Models;
 using BlastOFF.Services.Providers;
 using BlastOFF.Services.Results;
+using BlastOFF.Models.UserModel;
 
 namespace BlastOFF.Services.Controllers
 {
@@ -328,7 +329,7 @@ namespace BlastOFF.Services.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.Username, Email = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 

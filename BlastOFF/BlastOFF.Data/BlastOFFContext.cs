@@ -1,13 +1,16 @@
 namespace BlastOFF.Data
 {
     using System.Data.Entity;
-
+    using Microsoft.AspNet.Identity.EntityFramework;
+    
     using Interfaces;
     using Migrations;
     using Models.GalleryModels;
     using Models.MusicModels;
+    using Models.UserModel;
+    
 
-    public class BlastOFFContext : DbContext, IBlastOFFContext
+    public class BlastOFFContext : IdentityDbContext<ApplicationUser>, IBlastOFFContext
     {
         public BlastOFFContext()
             : base("BlastOFFContext")

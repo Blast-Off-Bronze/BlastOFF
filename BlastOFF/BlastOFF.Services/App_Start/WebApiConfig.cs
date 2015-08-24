@@ -4,6 +4,7 @@
     using System.Web.Http.OData.Extensions;
 
     using Microsoft.Owin.Security.OAuth;
+    using Newtonsoft.Json.Serialization;
 
     public static class WebApiConfig
     {

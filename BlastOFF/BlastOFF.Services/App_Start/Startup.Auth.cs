@@ -10,6 +10,7 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using BlastOFF.Services.Providers;
 using BlastOFF.Services.Models;
+using BlastOFF.Data;
 
 namespace BlastOFF.Services
 {
@@ -23,7 +24,7 @@ namespace BlastOFF.Services
         public void ConfigureAuth(IAppBuilder app)
         {
             // Configure the db context and user manager to use a single instance per request
-            app.CreatePerOwinContext(ApplicationDbContext.Create);
+            app.CreatePerOwinContext(BlastOFFContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
 
             // Enable the application to use a cookie to store information for the signed in user
