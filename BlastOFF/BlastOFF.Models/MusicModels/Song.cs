@@ -25,8 +25,7 @@
         [Required]
         public string FilePath { get; set; }
 
-        [Required]
-        public int MusicAlbumId { get; set; }
+        public int? MusicAlbumId { get; set; } // TO BE FIXED !!!
 
         public virtual MusicAlbum MusicAlbum { get; set; }
 
