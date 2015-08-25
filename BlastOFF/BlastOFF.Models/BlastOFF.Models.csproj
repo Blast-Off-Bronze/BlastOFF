@@ -57,6 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlastModels\Blast.cs" />
+    <Compile Include="BlastModels\BlastComment.cs" />
     <Compile Include="GalleryModels\Album.cs" />
     <Compile Include="GalleryModels\Image.cs" />
     <Compile Include="MusicModels\MusicAlbum.cs" />
