@@ -18,7 +18,7 @@
         private IRepository<Blast> blasts;
         private IRepository<GalleryAlbum> galleryAlbums;
         private IRepository<Image> images;
-        private IRepository<MusicAlbum> musicyAlbums;
+        private IRepository<MusicAlbum> musicAlbums;
         private IRepository<Song> songs;
 
         private IBlastOFFContext context;
@@ -110,12 +110,12 @@
         {
             get
             {
-                if (this.musicyAlbums == null)
+                if (this.musicAlbums == null)
                 {
-                    this.musicyAlbums = new Repository<MusicAlbum>(this.context);
+                    this.musicAlbums = new Repository<MusicAlbum>(this.context);
                 }
 
-                return this.musicyAlbums;
+                return this.musicAlbums;
             }
         }
 
