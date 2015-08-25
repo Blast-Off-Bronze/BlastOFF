@@ -46,6 +46,13 @@
             this.ChangeEntityState(entity, EntityState.Deleted);
         }
 
+        public T Delete(int id)
+        {
+            var entity = this.Find(id);
+            this.Delete(entity);
+            return entity;
+        }
+
         public void Detach(T entity)
         {
             this.ChangeEntityState(entity, EntityState.Detached);
