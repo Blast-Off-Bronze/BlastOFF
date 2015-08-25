@@ -1,16 +1,17 @@
-﻿using System.ComponentModel;
-using BlastOFF.Models.UserModel;
-
-namespace BlastOFF.Models.MusicModels
+﻿namespace BlastOFF.Models.MusicModels
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+
+    using UserModel;
 
     public class Song
     {
         private ICollection<Comment> comments;
-        private ICollection<ApplicationUser> usersLikes; 
+
+        private ICollection<ApplicationUser> usersLikes;
 
         public Song()
         {
@@ -39,14 +40,28 @@ namespace BlastOFF.Models.MusicModels
 
         public virtual ICollection<ApplicationUser> UserLikes
         {
-            get { return this.usersLikes; }
-            set { this.usersLikes = value; }
+            get
+            {
+                return this.usersLikes;
+            }
+
+            set
+            {
+                this.usersLikes = value;
+            }
         }
 
         public virtual ICollection<Comment> Comments
         {
-            get { return this.comments; }
-            set { this.comments = value; }
+            get
+            {
+                return this.comments;
+            }
+
+            set
+            {
+                this.comments = value;
+            }
         }
 
         //// Optional
