@@ -18,7 +18,7 @@ namespace BlastOFF.Data.Migrations
         protected override void Seed(BlastOFFContext dbo)
         {
             //// Add songs
-            if (!dbo.Songs.Any())
+            /* if (!dbo.Songs.Any())
             {
                 string songsInputFile = "../../../database seed files/songs.txt";
 
@@ -49,7 +49,7 @@ namespace BlastOFF.Data.Migrations
                 }
 
                 dbo.SaveChanges();
-            }
+            } */
         }
     }
 }

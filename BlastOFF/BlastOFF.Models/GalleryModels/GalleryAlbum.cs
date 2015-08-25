@@ -1,22 +1,20 @@
-﻿using System.ComponentModel;
-using BlastOFF.Models.UserModel;
+﻿using BlastOFF.Models.UserModel;
 
-namespace BlastOFF.Models.MusicModels
+namespace BlastOFF.Models.GalleryModels
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    public class MusicAlbum
+    public class GalleryAlbum
     {
         private ICollection<ApplicationUser> userLikes;
         private ICollection<ApplicationUser> followers;
-        private ICollection<Song> songs;       
+        private ICollection<Image> images;
 
-        public MusicAlbum()
+        public GalleryAlbum()
         {
+            this.images = new HashSet<Image>();
             this.userLikes = new HashSet<ApplicationUser>();
-            this.songs = new HashSet<Song>();
             this.followers = new HashSet<ApplicationUser>();
         }
 
@@ -27,15 +25,15 @@ namespace BlastOFF.Models.MusicModels
         public string Title { get; set; }
 
         [Required]
-        public string CreatedById { get; set; }
+        public int CreatedById { get; set; }
 
         public virtual ApplicationUser CreatedBy { get; set; }
 
-        [Required]
-        public DateTime DateCreated { get; set; }
-
-        [DefaultValue(0)]
-        public int ViewsCount { get; set; }
+        public virtual ICollection<Image> Images
+        {
+            get { return this.images; }
+            set { this.images = value; }
+        }
 
         public virtual ICollection<ApplicationUser> UserLikes
         {
@@ -43,19 +41,10 @@ namespace BlastOFF.Models.MusicModels
             set { this.userLikes = value; }
         }
 
-        public virtual ICollection<Song> Songs
-        {
-            get { return this.songs; }
-            set { this.songs = value; }
-        }
-
         public virtual ICollection<ApplicationUser> Followers
         {
             get { return this.followers; }
             set { this.followers = value; }
         }
-
-        //// Optional
-        public string CoverImageData { get; set; }
     }
 }

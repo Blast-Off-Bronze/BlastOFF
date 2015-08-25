@@ -1,4 +1,7 @@
-﻿namespace BlastOFF.Models.MusicModels
+﻿using System.ComponentModel;
+using BlastOFF.Models.UserModel;
+
+namespace BlastOFF.Models.MusicModels
 {
     using System;
     using System.Collections.Generic;
@@ -6,11 +9,13 @@
 
     public class Song
     {
-        private ICollection<SongLike> songLikes;
+        private ICollection<Comment> comments;
+        private ICollection<ApplicationUser> usersLikes; 
 
         public Song()
         {
-            this.songLikes = new HashSet<SongLike>();
+            this.comments = new HashSet<Comment>();
+            this.usersLikes = new HashSet<ApplicationUser>();
         }
 
         [Key]
@@ -29,20 +34,19 @@
 
         public virtual MusicAlbum MusicAlbum { get; set; }
 
-        [Required]
+        [DefaultValue(0)]
         public int ViewsCount { get; set; }
 
-        public virtual ICollection<SongLike> SongLikes
+        public virtual ICollection<ApplicationUser> UserLikes
         {
-            get
-            {
-                return this.songLikes;
-            }
+            get { return this.usersLikes; }
+            set { this.usersLikes = value; }
+        }
 
-            set
-            {
-                this.songLikes = value;
-            }
+        public virtual ICollection<Comment> Comments
+        {
+            get { return this.comments; }
+            set { this.comments = value; }
         }
 
         //// Optional
@@ -53,8 +57,6 @@
         public DateTime? Year { get; set; }
 
         public string Genre { get; set; }
-
-        //public Comment Comment { get; set; }
 
         public string OriginalAlbumArtist { get; set; }
 

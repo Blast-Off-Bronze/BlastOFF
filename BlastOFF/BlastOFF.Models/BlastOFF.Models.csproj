@@ -58,13 +58,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlastModels\Blast.cs" />
-    <Compile Include="BlastModels\BlastComment.cs" />
-    <Compile Include="GalleryModels\Album.cs" />
+    <Compile Include="Comment.cs" />
+    <Compile Include="Enumerations\BlastType.cs" />
+    <Compile Include="GalleryModels\GalleryAlbum.cs" />
     <Compile Include="GalleryModels\Image.cs" />
     <Compile Include="MusicModels\MusicAlbum.cs" />
-    <Compile Include="MusicModels\MusicAlbumLike.cs" />
     <Compile Include="MusicModels\Song.cs" />
-    <Compile Include="MusicModels\SongLike.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModels\ApplicationUser.cs" />
   </ItemGroup>

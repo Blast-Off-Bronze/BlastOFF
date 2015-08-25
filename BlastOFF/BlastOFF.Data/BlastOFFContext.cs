@@ -1,3 +1,6 @@
+using System.Data.Entity.ModelConfiguration.Conventions;
+using BlastOFF.Models;
+
 namespace BlastOFF.Data
 {
     using System.Data.Entity;
@@ -23,10 +26,10 @@ namespace BlastOFF.Data
         //// Blasts Db sets 
         public virtual IDbSet<Blast> Blasts { get; set; }
 
-        public virtual IDbSet<BlastComment> BlastComments { get; set; }
+        public virtual IDbSet<Comment> Comments { get; set; }
         
         //// Gallery Db sets
-        public virtual IDbSet<Album> Albums { get; set; }
+        public virtual IDbSet<GalleryAlbum> GalleryAlbums { get; set; }
 
         public virtual IDbSet<Image> Images { get; set; }
 
@@ -55,6 +58,10 @@ namespace BlastOFF.Data
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+
+            // Followers mapping
+
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.FollowedBy)
                 .WithMany(u => u.FollowedUsers)
@@ -63,6 +70,94 @@ namespace BlastOFF.Data
                     m.MapLeftKey("Follower_Id");
                     m.MapRightKey("FollowedBy_Id");
                     m.ToTable("UsersFollowers");
+                });
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.FollowedMusicAlbums)
+                .WithMany(ma => ma.Followers)
+                .Map(m =>
+                {
+                    m.MapLeftKey("User_Id");
+                    m.MapRightKey("MusicAlbum_Id");
+                    m.ToTable("MusicAbumsUserFollowers");
+                });
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.FollowedGalleryAlbums)
+                .WithMany(ga => ga.Followers)
+                .Map(m =>
+                {
+                    m.MapLeftKey("User_Id");
+                    m.MapRightKey("GalleryAlbum_Id");
+                    m.ToTable("GalleryAbumsUserFollowers");
+                });
+
+            // Likes Mapping
+
+            modelBuilder.Entity<Blast>()
+                .HasMany(b => b.UserLikes)
+                .WithMany(u => u.LikedBlasts)
+                .Map(m =>
+                {
+                    m.MapLeftKey("User_Id");
+                    m.MapRightKey("Blast_Id");
+                    m.ToTable("BlastsUserLikes");
+                });
+
+            modelBuilder.Entity<Comment>()
+                .HasMany(c => c.LikedBy)
+                .WithMany(u => u.LikedComments)
+                .Map(m =>
+                {
+                    m.MapLeftKey("User_Id");
+                    m.MapRightKey("Comment_Id");
+                    m.ToTable("CommentsUserLikes");
+                });
+
+            //Music mapping
+
+            modelBuilder.Entity<MusicAlbum>()
+                .HasMany(m => m.UserLikes)
+                .WithMany(u => u.LikedMusicAlbums)
+                .Map(m =>
+                {
+                    m.MapLeftKey("User_Id");
+                    m.MapRightKey("MusicAlbum_Id");
+                    m.ToTable("MusicAlbumsUserLikes");
+                });
+
+            modelBuilder.Entity<Song>()
+                .HasMany(s => s.UserLikes)
+                .WithMany(u => u.LikedSongs)
+                .Map(m =>
+                {
+                    m.MapLeftKey("User_Id");
+                    m.MapRightKey("Song_Id");
+                    m.ToTable("SongsUserLikes");
+                });
+
+
+            //Gallery mapping
+
+            modelBuilder.Entity<GalleryAlbum>()
+                .HasMany(ga => ga.UserLikes)
+                .WithMany(u => u.LikedGalleryAlbums)
+                .Map(m =>
+                {
+                    m.MapLeftKey("User_Id");
+                    m.MapRightKey("GalleryAlbum_Id");
+                    m.ToTable("GalleryAlbumsUserLikes");
+                });
+
+
+            modelBuilder.Entity<Image>()
+                .HasMany(i => i.UserLikes)
+                .WithMany(u => u.LikedImages)
+                .Map(m =>
+                {
+                    m.MapLeftKey("User_Id");
+                    m.MapRightKey("Image_Id");
+                    m.ToTable("ImagesUserLikes");
                 });
 
             base.OnModelCreating(modelBuilder);
