@@ -11,18 +11,16 @@
 
     using Microsoft.AspNet.Identity;
 
-    public class MusicController : ApiController
+    public class MusicController : BaseApiController
     {
-        private IBlastOFFData data;
-
         public MusicController()
             : this(new BlastOFFData())
         {
         }
 
-        public MusicController(IBlastOFFData data)
+        public MusicController(IBlastOFFData data):
+            base(data)
         {
-            this.data = data;
         }
 
         // START - MUSIC ALBUMS Endpoints
@@ -32,9 +30,9 @@
         [Route("api/music/albums")]
         public IHttpActionResult All()
         {
-            var albums = this.data.MusicAlbums.All().Select(MusicAlbumViewModel.Get);
+            var albums = this.Data.MusicAlbums.All().Select(MusicAlbumViewModel.Get);
 
-            this.data.Dispose();
+            this.Data.Dispose();
 
             return this.Ok(albums);
         }
@@ -44,14 +42,14 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult Find(int id)
         {
-            var album = this.data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
+            var album = this.Data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
 
             if (album == null)
             {
                 return this.NotFound();
             }
 
-            this.data.Dispose();
+            this.Data.Dispose();
 
             return this.Ok(album);
         }
@@ -86,17 +84,17 @@
                 ViewsCount = 0
             };
 
-            if (this.data.MusicAlbums.All().Any(a => a.AuthorId == loggedUserId && a.Title == newMusicAlbum.Title))
+            if (this.Data.MusicAlbums.All().Any(a => a.AuthorId == loggedUserId && a.Title == newMusicAlbum.Title))
             {
                 return this.BadRequest(string.Format("A music album with the specified title already exists."));
             }
 
-            this.data.MusicAlbums.Add(newMusicAlbum);
-            this.data.SaveChanges();
+            this.Data.MusicAlbums.Add(newMusicAlbum);
+            this.Data.SaveChanges();
 
             musicAlbum.Id = newMusicAlbum.Id;
 
-            this.data.Dispose();
+            this.Data.Dispose();
 
             return this.Ok(musicAlbum);
         }
@@ -106,7 +104,7 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult Update(int id, MusicAlbumBindingModel musicAlbum)
         {
-            var existingMusicAlbum = this.data.MusicAlbums.Find(id);
+            var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
 
             if (existingMusicAlbum == null)
             {
@@ -136,11 +134,11 @@
             }
 
             existingMusicAlbum.Title = musicAlbum.Title;
-            this.data.SaveChanges();
+            this.Data.SaveChanges();
 
             musicAlbum.Id = existingMusicAlbum.Id;
 
-            this.data.Dispose();
+            this.Data.Dispose();
 
             return this.Ok(musicAlbum);
         }
@@ -150,7 +148,7 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult Delete(int id)
         {
-            var existingMusicAlbum = this.data.MusicAlbums.Find(id);
+            var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
 
             if (existingMusicAlbum == null)
             {
@@ -169,10 +167,10 @@
                 return this.Unauthorized();
             }
 
-            this.data.MusicAlbums.Delete(existingMusicAlbum);
-            this.data.SaveChanges();
+            this.Data.MusicAlbums.Delete(existingMusicAlbum);
+            this.Data.SaveChanges();
 
-            this.data.Dispose();
+            this.Data.Dispose();
 
             return this.Ok(existingMusicAlbum);
         }
@@ -186,16 +184,16 @@
         [Route("api/music/albums/{albumId}/songs")]
         public IHttpActionResult All(int albumId)
         {
-            var album = this.data.MusicAlbums.Find(albumId);
+            var album = this.Data.MusicAlbums.Find(albumId);
 
             if (album == null)
             {
                 return this.NotFound();
             }
 
-            var songs = this.data.Songs.All().Where(s => s.MusicAlbumId == albumId).Select(SongViewModel.Get);
+            var songs = this.Data.Songs.All().Where(s => s.MusicAlbumId == albumId).Select(SongViewModel.Get);
 
-            this.data.Dispose();
+            this.Data.Dispose();
 
             return this.Ok(songs);
         }
@@ -205,21 +203,21 @@
         [Route("api/music/albums/{albumId}/songs/{id}")]
         public IHttpActionResult Find(int albumId, int id)
         {
-            var album = this.data.MusicAlbums.Find(albumId);
+            var album = this.Data.MusicAlbums.Find(albumId);
 
             if (album == null)
             {
                 return this.NotFound();
             }
 
-            var song = this.data.Songs.All().Where(s => s.MusicAlbumId == albumId && s.Id == id).Select(SongViewModel.Get).FirstOrDefault();
+            var song = this.Data.Songs.All().Where(s => s.MusicAlbumId == albumId && s.Id == id).Select(SongViewModel.Get).FirstOrDefault();
 
             if (song == null)
             {
                 return this.NotFound();
             }
 
-            this.data.Dispose();
+            this.Data.Dispose();
 
             return this.Ok(song);
         }

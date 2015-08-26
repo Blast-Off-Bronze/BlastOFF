@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using BlastOFF.Data.Interfaces;
+
+namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Web.Http;
@@ -9,16 +11,26 @@
     using BlastOFF.Models.BlastModels;
     using System.Linq;
 
-    public class BlastsController : ApiController
+    public class BlastsController : BaseApiController
     {
-        private readonly BlastOFFData data = new BlastOFFData();
+        public BlastsController()
+            : this(new BlastOFFData())
+        {
+
+        }
+
+        public BlastsController(IBlastOFFData data)
+            : base(data)
+        {
+            
+        }
 
 
         [HttpGet]
         [Route("api/blasts")]
         public IHttpActionResult GetAll()
         {
-            var blasts = this.data.Blasts.All().Select(BlastViewModel.Create);
+            var blasts = this.Data.Blasts.All().Select(BlastViewModel.Create);
 
             return this.Ok(blasts);
         }
@@ -27,7 +39,7 @@
         [Route("api/blasts/{id}")]
         public IHttpActionResult GetBlastById(int id)
         {
-            var blast = this.data.Blasts.All().Where(b => b.Id == id).Select(BlastViewModel.Create);
+            var blast = this.Data.Blasts.All().Where(b => b.Id == id).Select(BlastViewModel.Create);
 
             if (blast.Count() == 0)
             {
@@ -63,8 +75,8 @@
                 BlastType = model.BlastType
             };
 
-            this.data.Blasts.Add(newBlast);
-            this.data.SaveChanges();
+            this.Data.Blasts.Add(newBlast);
+            this.Data.SaveChanges();
 
             return Ok();
         }
@@ -75,7 +87,7 @@
         public IHttpActionResult UpdateBlast(int id, [FromBody]BlastBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
-            var oldBlast = this.data.Blasts.Find(id);
+            var oldBlast = this.Data.Blasts.Find(id);
 
             if (loggedUserId == null)
             {
@@ -99,7 +111,7 @@
 
             oldBlast.Content = model.Content;
             oldBlast.BlastType = model.BlastType;
-            this.data.SaveChanges();
+            this.Data.SaveChanges();
 
             return Ok();
         }
