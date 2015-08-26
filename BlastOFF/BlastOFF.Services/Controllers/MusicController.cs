@@ -25,7 +25,7 @@
             this.data = data;
         }
 
-        // START - ALBUMS Endpoints
+        // START - MUSIC ALBUMS Endpoints
 
         //// GET /api/music/albums
         [HttpGet]
@@ -175,6 +175,6 @@
             return this.Ok(string.Format("Category with id {0} successfully deleted", id));
         }
 
-        // END - ALBUMS Endpoints
+        // END - MUSIC ALBUMS Endpoints
     }
 }
