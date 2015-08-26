@@ -23,6 +23,20 @@
             return this.Ok(blasts);
         }
 
+        [HttpGet]
+        [Route("api/blasts/{id}")]
+        public IHttpActionResult GetBlastById(int id)
+        {
+            var blast = this.data.Blasts.All().Where(b => b.Id == id).Select(BlastViewModel.Create);
+
+            if (blast.Count() == 0)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok(blast);
+        }
+
 
         [HttpPost]
         [Authorize]
