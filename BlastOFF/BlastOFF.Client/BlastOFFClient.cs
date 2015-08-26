@@ -1,21 +1,26 @@
 ﻿namespace BlastOFF.Client
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
 
     using Services.Services;
 
     using Google.Apis.Drive.v2;
     using Google.Apis.Drive.v2.Data;
+    using Data;
 
     public class BlastOFFClient
     {
         public static void Main()
         {
-            //// var dbo = new BlastOFFContext();
+            var dbo = new BlastOFFContext();
 
-            //// var songsCount = dbo.Songs.Count();
-            //// Console.WriteLine("Songs count: {0}", songsCount);
+            var songsCount = dbo.Songs.Count();
+            Console.WriteLine("Songs count: {0}", songsCount);
+
+            //too lazy to comment the whole section : )
+            return;
 
             var service = GoogleDriveService.Get();
 

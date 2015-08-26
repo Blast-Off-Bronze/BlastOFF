@@ -285,6 +285,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Constants\MusicConstants.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BlastsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MusicController.cs" />
     <Compile Include="Global.asax.cs">
@@ -292,6 +293,8 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BlastModels\BlastBindingModel.cs" />
+    <Compile Include="Models\BlastModels\BlastViewModel.cs" />
     <Compile Include="Models\MusicModels\MusicAlbumBindingModel.cs" />
     <Compile Include="Models\MusicModels\MusicAlbumViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

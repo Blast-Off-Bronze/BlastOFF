@@ -25,7 +25,7 @@ namespace BlastOFF.Models.GalleryModels
         public string Title { get; set; }
 
         [Required]
-        public int CreatedById { get; set; }
+        public string CreatedById { get; set; }
 
         public virtual ApplicationUser CreatedBy { get; set; }
 

@@ -1,13 +1,13 @@
-﻿using BlastOFF.Models.Enumerations;
-
-namespace BlastOFF.Models.BlastModels
+﻿namespace BlastOFF.Models.BlastModels
 {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     using UserModel;
-
+    using Enumerations;
+    
     public class Blast
     {
         private ICollection<Comment> comments;
@@ -29,7 +29,7 @@ namespace BlastOFF.Models.BlastModels
 
         public BlastType BlastType { get; set; }
 
-        public int AuthorId { get; set; }
+        public string AuthorId { get; set; }
 
         public virtual ApplicationUser Author { get; set; }
 
