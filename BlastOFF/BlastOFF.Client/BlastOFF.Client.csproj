@@ -136,6 +136,10 @@
       <Project>{447a5617-3d56-4fc7-b9c3-e925d95542e9}</Project>
       <Name>BlastOFF.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BlastOFF.Services\BlastOFF.Services.csproj">
+      <Project>{4a96b114-cc7a-4ab8-aca0-267d231cacf3}</Project>
+      <Name>BlastOFF.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
