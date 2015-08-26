@@ -9,14 +9,13 @@
 
     public class Song
     {
-        private ICollection<Comment> comments;
-
         private ICollection<ApplicationUser> usersLikes;
+        private ICollection<Comment> comments;
 
         public Song()
         {
-            this.comments = new HashSet<Comment>();
             this.usersLikes = new HashSet<ApplicationUser>();
+            this.comments = new HashSet<Comment>();
         }
 
         [Key]
@@ -31,25 +30,14 @@
         [Required]
         public string FilePath { get; set; }
 
-        public int? MusicAlbumId { get; set; } // TO BE FIXED !!!
+        public int MusicAlbumId { get; set; }
 
         public virtual MusicAlbum MusicAlbum { get; set; }
 
+        public DateTime DateAdded { get; set; }
+
         [DefaultValue(0)]
         public int ViewsCount { get; set; }
-
-        public virtual ICollection<ApplicationUser> UserLikes
-        {
-            get
-            {
-                return this.usersLikes;
-            }
-
-            set
-            {
-                this.usersLikes = value;
-            }
-        }
 
         public virtual ICollection<Comment> Comments
         {
@@ -64,16 +52,29 @@
             }
         }
 
+        public virtual ICollection<ApplicationUser> UserLikes
+        {
+            get
+            {
+                return this.usersLikes;
+            }
+
+            set
+            {
+                this.usersLikes = value;
+            }
+        }
+
         //// Optional
         public int? TrackNumber { get; set; }
 
         public string OriginalAlbumTitle { get; set; }
 
-        public DateTime? Year { get; set; }
+        public string OriginalAlbumArtist { get; set; }
+
+        public DateTime? OriginalDate { get; set; }
 
         public string Genre { get; set; }
-
-        public string OriginalAlbumArtist { get; set; }
 
         public string Composer { get; set; }
 
