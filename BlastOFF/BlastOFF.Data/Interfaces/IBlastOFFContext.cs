@@ -9,7 +9,7 @@
     public interface IBlastOFFContext : IDisposable
     {
         //// Gallery Db sets
-        IDbSet<GalleryAlbum> GalleryAlbums { get; set; }
+        IDbSet<ImageAlbum> ImageAlbums { get; set; }
 
         IDbSet<Image> Images { get; set; }
 

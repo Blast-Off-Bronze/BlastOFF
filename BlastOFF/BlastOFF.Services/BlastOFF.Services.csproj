@@ -288,12 +288,17 @@
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\BlastsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ImageAlbumController.cs" />
     <Compile Include="Controllers\MusicController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BlastModels\BlastBindingModel.cs" />
+    <Compile Include="Models\BlastModels\BlastViewModel.cs" />
+    <Compile Include="Models\ImageModels\ImageAlbumBindingModel.cs" />
+    <Compile Include="Models\ImageModels\ImageBindingModel.cs" />
     <Compile Include="Models\MusicModels\MusicAlbumBindingModel.cs" />
     <Compile Include="Models\MusicModels\MusicAlbumViewModel.cs" />
     <Compile Include="Models\MusicModels\SongViewModel.cs" />

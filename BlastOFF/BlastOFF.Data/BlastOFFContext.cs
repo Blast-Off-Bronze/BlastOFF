@@ -29,7 +29,7 @@ namespace BlastOFF.Data
         public virtual IDbSet<Comment> Comments { get; set; }
         
         //// Gallery Db sets
-        public virtual IDbSet<GalleryAlbum> GalleryAlbums { get; set; }
+        public virtual IDbSet<ImageAlbum> ImageAlbums { get; set; }
 
         public virtual IDbSet<Image> Images { get; set; }
 
@@ -83,13 +83,13 @@ namespace BlastOFF.Data
                 });
 
             modelBuilder.Entity<ApplicationUser>()
-                .HasMany(u => u.FollowedGalleryAlbums)
+                .HasMany(u => u.FollowedImageAlbums)
                 .WithMany(ga => ga.Followers)
                 .Map(m =>
                 {
                     m.MapLeftKey("User_Id");
-                    m.MapRightKey("GalleryAlbum_Id");
-                    m.ToTable("GalleryAbumsUserFollowers");
+                    m.MapRightKey("ImageAlbum_Id");
+                    m.ToTable("ImageAlbumsUserFollowers");
                 });
 
             // Likes Mapping
@@ -139,14 +139,14 @@ namespace BlastOFF.Data
 
             //Gallery mapping
 
-            modelBuilder.Entity<GalleryAlbum>()
+            modelBuilder.Entity<ImageAlbum>()
                 .HasMany(ga => ga.UserLikes)
-                .WithMany(u => u.LikedGalleryAlbums)
+                .WithMany(u => u.LikedImageAlbums)
                 .Map(m =>
                 {
                     m.MapLeftKey("User_Id");
-                    m.MapRightKey("GalleryAlbum_Id");
-                    m.ToTable("GalleryAlbumsUserLikes");
+                    m.MapRightKey("ImageAlbum_Id");
+                    m.ToTable("ImageAlbumsUserLikes");
                 });
 
 

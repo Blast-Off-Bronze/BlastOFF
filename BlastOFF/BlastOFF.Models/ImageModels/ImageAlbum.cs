@@ -1,17 +1,18 @@
-﻿using BlastOFF.Models.UserModel;
+﻿using System;
+using BlastOFF.Models.UserModel;
 
 namespace BlastOFF.Models.GalleryModels
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    public class GalleryAlbum
+    public class ImageAlbum
     {
         private ICollection<ApplicationUser> userLikes;
         private ICollection<ApplicationUser> followers;
         private ICollection<Image> images;
 
-        public GalleryAlbum()
+        public ImageAlbum()
         {
             this.images = new HashSet<Image>();
             this.userLikes = new HashSet<ApplicationUser>();
@@ -28,6 +29,9 @@ namespace BlastOFF.Models.GalleryModels
         public string CreatedById { get; set; }
 
         public virtual ApplicationUser CreatedBy { get; set; }
+
+        [Required]
+        public DateTime DateCreated { get; set; }
 
         public virtual ICollection<Image> Images
         {

@@ -60,8 +60,8 @@
     <Compile Include="BlastModels\Blast.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="Enumerations\BlastType.cs" />
-    <Compile Include="GalleryModels\GalleryAlbum.cs" />
-    <Compile Include="GalleryModels\Image.cs" />
+    <Compile Include="ImageModels\ImageAlbum.cs" />
+    <Compile Include="ImageModels\Image.cs" />
     <Compile Include="MusicModels\MusicAlbum.cs" />
     <Compile Include="MusicModels\Song.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

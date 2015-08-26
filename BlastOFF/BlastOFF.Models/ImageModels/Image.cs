@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BlastOFF.Models.UserModel;
 
 namespace BlastOFF.Models.GalleryModels
@@ -23,9 +24,20 @@ namespace BlastOFF.Models.GalleryModels
         public string Title { get; set; }
 
         [Required]
-        public int AlbumId { get; set; }
+        public string FilePath { get; set; }
 
-        public virtual GalleryAlbum Album { get; set; }
+        [Required]
+        public int ImageAlbumId { get; set; }
+
+        public virtual ImageAlbum ImageAlbum { get; set; }
+
+        [Required]
+        public DateTime DateCreated { get; set; }
+
+        [Required]
+        public string UploadedById { get; set; }
+
+        public virtual ApplicationUser UploadedBy { get; set; }
 
         public virtual ICollection<Comment> Comments
         {

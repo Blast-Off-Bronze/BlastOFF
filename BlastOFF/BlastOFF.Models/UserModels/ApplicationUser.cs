@@ -21,13 +21,13 @@ namespace BlastOFF.Models.UserModel
         private ICollection<Image> likedImages;
         private ICollection<Blast> likedBlasts;
         private ICollection<MusicAlbum> likedMusicAlbums;
-        private ICollection<GalleryAlbum> likedGalleryAlbums;
+        private ICollection<ImageAlbum> likedImageAlbums;
         private ICollection<Comment> likedComments;
 
         //follow collections
         private ICollection<ApplicationUser> followedUsers;
         private ICollection<ApplicationUser> followedBy;
-        private ICollection<GalleryAlbum> followedgGalleryAlbums;
+        private ICollection<ImageAlbum> followedgImageAlbums;
         private ICollection<MusicAlbum> followedMusicAlbums;
 
         public ApplicationUser()
@@ -39,13 +39,13 @@ namespace BlastOFF.Models.UserModel
             this.likedImages = new HashSet<Image>();
             this.likedBlasts = new HashSet<Blast>();
             this.likedMusicAlbums = new HashSet<MusicAlbum>();
-            this.likedGalleryAlbums = new HashSet<GalleryAlbum>();
+            this.likedImageAlbums = new HashSet<ImageAlbum>();
             this.likedComments = new HashSet<Comment>();
 
             this.followedBy = new HashSet<ApplicationUser>();
             this.followedUsers = new HashSet<ApplicationUser>();
             this.followedMusicAlbums = new HashSet<MusicAlbum>();
-            this.followedgGalleryAlbums = new HashSet<GalleryAlbum>();
+            this.followedgImageAlbums = new HashSet<ImageAlbum>();
         }
 
         public virtual ICollection<Blast> Blasts
@@ -72,10 +72,10 @@ namespace BlastOFF.Models.UserModel
             set { this.followedBy = value; }
         }
 
-        public virtual ICollection<GalleryAlbum> FollowedGalleryAlbums
+        public virtual ICollection<ImageAlbum> FollowedImageAlbums
         {
-            get { return this.followedgGalleryAlbums; }
-            set { this.followedgGalleryAlbums = value; }
+            get { return this.followedgImageAlbums; }
+            set { this.followedgImageAlbums = value; }
         }
 
         public virtual ICollection<MusicAlbum> FollowedMusicAlbums
@@ -108,10 +108,10 @@ namespace BlastOFF.Models.UserModel
             set { this.likedMusicAlbums = value; }
         }
 
-        public virtual ICollection<GalleryAlbum> LikedGalleryAlbums
+        public virtual ICollection<ImageAlbum> LikedImageAlbums
         {
-            get { return this.likedGalleryAlbums; }
-            set { this.likedGalleryAlbums = value; }
+            get { return this.likedImageAlbums; }
+            set { this.likedImageAlbums = value; }
         }
 
         public virtual ICollection<Comment> LikedComments

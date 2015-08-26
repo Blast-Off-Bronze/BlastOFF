@@ -40,9 +40,9 @@ namespace BlastOFF.Models
 
         public int? BlastId { get; set; }
 
-        public int? GalleryAlbumId { get; set; }
+        public int? ImageAlbumId { get; set; }
 
-        public virtual GalleryAlbum GalleryAlbum { get; set; }
+        public virtual ImageAlbum ImageAlbum { get; set; }
 
         public int? MusicAlbumId { get; set; }
 

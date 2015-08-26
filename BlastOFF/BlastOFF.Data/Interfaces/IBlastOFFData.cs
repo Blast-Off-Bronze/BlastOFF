@@ -20,7 +20,7 @@
         IRepository<Blast> Blasts { get; }
 
         //// Gallery
-        IRepository<GalleryAlbum> GalleryAlbums { get; }
+        IRepository<ImageAlbum> ImageAlbums { get; }
 
         IRepository<Image> Images { get; }
 

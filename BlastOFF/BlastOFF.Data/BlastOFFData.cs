@@ -16,7 +16,7 @@
         private IRepository<ApplicationUser> users;
         private IRepository<Comment> comments;
         private IRepository<Blast> blasts;
-        private IRepository<GalleryAlbum> galleryAlbums;
+        private IRepository<ImageAlbum> imageAlbums;
         private IRepository<Image> images;
         private IRepository<MusicAlbum> musicAlbums;
         private IRepository<Song> songs;
@@ -79,16 +79,16 @@
         }
 
         //// Gallery
-        public IRepository<GalleryAlbum> GalleryAlbums
+        public IRepository<ImageAlbum> ImageAlbums
         {
             get
             {
-                if (this.galleryAlbums == null)
+                if (this.imageAlbums == null)
                 {
-                    this.galleryAlbums = new Repository<GalleryAlbum>(this.context);
+                    this.imageAlbums = new Repository<ImageAlbum>(this.context);
                 }
 
-                return this.galleryAlbums;
+                return this.imageAlbums;
             }
         }
 
