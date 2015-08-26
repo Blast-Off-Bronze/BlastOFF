@@ -28,7 +28,7 @@
             {
                 foreach (var file in files)
                 {
-                    Console.WriteLine("{0} ({1})", file.Title, file.Id);
+                    Console.WriteLine("{0} (https://drive.google.com/open?id={1})", file.Title, file.Id);
                 }
             }
             else
