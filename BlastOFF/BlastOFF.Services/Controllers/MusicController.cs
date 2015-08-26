@@ -32,7 +32,7 @@
         [Route("api/music/albums")]
         public IHttpActionResult All()
         {
-            var albums = this.data.MusicAlbums.All();
+            var albums = this.data.MusicAlbums.All().Select(MusicAlbumViewModel.Get);
 
             return this.Ok(albums);
         }
@@ -42,7 +42,7 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult Find(int id)
         {
-            var album = this.data.MusicAlbums.Find(id);
+            var album = this.data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
 
             if (album == null)
             {
@@ -79,12 +79,12 @@
             var newMusicAlbum = new MusicAlbum
                                     {
                                         Title = musicAlbum.Title,
-                                        CreatedById = loggedUserId,
+                                        AuthorId = loggedUserId,
                                         DateCreated = DateTime.Now,
                                         ViewsCount = 0
                                     };
 
-            if (this.data.MusicAlbums.All().Any(a => a.CreatedById == loggedUserId && a.Title == newMusicAlbum.Title))
+            if (this.data.MusicAlbums.All().Any(a => a.AuthorId == loggedUserId && a.Title == newMusicAlbum.Title))
             {
                 return this.BadRequest(string.Format("A music album with the specified title already exists."));
             }
@@ -118,7 +118,7 @@
                 return this.BadRequest("You have to be logged in to continue.");
             }
 
-            if (loggedUserId != existingMusicAlbum.CreatedById)
+            if (loggedUserId != existingMusicAlbum.AuthorId)
             {
                 return this.Unauthorized();
             }
@@ -162,7 +162,7 @@
                 return this.BadRequest("You have to be logged in to continue.");
             }
 
-            if (loggedUserId != existingMusicAlbum.CreatedById)
+            if (loggedUserId != existingMusicAlbum.AuthorId)
             {
                 return this.Unauthorized();
             }

@@ -9,17 +9,17 @@
 
     public class MusicAlbum
     {
-        private ICollection<ApplicationUser> followers;
-
-        private ICollection<Song> songs;
-
         private ICollection<ApplicationUser> userLikes;
+        private ICollection<Comment> comments;
+        private ICollection<ApplicationUser> followers;
+        private ICollection<Song> songs;
 
         public MusicAlbum()
         {
             this.userLikes = new HashSet<ApplicationUser>();
-            this.songs = new HashSet<Song>();
+            this.comments = new HashSet<Comment>();
             this.followers = new HashSet<ApplicationUser>();
+            this.songs = new HashSet<Song>();
         }
 
         [Key]
@@ -29,9 +29,9 @@
         public string Title { get; set; }
 
         [Required]
-        public string CreatedById { get; set; }
+        public string AuthorId { get; set; }
 
-        public virtual ApplicationUser CreatedBy { get; set; }
+        public virtual ApplicationUser Author { get; set; }
 
         [Required]
         public DateTime DateCreated { get; set; }
@@ -52,16 +52,16 @@
             }
         }
 
-        public virtual ICollection<Song> Songs
+        public virtual ICollection<Comment> Comments
         {
             get
             {
-                return this.songs;
+                return this.comments;
             }
 
             set
             {
-                this.songs = value;
+                this.comments = value;
             }
         }
 
@@ -75,6 +75,19 @@
             set
             {
                 this.followers = value;
+            }
+        }
+
+        public virtual ICollection<Song> Songs
+        {
+            get
+            {
+                return this.songs;
+            }
+
+            set
+            {
+                this.songs = value;
             }
         }
 
