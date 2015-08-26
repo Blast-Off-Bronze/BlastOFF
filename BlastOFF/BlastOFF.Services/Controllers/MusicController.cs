@@ -34,6 +34,8 @@
         {
             var albums = this.data.MusicAlbums.All().Select(MusicAlbumViewModel.Get);
 
+            this.data.Dispose();
+
             return this.Ok(albums);
         }
 
@@ -46,7 +48,7 @@
 
             if (album == null)
             {
-                return this.BadRequest(string.Format("A music album with id {0} does not exist", id));
+                return this.NotFound();
             }
 
             this.data.Dispose();
@@ -77,12 +79,12 @@
             }
 
             var newMusicAlbum = new MusicAlbum
-                                    {
-                                        Title = musicAlbum.Title,
-                                        AuthorId = loggedUserId,
-                                        DateCreated = DateTime.Now,
-                                        ViewsCount = 0
-                                    };
+            {
+                Title = musicAlbum.Title,
+                AuthorId = loggedUserId,
+                DateCreated = DateTime.Now,
+                ViewsCount = 0
+            };
 
             if (this.data.MusicAlbums.All().Any(a => a.AuthorId == loggedUserId && a.Title == newMusicAlbum.Title))
             {
@@ -176,15 +178,16 @@
         }
 
         // END - MUSIC ALBUMS Endpoints
-        
+
         // START - SONGS Endpoints
 
-        //// GET /api/music/albums/{id}/songs
+        //// GET /api/music/albums/{albumId}/songs
         [HttpGet]
         [Route("api/music/albums/{albumId}/songs")]
         public IHttpActionResult All(int albumId)
         {
             var album = this.data.MusicAlbums.Find(albumId);
+
             if (album == null)
             {
                 return this.NotFound();
@@ -192,25 +195,34 @@
 
             var songs = this.data.Songs.All().Where(s => s.MusicAlbumId == albumId).Select(SongViewModel.Get);
 
+            this.data.Dispose();
+
             return this.Ok(songs);
         }
 
-        ////// GET /api/music/albums/{id}
-        //[HttpGet]
-        //[Route("api/music/albums/{id}")]
-        //public IHttpActionResult Find(int id)
-        //{
-        //    var album = this.data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
+        //// GET /api/music/albums/{albumId}/songs/{id}
+        [HttpGet]
+        [Route("api/music/albums/{albumId}/songs/{id}")]
+        public IHttpActionResult Find(int albumId, int id)
+        {
+            var album = this.data.MusicAlbums.Find(albumId);
 
-        //    if (album == null)
-        //    {
-        //        return this.BadRequest(string.Format("A music album with id {0} does not exist", id));
-        //    }
+            if (album == null)
+            {
+                return this.NotFound();
+            }
 
-        //    this.data.Dispose();
+            var song = this.data.Songs.All().Where(s => s.MusicAlbumId == albumId && s.Id == id).Select(SongViewModel.Get).FirstOrDefault();
 
-        //    return this.Ok(album);
-        //}
+            if (song == null)
+            {
+                return this.NotFound();
+            }
+
+            this.data.Dispose();
+
+            return this.Ok(song);
+        }
 
         ////// POST /api/music/albums
         //[HttpPost]
