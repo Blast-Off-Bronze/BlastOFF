@@ -315,7 +315,7 @@
                 return this.Unauthorized();
             }
 
-            var existingSong = existingMusicAlbum.Songs.FirstOrDefault(s => s.Id == id);
+            var existingSong = this.Data.Songs.All().FirstOrDefault(s => s.MusicAlbumId == albumId && s.Id == id);
 
             if (existingSong == null)
             {
@@ -381,7 +381,7 @@
                 return this.Unauthorized();
             }
 
-            var existingSong = existingMusicAlbum.Songs.FirstOrDefault(s => s.Id == id);
+            var existingSong = this.Data.Songs.All().FirstOrDefault(s => s.MusicAlbumId == albumId && s.Id == id);
 
             if (existingSong == null)
             {
