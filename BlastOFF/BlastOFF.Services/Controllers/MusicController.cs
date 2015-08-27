@@ -546,6 +546,105 @@
 
         //// END - MUSIC ALBUM (COMMENTS) Endpoints
 
+        // START - MUSIC ALBUM (COMMENT LIKES) Endpoints
+
+        //// POST /api/music/albums/{albumId}/comment/{id}/likes
+        [HttpPost]
+        [Route("api/music/albums/{albumId}/comment/{id}/likes")]
+        public IHttpActionResult LikeMusicAlbumComment(int albumId, int id)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var comment = this.Data.Comments.All().FirstOrDefault(c => c.MusicAlbumId == albumId && c.Id == id);
+
+            if (comment == null)
+            {
+                return this.NotFound();
+            }
+
+            var isAlreadyLiked = comment.LikedBy.Any(u => u.Id == loggedUserId);
+
+            if (isAlreadyLiked)
+            {
+                return this.BadRequest("You have already liked this comment.");
+            }
+
+            if (comment.AuthorId == loggedUserId)
+            {
+                return this.BadRequest("Cannot like your own comment.");
+            }
+
+            comment.LikedBy.Add(currentUser);
+
+            this.Data.SaveChanges();
+            this.Data.Dispose();
+
+            return this.Ok("Comment successfully liked.");
+        }
+
+        //// DELETE /api/music/albums/{albumId}/comments/{id}/likes
+        [HttpDelete]
+        [Route("api/music/albums/{albumId}/comments/{id}/likes")]
+        public IHttpActionResult UnlikeMusicAlbumComment(int albumId, int id)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var comment = this.Data.Comments.All().FirstOrDefault(c => c.MusicAlbumId == albumId && c.Id == id);
+
+            if (comment == null)
+            {
+                return this.NotFound();
+            }
+
+            var isAlreadyLiked = comment.LikedBy.Any(u => u.Id == loggedUserId);
+
+            if (!isAlreadyLiked)
+            {
+                return this.BadRequest("You have already unliked this comment.");
+            }
+
+            if (comment.AuthorId == loggedUserId)
+            {
+                return this.BadRequest("Cannot unlike your own comment.");
+            }
+
+            comment.LikedBy.Remove(currentUser);
+
+            this.Data.SaveChanges();
+            this.Data.Dispose();
+
+            return this.Ok("Comment successfully unliked.");
+        }
+
+        // END - MUSIC ALBUM (COMMENT LIKES) Endpoints
 
 
 
