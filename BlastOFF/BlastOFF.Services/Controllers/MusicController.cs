@@ -665,7 +665,7 @@
         [HttpPost]
         [Route("api/music/albums/{id}/follow")]
         [Authorize]
-        public IHttpActionResult FollowMusicAlbum(int id)
+        public IHttpActionResult FollowMusicAlbum([FromUri]int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -702,7 +702,7 @@
         [HttpDelete]
         [Route("api/music/albums/{id}/follow")]
         [Authorize]
-        public IHttpActionResult UnfollowMusicAlbum(int id)
+        public IHttpActionResult UnfollowMusicAlbum([FromUri]int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
