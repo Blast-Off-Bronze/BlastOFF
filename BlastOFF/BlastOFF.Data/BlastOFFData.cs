@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Data
+﻿using BlastOFF.Models.ChatModels;
+
+namespace BlastOFF.Data
 {
     using System;
 
@@ -14,6 +16,7 @@
     {
         //// Repositories
         private IRepository<ApplicationUser> users;
+        private IRepository<Chat> chats;
         private IRepository<Comment> comments;
         private IRepository<Blast> blasts;
         private IRepository<ImageAlbum> imageAlbums;
@@ -47,6 +50,19 @@
                 }
 
                 return this.users;
+            }
+        }
+
+        //// Chat
+        public IRepository<Chat> Chats
+        {
+            get
+            {
+                if (this.chats == null)
+                {
+                    this.chats = new Repository<Chat>(this.context);
+                }
+                return this.chats;
             }
         }
 

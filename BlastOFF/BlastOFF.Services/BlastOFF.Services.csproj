@@ -72,6 +72,9 @@
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Build.Framework">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Microsoft.Build.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -287,6 +290,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\BlastsController.cs" />
+    <Compile Include="Controllers\ChatController.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImageAlbumController.cs" />
@@ -298,6 +302,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BlastModels\BlastBindingModel.cs" />
     <Compile Include="Models\BlastModels\BlastViewModel.cs" />
+    <Compile Include="Models\ChatModels\ChatBindingModel.cs" />
     <Compile Include="Models\CommentBindingModel.cs" />
     <Compile Include="Models\CommentViewModel.cs" />
     <Compile Include="Models\ImageModels\ImageAlbumBindingModel.cs" />

@@ -1,5 +1,6 @@
 using System.Data.Entity.ModelConfiguration.Conventions;
 using BlastOFF.Models;
+using BlastOFF.Models.ChatModels;
 
 namespace BlastOFF.Data
 {
@@ -27,6 +28,9 @@ namespace BlastOFF.Data
         public virtual IDbSet<Blast> Blasts { get; set; }
 
         public virtual IDbSet<Comment> Comments { get; set; }
+
+        ////Chat Db set
+        public virtual IDbSet<Chat> Chats { get; set; }
         
         //// Gallery Db sets
         public virtual IDbSet<ImageAlbum> ImageAlbums { get; set; }
