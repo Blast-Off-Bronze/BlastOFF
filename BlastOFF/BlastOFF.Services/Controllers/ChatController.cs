@@ -30,15 +30,22 @@ namespace BlastOFF.Services.Controllers
         // GET api/message
         [HttpGet]
         [Route("api/message")]
-        public IHttpActionResult GetMessage()
+        public IHttpActionResult GetMessage(string chatRoom)
         {
-            var username = User.Identity.GetUserName();
+
+            var validateChatRoom = this.Data.Chats.All().FirstOrDefault(c => c.ChatRoomName == chatRoom);
+
+            if (validateChatRoom == null)
+            {
+                return this.BadRequest("There is no such a room.");
+            }
 
             var message = this.Data.Chats.All()
-                .Where(c => c.SenderUsername == username)
+                .Where(c => c.ChatRoomName == chatRoom)
                 .Select(a => new
                 {
-                    a.ReceiverUsername,
+                    Sender = a.SenderUsername,
+                    Receiver = a.ReceiverUsername,
                     a.Content
                 });
 
@@ -50,21 +57,19 @@ namespace BlastOFF.Services.Controllers
         [Route("api/message")]
         public IHttpActionResult PostMessage([FromBody]ChatBindingModel model)
         {
-            var senderId = User.Identity.GetUserId();
             var senderUsername = User.Identity.GetUserName();
 
             if (senderUsername == model.RecieverUsername)
             {
-                return this.BadRequest("You cannot send message to yourself.");
+                return this.BadRequest("You cannot send a message to yourself.");
             }
 
-
-            var users = this.Data.Users.All()
+            var user = this.Data.Users.All()
                 .Where(u => u.UserName == model.RecieverUsername)
                 .Select(u => u.UserName)
                 .FirstOrDefault();
 
-            if (users == null)
+            if (user == null)
             {
                 return this.BadRequest("There is no such user.");
             }
@@ -72,10 +77,12 @@ namespace BlastOFF.Services.Controllers
             var message = new Chat()
             {
                 Content = model.Content,
+                ChatRoomName = model.ChatRoomName,
                 SenderUsername = senderUsername,
                 ReceiverUsername = model.RecieverUsername,
                 PostedOn = DateTime.Now
             };
+
             this.Data.Chats.Add(message);
 
             this.Data.SaveChanges();
