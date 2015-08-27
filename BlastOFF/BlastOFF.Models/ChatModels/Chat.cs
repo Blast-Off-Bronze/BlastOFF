@@ -8,13 +8,16 @@ namespace BlastOFF.Models.ChatModels
         public int Id { get; set; }
 
         [Required]
-        public string Content { get; set; }
+        public string ChatRoomName { get; set; }
 
         [Required]
         public string SenderUsername { get; set; }
 
         [Required]
         public string ReceiverUsername { get; set; }
+
+        [Required]
+        public string Content { get; set; }
 
         public DateTime PostedOn { get; set; }
 
