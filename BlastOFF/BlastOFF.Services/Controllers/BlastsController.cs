@@ -22,7 +22,7 @@ namespace BlastOFF.Services.Controllers
         public BlastsController(IBlastOFFData data)
             : base(data)
         {
-            
+
         }
 
 
@@ -39,7 +39,8 @@ namespace BlastOFF.Services.Controllers
         [Route("api/blasts/{id}")]
         public IHttpActionResult GetBlastById(int id)
         {
-            var blast = this.Data.Blasts.All().Where(b => b.Id == id).Select(BlastViewModel.Create);
+            var blast = this.Data.Blasts.All().Where(b => b.Id == id)
+                .Select(BlastViewModel.Create);
 
             if (blast.Count() == 0)
             {
@@ -47,6 +48,78 @@ namespace BlastOFF.Services.Controllers
             }
 
             return this.Ok(blast);
+        }
+
+        [HttpGet]
+        [Route("api/blasts/{username}")]
+        public IHttpActionResult GetBlastsByAuthor(string username)
+        {
+            var blasts = this.Data.Blasts.All().Where(b => b.Author.UserName == username)
+                .Select(BlastViewModel.Create);
+
+            if (blasts.Count() == 0)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok(blasts);
+        }
+
+        [HttpPost]
+        [Route("api/blast/{id}/like")]
+        [Authorize]
+        public IHttpActionResult LikeBlast(int id)
+        {
+            var blast = this.Data.Blasts.All().FirstOrDefault(b => b.Id == id);
+
+            if (blast == null)
+            {
+                return this.NotFound();
+            }
+
+            var loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.All().First(u => u.Id == loggedUserId);
+
+            if (blast.AuthorId == loggedUserId || blast.UserLikes.Any(ul => ul.Id == loggedUserId))
+            {
+                //already liked or trying to like own blast
+                return this.BadRequest();
+            }
+
+            blast.UserLikes.Add(currentUser);
+            currentUser.LikedBlasts.Add(blast);
+            this.Data.SaveChanges();
+
+            return this.Ok();
+        }
+
+        [HttpDelete]
+        [Route("api/blast/{id}/like")]
+        [Authorize]
+        public IHttpActionResult RemoveLike(int id)
+        {
+            var blast = this.Data.Blasts.All().FirstOrDefault(b => b.Id == id);
+
+            if (blast == null)
+            {
+                return this.NotFound();
+            }
+
+            var loggedUserId = this.User.Identity.GetUserId();
+
+            if (!blast.UserLikes.Any(ul => ul.Id == loggedUserId))
+            {
+                //cannot remove other users' likes
+                return this.BadRequest();
+            }
+
+            var currentUser = this.Data.Users.All().First(u => u.Id == loggedUserId);
+
+            blast.UserLikes.Remove(currentUser);
+            currentUser.LikedBlasts.Remove(blast);
+            this.Data.SaveChanges();
+
+            return this.Ok();
         }
 
 
