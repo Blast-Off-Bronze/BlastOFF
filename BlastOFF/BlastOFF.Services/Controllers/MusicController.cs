@@ -18,12 +18,12 @@
         {
         }
 
-        public MusicController(IBlastOFFData data):
-            base(data)
+        public MusicController(IBlastOFFData data)
+            : base(data)
         {
         }
 
-        // START - MUSIC ALBUMS Endpoints
+        // START - MUSIC ALBUM Endpoints
 
         //// GET /api/music/albums
         [HttpGet]
@@ -42,7 +42,8 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult Find(int id)
         {
-            var album = this.Data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
+            var album =
+                this.Data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
 
             if (album == null)
             {
@@ -175,9 +176,9 @@
             return this.Ok(existingMusicAlbum);
         }
 
-        // END - MUSIC ALBUMS Endpoints
+        // END - MUSIC ALBUM Endpoints
 
-        // START - SONGS Endpoints
+        // START - SONG Endpoints
 
         //// GET /api/music/albums/{albumId}/songs
         [HttpGet]
@@ -210,7 +211,10 @@
                 return this.NotFound();
             }
 
-            var song = this.Data.Songs.All().Where(s => s.MusicAlbumId == albumId && s.Id == id).Select(SongViewModel.Get).FirstOrDefault();
+            var song = this.Data.Songs.All()
+                    .Where(s => s.MusicAlbumId == albumId && s.Id == id)
+                    .Select(SongViewModel.Get)
+                    .FirstOrDefault();
 
             if (song == null)
             {
@@ -222,127 +226,183 @@
             return this.Ok(song);
         }
 
-        ////// POST /api/music/albums
-        //[HttpPost]
-        //[Route("api/music/albums")]
-        //public IHttpActionResult Create(MusicAlbumBindingModel musicAlbum)
-        //{
-        //    string loggedUserId = this.User.Identity.GetUserId();
+        //// POST /api/music/albums/{albumId}/songs
+        [HttpPost]
+        [Route("api/music/albums/{albumId}/songs")]
+        public IHttpActionResult Create(int albumId, SongBindingModel song)
+        {
+            // TODO: Upload song to Google Drive and acquire link
 
-        //    if (string.IsNullOrEmpty(loggedUserId))
-        //    {
-        //        return this.BadRequest("You have to be logged in to continue.");
-        //    }
+            string loggedUserId = this.User.Identity.GetUserId();
 
-        //    if (musicAlbum == null)
-        //    {
-        //        return this.BadRequest("Cannot create an empty music album model.");
-        //    }
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
 
-        //    if (!this.ModelState.IsValid)
-        //    {
-        //        return this.BadRequest(this.ModelState);
-        //    }
+            var album = this.Data.MusicAlbums.Find(albumId);
 
-        //    var newMusicAlbum = new MusicAlbum
-        //    {
-        //        Title = musicAlbum.Title,
-        //        AuthorId = loggedUserId,
-        //        DateCreated = DateTime.Now,
-        //        ViewsCount = 0
-        //    };
+            if (album == null)
+            {
+                return this.NotFound();
+            }
 
-        //    if (this.data.MusicAlbums.All().Any(a => a.AuthorId == loggedUserId && a.Title == newMusicAlbum.Title))
-        //    {
-        //        return this.BadRequest(string.Format("A music album with the specified title already exists."));
-        //    }
+            if (song == null)
+            {
+                return this.BadRequest("Cannot create an empty song model.");
+            }
 
-        //    this.data.MusicAlbums.Add(newMusicAlbum);
-        //    this.data.SaveChanges();
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
 
-        //    musicAlbum.Id = newMusicAlbum.Id;
+            var newSong = new Song
+                {
+                    Title = song.Title,
+                    Artist = song.Artist,
+                    // FilePath = link to Google Drive,
+                    MusicAlbumId = album.Id,
+                    UploaderId = loggedUserId,
+                    DateAdded = DateTime.Now,
+                    ViewsCount = 0,
+                    TrackNumber = song.TrackNumber,
+                    OriginalAlbumTitle = song.OriginalAlbumTitle,
+                    OriginalAlbumArtist = song.OriginalAlbumArtist,
+                    OriginalDate = song.OriginalDate,
+                    Genre = song.Genre,
+                    Composer = song.Composer,
+                    Publisher = song.Publisher,
+                    Bpm = song.Bpm
+                };
 
-        //    this.data.Dispose();
+            if (album.Songs.Any(s => s == newSong))
+            {
+                return this.BadRequest(string.Format("This song already exists in album."));
+            }
 
-        //    return this.Ok(musicAlbum);
-        //}
+            this.Data.Songs.Add(newSong);
+            song.Id = newSong.Id;
 
-        ////// PUT /api/music/albums/{id}
-        //[HttpPut]
-        //[Route("api/music/albums/{id}")]
-        //public IHttpActionResult Update(int id, MusicAlbumBindingModel musicAlbum)
-        //{
-        //    var existingMusicAlbum = this.data.MusicAlbums.Find(id);
+            album.Songs.Add(newSong);
+            this.Data.SaveChanges();
+            this.Data.Dispose();
 
-        //    if (existingMusicAlbum == null)
-        //    {
-        //        return this.NotFound();
-        //    }
+            return this.Ok(song);
+        }
 
-        //    string loggedUserId = this.User.Identity.GetUserId();
+        //// PUT /api/music/albums/{albumId}/songs/{id}
+        [HttpPut]
+        [Route("api/music/albums/{albumId}/songs/{id}")]
+        public IHttpActionResult Update(int albumId, int id, SongBindingModel song)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
 
-        //    if (string.IsNullOrEmpty(loggedUserId))
-        //    {
-        //        return this.BadRequest("You have to be logged in to continue.");
-        //    }
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
 
-        //    if (loggedUserId != existingMusicAlbum.AuthorId)
-        //    {
-        //        return this.Unauthorized();
-        //    }
+            var existingMusicAlbum = this.Data.MusicAlbums.Find(albumId);
 
-        //    if (musicAlbum == null)
-        //    {
-        //        return this.BadRequest("Cannot create an empty music album model.");
-        //    }
+            if (existingMusicAlbum == null)
+            {
+                return this.NotFound();
+            }
 
-        //    if (!this.ModelState.IsValid)
-        //    {
-        //        return this.BadRequest(this.ModelState);
-        //    }
+            if (loggedUserId != existingMusicAlbum.AuthorId)
+            {
+                return this.Unauthorized();
+            }
 
-        //    existingMusicAlbum.Title = musicAlbum.Title;
-        //    this.data.SaveChanges();
+            var existingSong = existingMusicAlbum.Songs.FirstOrDefault(s => s.Id == id);
 
-        //    musicAlbum.Id = existingMusicAlbum.Id;
+            if (existingSong == null)
+            {
+                return this.NotFound();
+            }
 
-        //    this.data.Dispose();
+            if (loggedUserId != existingSong.UploaderId)
+            {
+                return this.Unauthorized();
+            }
 
-        //    return this.Ok(musicAlbum);
-        //}
+            if (song == null)
+            {
+                return this.BadRequest("Cannot create an empty song model.");
+            }
 
-        ////// DELETE /api/music/albums/{id}
-        //[HttpDelete]
-        //[Route("api/music/albums/{id}")]
-        //public IHttpActionResult Delete(int id)
-        //{
-        //    var existingMusicAlbum = this.data.MusicAlbums.Find(id);
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
 
-        //    if (existingMusicAlbum == null)
-        //    {
-        //        return this.NotFound();
-        //    }
+            existingSong.Title = song.Title;
+            existingSong.Artist = song.Artist;
+            existingSong.TrackNumber = song.TrackNumber;
+            existingSong.OriginalAlbumTitle = song.OriginalAlbumTitle;
+            existingSong.OriginalAlbumArtist = song.OriginalAlbumArtist;
+            existingSong.OriginalDate = song.OriginalDate;
+            existingSong.Genre = song.Genre;
+            existingSong.Composer = song.Composer;
+            existingSong.Publisher = song.Publisher;
+            existingSong.Bpm = song.Bpm;
 
-        //    string loggedUserId = this.User.Identity.GetUserId();
+            this.Data.SaveChanges();
 
-        //    if (string.IsNullOrEmpty(loggedUserId))
-        //    {
-        //        return this.BadRequest("You have to be logged in to continue.");
-        //    }
+            song.Id = existingSong.Id;
 
-        //    if (loggedUserId != existingMusicAlbum.AuthorId)
-        //    {
-        //        return this.Unauthorized();
-        //    }
+            this.Data.Dispose();
 
-        //    this.data.MusicAlbums.Delete(existingMusicAlbum);
-        //    this.data.SaveChanges();
+            return this.Ok(song);
+        }
 
-        //    this.data.Dispose();
+        //// DELETE /api/music/albums/{albumId}/songs/{id}
+        [HttpDelete]
+        [Route("api/music/albums/{albumId}/songs/{id}")]
+        public IHttpActionResult Delete(int albumId, int id)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
 
-        //    return this.Ok(string.Format("Category with id {0} successfully deleted", id));
-        //}
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
 
-        //// END - MUSIC ALBUMS Endpoints
+            var existingMusicAlbum = this.Data.MusicAlbums.Find(albumId);
+
+            if (existingMusicAlbum == null)
+            {
+                return this.NotFound();
+            }
+
+            if (loggedUserId != existingMusicAlbum.AuthorId)
+            {
+                return this.Unauthorized();
+            }
+
+            var existingSong = existingMusicAlbum.Songs.FirstOrDefault(s => s.Id == id);
+
+            if (existingSong == null)
+            {
+                return this.NotFound();
+            }
+
+            if (loggedUserId != existingSong.UploaderId)
+            {
+                return this.Unauthorized();
+            }
+
+            this.Data.Songs.Delete(existingSong);
+            existingMusicAlbum.Songs.Remove(existingSong);
+
+            this.Data.SaveChanges();
+
+            this.Data.Dispose();
+
+            return this.Ok(existingSong);
+        }
+
+        //// END - SONG Endpoints
     }
 }

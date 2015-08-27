@@ -34,6 +34,10 @@
 
         public virtual MusicAlbum MusicAlbum { get; set; }
 
+        public string UploaderId { get; set; }
+
+        public virtual ApplicationUser Uploader { get; set; }
+
         public DateTime DateAdded { get; set; }
 
         [DefaultValue(0)]

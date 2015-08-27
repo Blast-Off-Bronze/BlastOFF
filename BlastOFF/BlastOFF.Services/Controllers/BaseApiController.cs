@@ -1,8 +1,8 @@
-﻿
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System.Web.Http;
-    using BlastOFF.Data.Interfaces;
+
+    using Data.Interfaces;
 
     public abstract class BaseApiController : ApiController
     {
@@ -15,7 +15,10 @@ namespace BlastOFF.Services.Controllers
 
         protected IBlastOFFData Data
         {
-            get { return this.data; }
+            get
+            {
+                return this.data;
+            }
         }
     }
 }
