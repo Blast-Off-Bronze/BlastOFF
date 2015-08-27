@@ -178,6 +178,189 @@
 
         // END - MUSIC ALBUM Endpoints
 
+        // START - MUSIC ALBUM (LIKES) Endpoints
+
+        //// POST /api/music/albums/{id}/likes
+        [HttpGet]
+        [Route("api/music/albums/{id}/likes")]
+        public IHttpActionResult Like(int id)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var isAlreadyLiked = album.UserLikes.Any(u => u.Id == loggedUserId);
+
+            if (isAlreadyLiked)
+            {
+                return this.BadRequest("You have already liked this music album.");
+            }
+
+            if (album.AuthorId == loggedUserId)
+            {
+                return this.BadRequest("Cannot like your own music album.");
+            }
+
+            album.UserLikes.Add(currentUser);
+
+            this.Data.SaveChanges();
+            this.Data.Dispose();
+
+            return this.Ok(string.Format("Music Album {0}, created by {1} successfully liked.", album.Title, album.Author));
+        }
+
+        //// DELETE /api/music/albums/{id}/likes
+        [HttpDelete]
+        [Route("api/music/albums/{id}/likes")]
+        public IHttpActionResult Unlike(int id)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var isAlreadyUnliked = album.UserLikes.Any(u => u.Id == loggedUserId);
+
+            if (!isAlreadyUnliked)
+            {
+                return this.BadRequest("You have already unliked this music album.");
+            }
+
+            if (album.AuthorId == loggedUserId)
+            {
+                return this.BadRequest("Cannot unlike your own music album.");
+            }
+
+            album.UserLikes.Remove(currentUser);
+
+            this.Data.SaveChanges();
+            this.Data.Dispose();
+
+            return this.Ok(string.Format("Music Album {0}, created by {1} successfully unliked.", album.Title, album.Author));
+        }
+
+        // END - MUSIC ALBUM (LIKES) Endpoints
+
+        // START - MUSIC ALBUM (FOLLOWERS) Endpoints
+
+        //// POST /api/music/albums/{id}/follow
+        [HttpGet]
+        [Route("api/music/albums/{id}/follow")]
+        public IHttpActionResult Follow(int id)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var isAlreadyFollowed = album.Followers.Any(u => u.Id == loggedUserId);
+
+            if (isAlreadyFollowed)
+            {
+                return this.BadRequest("You are currently following this music album.");
+            }
+
+            if (album.AuthorId == loggedUserId)
+            {
+                return this.BadRequest("Cannot follow your own music album.");
+            }
+
+            album.Followers.Add(currentUser);
+
+            this.Data.SaveChanges();
+            this.Data.Dispose();
+
+            return this.Ok(string.Format("Music Album {0}, created by {1} successfully followed.", album.Title, album.Author));
+        }
+
+        //// DELETE /api/music/albums/{id}/follow
+        [HttpDelete]
+        [Route("api/music/albums/{id}/follow")]
+        public IHttpActionResult Unfollow(int id)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var isAlreadyUnfollowed = album.Followers.Any(u => u.Id == loggedUserId);
+
+            if (!isAlreadyUnfollowed)
+            {
+                return this.BadRequest("You are currently not following this music album.");
+            }
+
+            if (album.AuthorId == loggedUserId)
+            {
+                return this.BadRequest("Cannot unfollow your own music album.");
+            }
+
+            album.Followers.Remove(currentUser);
+
+            this.Data.SaveChanges();
+            this.Data.Dispose();
+
+            return this.Ok(string.Format("Music Album {0}, created by {1} successfully unfollowed.", album.Title, album.Author));
+        }
+
+        // END - MUSIC ALBUM (FOLLOWERS) Endpoints
+
+
+
+
+
+
+
+
+
+
+
+
         // START - SONG Endpoints
 
         //// GET /api/music/albums/{albumId}/songs
