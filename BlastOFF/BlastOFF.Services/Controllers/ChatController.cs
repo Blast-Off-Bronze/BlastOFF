@@ -69,7 +69,8 @@ namespace BlastOFF.Services.Controllers
                 .Select(u => u.UserName)
                 .FirstOrDefault();
 
-            if (user == null)
+
+            if (user == null && model.RecieverUsername != "All")
             {
                 return this.BadRequest("There is no such user.");
             }
@@ -80,7 +81,7 @@ namespace BlastOFF.Services.Controllers
                 ChatRoomName = model.ChatRoomName,
                 SenderUsername = senderUsername,
                 ReceiverUsername = model.RecieverUsername,
-                PostedOn = DateTime.Now
+                PostedOn = DateTime.Now.ToString("yyyy MMM d ddd HH:mm")
             };
 
             this.Data.Chats.Add(message);
