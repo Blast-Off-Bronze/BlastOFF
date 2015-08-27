@@ -30,7 +30,7 @@
         //// GET /api/music/albums
         [HttpGet]
         [Route("api/music/albums")]
-        public IHttpActionResult All()
+        public IHttpActionResult AllMusicAlbums()
         {
             var albums = this.Data.MusicAlbums.All().Select(MusicAlbumViewModel.Get);
 
@@ -42,7 +42,7 @@
         //// GET /api/music/albums/{id}
         [HttpGet]
         [Route("api/music/albums/{id}")]
-        public IHttpActionResult Find(int id)
+        public IHttpActionResult FindMusicAlbumById(int id)
         {
             var album = this.Data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
 
@@ -59,7 +59,7 @@
         //// POST /api/music/albums
         [HttpPost]
         [Route("api/music/albums")]
-        public IHttpActionResult Create(MusicAlbumBindingModel musicAlbum)
+        public IHttpActionResult AddMusicAlbum(MusicAlbumBindingModel musicAlbum)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -104,7 +104,7 @@
         //// PUT /api/music/albums/{id}
         [HttpPut]
         [Route("api/music/albums/{id}")]
-        public IHttpActionResult Update(int id, MusicAlbumBindingModel musicAlbum)
+        public IHttpActionResult UpdateMusicAlbum(int id, MusicAlbumBindingModel musicAlbum)
         {
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
 
@@ -148,7 +148,7 @@
         //// DELETE /api/music/albums/{id}
         [HttpDelete]
         [Route("api/music/albums/{id}")]
-        public IHttpActionResult Delete(int id)
+        public IHttpActionResult DeleteMusicAlbum(int id)
         {
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
 
@@ -270,7 +270,7 @@
         //// POST /api/music/albums/{id}/follow
         [HttpPost]
         [Route("api/music/albums/{id}/follow")]
-        public IHttpActionResult Follow(int id)
+        public IHttpActionResult FollowMusicAlbum(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -311,7 +311,7 @@
         //// DELETE /api/music/albums/{id}/follow
         [HttpDelete]
         [Route("api/music/albums/{id}/follow")]
-        public IHttpActionResult Unfollow(int id)
+        public IHttpActionResult UnfollowMusicAlbum(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -661,7 +661,7 @@
         //// GET /api/music/albums/{albumId}/songs
         [HttpGet]
         [Route("api/music/albums/{albumId}/songs")]
-        public IHttpActionResult All(int albumId)
+        public IHttpActionResult AllSongs(int albumId)
         {
             var album = this.Data.MusicAlbums.Find(albumId);
 
@@ -680,7 +680,7 @@
         //// GET /api/music/albums/{albumId}/songs/{id}
         [HttpGet]
         [Route("api/music/albums/{albumId}/songs/{id}")]
-        public IHttpActionResult Find(int albumId, int id)
+        public IHttpActionResult FindSongById(int albumId, int id)
         {
             var album = this.Data.MusicAlbums.Find(albumId);
 
@@ -707,7 +707,7 @@
         //// POST /api/music/albums/{albumId}/songs
         [HttpPost]
         [Route("api/music/albums/{albumId}/songs")]
-        public IHttpActionResult Create(int albumId, SongBindingModel song)
+        public IHttpActionResult AddSong(int albumId, SongBindingModel song)
         {
             // TODO: Upload song to Google Drive and acquire link
 
@@ -772,7 +772,7 @@
         //// PUT /api/music/albums/{albumId}/songs/{id}
         [HttpPut]
         [Route("api/music/albums/{albumId}/songs/{id}")]
-        public IHttpActionResult Update(int albumId, int id, SongBindingModel song)
+        public IHttpActionResult UpdateSong(int albumId, int id, SongBindingModel song)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -838,7 +838,7 @@
         //// DELETE /api/music/albums/{albumId}/songs/{id}
         [HttpDelete]
         [Route("api/music/albums/{albumId}/songs/{id}")]
-        public IHttpActionResult Delete(int albumId, int id)
+        public IHttpActionResult DeleteSong(int albumId, int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -936,7 +936,7 @@
         //// DELETE /api/music/albums/{albumId}/song/{id}/likes
         [HttpDelete]
         [Route("api/music/albums/{albumId}/song/{id}/likes")]
-        public IHttpActionResult Unlike(int albumId, int id)
+        public IHttpActionResult UnlikeSong(int albumId, int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
