@@ -11,12 +11,14 @@ namespace BlastOFF.Models.GalleryModels
         private ICollection<ApplicationUser> userLikes;
         private ICollection<ApplicationUser> followers;
         private ICollection<Image> images;
+        private ICollection<Comment> comments; 
 
         public ImageAlbum()
         {
             this.images = new HashSet<Image>();
             this.userLikes = new HashSet<ApplicationUser>();
             this.followers = new HashSet<ApplicationUser>();
+            this.comments = new HashSet<Comment>();
         }
 
         [Key]
@@ -49,6 +51,12 @@ namespace BlastOFF.Models.GalleryModels
         {
             get { return this.followers; }
             set { this.followers = value; }
+        }
+
+        public virtual ICollection<Comment> Comments
+        {
+            get { return this.comments; }
+            set { this.comments = value; }
         }
     }
 }
