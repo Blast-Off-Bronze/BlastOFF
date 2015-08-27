@@ -1,6 +1,7 @@
 ﻿namespace BlastOFF.Services.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Web.Http;
 
@@ -39,12 +40,29 @@
             return this.Ok(albums);
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         //// GET /api/music/albums/{id}
         [HttpGet]
         [Route("api/music/albums/{id}")]
         public IHttpActionResult FindMusicAlbumById(int id)
         {
-            var album = this.Data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
+            var albumCollection = new List<MusicAlbum> { this.Data.MusicAlbums.Find(id) };
+
+            var album = albumCollection.AsQueryable().Select(MusicAlbumViewModel.Get);
 
             if (album == null)
             {
@@ -59,14 +77,10 @@
         //// POST /api/music/albums
         [HttpPost]
         [Route("api/music/albums")]
+        [Authorize]
         public IHttpActionResult AddMusicAlbum(MusicAlbumBindingModel musicAlbum)
         {
             string loggedUserId = this.User.Identity.GetUserId();
-
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
 
             if (musicAlbum == null)
             {
@@ -104,6 +118,7 @@
         //// PUT /api/music/albums/{id}
         [HttpPut]
         [Route("api/music/albums/{id}")]
+        [Authorize]
         public IHttpActionResult UpdateMusicAlbum(int id, MusicAlbumBindingModel musicAlbum)
         {
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
@@ -114,11 +129,6 @@
             }
 
             string loggedUserId = this.User.Identity.GetUserId();
-
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
 
             if (loggedUserId != existingMusicAlbum.AuthorId)
             {
@@ -138,7 +148,9 @@
             existingMusicAlbum.Title = musicAlbum.Title;
             this.Data.SaveChanges();
 
-            musicAlbum.Id = existingMusicAlbum.Id;
+            var musicAlbumCollection = new List<MusicAlbum> { existingMusicAlbum };
+
+            var musicAlbumToReturn = musicAlbumCollection.AsQueryable().Select(MusicAlbumViewModel.Get);
 
             this.Data.Dispose();
 
@@ -148,6 +160,7 @@
         //// DELETE /api/music/albums/{id}
         [HttpDelete]
         [Route("api/music/albums/{id}")]
+        [Authorize]
         public IHttpActionResult DeleteMusicAlbum(int id)
         {
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
@@ -159,11 +172,6 @@
 
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
             if (loggedUserId != existingMusicAlbum.AuthorId)
             {
                 return this.Unauthorized();
@@ -174,7 +182,7 @@
 
             this.Data.Dispose();
 
-            return this.Ok(existingMusicAlbum);
+            return this.Ok();
         }
 
         // END - MUSIC ALBUM Endpoints
@@ -184,16 +192,12 @@
         //// POST /api/music/albums/{id}/likes
         [HttpPost]
         [Route("api/music/albums/{id}/likes")]
+        [Authorize]
         public IHttpActionResult LikeMusicAlbum(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(loggedUserId);
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -225,16 +229,12 @@
         //// DELETE /api/music/albums/{id}/likes
         [HttpDelete]
         [Route("api/music/albums/{id}/likes")]
+        [Authorize]
         public IHttpActionResult UnlikeMusicAlbum(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(loggedUserId);
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -270,16 +270,12 @@
         //// POST /api/music/albums/{id}/follow
         [HttpPost]
         [Route("api/music/albums/{id}/follow")]
+        [Authorize]
         public IHttpActionResult FollowMusicAlbum(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(loggedUserId);
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -311,16 +307,12 @@
         //// DELETE /api/music/albums/{id}/follow
         [HttpDelete]
         [Route("api/music/albums/{id}/follow")]
+        [Authorize]
         public IHttpActionResult UnfollowMusicAlbum(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(loggedUserId);
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -349,14 +341,10 @@
             return this.Ok(string.Format("Music Album {0}, created by {1} successfully unfollowed.", album.Title, album.Author.UserName));
         }
 
-        // END - MUSIC ALBUM (FOLLOWERS) Endpoints
-
-        // START - MUSIC ALBUM (COMMENTS) Endpoints
-
         //// GET /api/music/albums/{id}/comments
         [HttpGet]
         [Route("api/music/albums/{id}/comments")]
-        public IHttpActionResult AllMusicAlbumComments(int id)
+        public IHttpActionResult AllMusicAlbumComments([FromUri]int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -365,53 +353,41 @@
                 return this.NotFound();
             }
 
-            var comments = this.Data.Comments.All().Where(c => c.MusicAlbumId == id).Select(CommentViewModel.Get);
+            var comments = album.Comments.AsQueryable().Select(CommentViewModel.Get);
 
             this.Data.Dispose();
 
             return this.Ok(comments);
         }
 
-        //// GET /api/music/albums/{albumId}/comments/{id}
+        //// GET /api/songs/{id}/comments
         [HttpGet]
-        [Route("api/music/albums/{albumId}/comments/{id}")]
-        public IHttpActionResult FindMusicAlbumCommentById(int albumId, int id)
+        [Route("api/songs/{id}/comments")]
+        public IHttpActionResult AllSongComments([FromUri]int id)
         {
-            var album = this.Data.MusicAlbums.Find(albumId);
+            var song = this.Data.Songs.Find(id);
 
-            if (album == null)
+            if (song == null)
             {
                 return this.NotFound();
             }
 
-            var comment = this.Data.Comments.All()
-                    .Where(c => c.MusicAlbumId == albumId && c.Id == id)
-                    .Select(CommentViewModel.Get)
-                    .FirstOrDefault();
-
-            if (comment == null)
-            {
-                return this.NotFound();
-            }
+            var comments = song.Comments.AsQueryable().Select(CommentViewModel.Get);
 
             this.Data.Dispose();
 
-            return this.Ok(comment);
+            return this.Ok(comments);
         }
 
-        //// POST /api/music/albums/{albumId}/comments
+        //// POST /api/music/albums/{id}/comments
         [HttpPost]
-        [Route("api/music/albums/{albumId}/comments")]
-        public IHttpActionResult AddMusicAlbumComment(int albumId, CommentBindingModel comment)
+        [Route("api/music/albums/{id}/comments")]
+        [Authorize]
+        public IHttpActionResult AddMusicAlbumComment(int id, CommentBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var album = this.Data.MusicAlbums.Find(albumId);
+            var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
             {
@@ -433,7 +409,7 @@
                 Content = comment.Content,
                 AuthorId = loggedUserId,
                 PostedOn = DateTime.Now,
-                MusicAlbumId = albumId
+                MusicAlbumId = id
             };
 
             if (album.Comments.Any(c => c == newComment))
@@ -450,249 +426,19 @@
 
             return this.Ok(comment);
         }
-
-        //// PUT /api/music/albums/{albumId}/comments/{id}
-        [HttpPut]
-        [Route("api/music/albums/{albumId}/comments/{id}")]
-        public IHttpActionResult UpdateMusicAlbumComment(int albumId, int id, CommentBindingModel comment)
-        {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var existingMusicAlbum = this.Data.MusicAlbums.Find(albumId);
-
-            if (existingMusicAlbum == null)
-            {
-                return this.NotFound();
-            }
-
-            var existingComment = this.Data.Comments.All().FirstOrDefault(c => c.MusicAlbumId == albumId && c.Id == id);
-
-            if (existingComment == null)
-            {
-                return this.NotFound();
-            }
-
-            if (loggedUserId != existingComment.AuthorId)
-            {
-                return this.Unauthorized();
-            }
-
-            if (comment == null)
-            {
-                return this.BadRequest("Cannot create an empty comment model.");
-            }
-
-            if (!this.ModelState.IsValid)
-            {
-                return this.BadRequest(this.ModelState);
-            }
-
-            existingComment.Content = comment.Content;
-            
-            this.Data.SaveChanges();
-
-            comment.Id = existingComment.Id;
-
-            this.Data.Dispose();
-
-            return this.Ok(comment);
-        }
-
-        //// DELETE /api/music/albums/{albumId}/comments/{id}
-        [HttpDelete]
-        [Route("api/music/albums/{albumId}/comments/{id}")]
-        public IHttpActionResult DeleteMusicAlbumComment(int albumId, int id)
-        {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var existingMusicAlbum = this.Data.MusicAlbums.Find(albumId);
-
-            if (existingMusicAlbum == null)
-            {
-                return this.NotFound();
-            }
-
-            var existingComment = this.Data.Comments.All().FirstOrDefault(c => c.MusicAlbumId == albumId && c.Id == id);
-
-            if (existingComment == null)
-            {
-                return this.NotFound();
-            }
-
-            if (loggedUserId != existingComment.AuthorId)
-            {
-                return this.Unauthorized();
-            }
-
-            this.Data.Comments.Delete(existingComment);
-            existingMusicAlbum.Comments.Remove(existingComment);
-
-            this.Data.SaveChanges();
-
-            this.Data.Dispose();
-
-            return this.Ok(existingComment);
-        }
-
-        //// END - MUSIC ALBUM (COMMENTS) Endpoints
-
-        // START - MUSIC ALBUM (COMMENT LIKES) Endpoints
-
-        //// POST /api/music/albums/{albumId}/comment/{id}/likes
-        [HttpPost]
-        [Route("api/music/albums/{albumId}/comment/{id}/likes")]
-        public IHttpActionResult LikeMusicAlbumComment(int albumId, int id)
-        {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
-
-            var album = this.Data.MusicAlbums.Find(id);
-
-            if (album == null)
-            {
-                return this.NotFound();
-            }
-
-            var comment = this.Data.Comments.All().FirstOrDefault(c => c.MusicAlbumId == albumId && c.Id == id);
-
-            if (comment == null)
-            {
-                return this.NotFound();
-            }
-
-            var isAlreadyLiked = comment.LikedBy.Any(u => u.Id == loggedUserId);
-
-            if (isAlreadyLiked)
-            {
-                return this.BadRequest("You have already liked this comment.");
-            }
-
-            if (comment.AuthorId == loggedUserId)
-            {
-                return this.BadRequest("Cannot like your own comment.");
-            }
-
-            comment.LikedBy.Add(currentUser);
-
-            this.Data.SaveChanges();
-            this.Data.Dispose();
-
-            return this.Ok("Comment successfully liked.");
-        }
-
-        //// DELETE /api/music/albums/{albumId}/comments/{id}/likes
-        [HttpDelete]
-        [Route("api/music/albums/{albumId}/comments/{id}/likes")]
-        public IHttpActionResult UnlikeMusicAlbumComment(int albumId, int id)
-        {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
-
-            var album = this.Data.MusicAlbums.Find(id);
-
-            if (album == null)
-            {
-                return this.NotFound();
-            }
-
-            var comment = this.Data.Comments.All().FirstOrDefault(c => c.MusicAlbumId == albumId && c.Id == id);
-
-            if (comment == null)
-            {
-                return this.NotFound();
-            }
-
-            var isAlreadyLiked = comment.LikedBy.Any(u => u.Id == loggedUserId);
-
-            if (!isAlreadyLiked)
-            {
-                return this.BadRequest("You have already unliked this comment.");
-            }
-
-            if (comment.AuthorId == loggedUserId)
-            {
-                return this.BadRequest("Cannot unlike your own comment.");
-            }
-
-            comment.LikedBy.Remove(currentUser);
-
-            this.Data.SaveChanges();
-            this.Data.Dispose();
-
-            return this.Ok("Comment successfully unliked.");
-        }
-
-        // END - MUSIC ALBUM (COMMENT LIKES) Endpoints
-
-
-
-
-
-
-
-
-
-
-
+        
         // START - SONG Endpoints
 
-        //// GET /api/music/albums/{albumId}/songs
+        
+
+        //// GET /api/songs/{id}
         [HttpGet]
-        [Route("api/music/albums/{albumId}/songs")]
-        public IHttpActionResult AllSongs(int albumId)
+        [Route("api/songs/{id}")]
+        public IHttpActionResult FindSongById(int id)
         {
-            var album = this.Data.MusicAlbums.Find(albumId);
+            var songCollection = new List<Song> { this.Data.Songs.Find(id) };
 
-            if (album == null)
-            {
-                return this.NotFound();
-            }
-
-            var songs = this.Data.Songs.All().Where(s => s.MusicAlbumId == albumId).Select(SongViewModel.Get);
-
-            this.Data.Dispose();
-
-            return this.Ok(songs);
-        }
-
-        //// GET /api/music/albums/{albumId}/songs/{id}
-        [HttpGet]
-        [Route("api/music/albums/{albumId}/songs/{id}")]
-        public IHttpActionResult FindSongById(int albumId, int id)
-        {
-            var album = this.Data.MusicAlbums.Find(albumId);
-
-            if (album == null)
-            {
-                return this.NotFound();
-            }
-
-            var song = this.Data.Songs.All()
-                    .Where(s => s.MusicAlbumId == albumId && s.Id == id)
-                    .Select(SongViewModel.Get)
-                    .FirstOrDefault();
+            var song = songCollection.AsQueryable().Select(SongViewModel.Get);
 
             if (song == null)
             {
@@ -707,16 +453,12 @@
         //// POST /api/music/albums/{albumId}/songs
         [HttpPost]
         [Route("api/music/albums/{albumId}/songs")]
+        [Authorize]
         public IHttpActionResult AddSong(int albumId, SongBindingModel song)
         {
             // TODO: Upload song to Google Drive and acquire link
 
             string loggedUserId = this.User.Identity.GetUserId();
-
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
 
             var album = this.Data.MusicAlbums.Find(albumId);
 
@@ -769,31 +511,15 @@
             return this.Ok(song);
         }
 
-        //// PUT /api/music/albums/{albumId}/songs/{id}
+        //// PUT /api/songs/{id}
         [HttpPut]
-        [Route("api/music/albums/{albumId}/songs/{id}")]
-        public IHttpActionResult UpdateSong(int albumId, int id, SongBindingModel song)
+        [Route("api/songs/{id}")]
+        [Authorize]
+        public IHttpActionResult UpdateSong(int id, SongBindingModel song)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var existingMusicAlbum = this.Data.MusicAlbums.Find(albumId);
-
-            if (existingMusicAlbum == null)
-            {
-                return this.NotFound();
-            }
-
-            if (loggedUserId != existingMusicAlbum.AuthorId)
-            {
-                return this.Unauthorized();
-            }
-
-            var existingSong = this.Data.Songs.All().FirstOrDefault(s => s.MusicAlbumId == albumId && s.Id == id);
+            var existingSong = this.Data.Songs.Find(id);
 
             if (existingSong == null)
             {
@@ -817,6 +543,7 @@
 
             existingSong.Title = song.Title;
             existingSong.Artist = song.Artist;
+            existingSong.DateAdded = DateTime.Now;
             existingSong.TrackNumber = song.TrackNumber;
             existingSong.OriginalAlbumTitle = song.OriginalAlbumTitle;
             existingSong.OriginalAlbumArtist = song.OriginalAlbumArtist;
@@ -835,31 +562,15 @@
             return this.Ok(song);
         }
 
-        //// DELETE /api/music/albums/{albumId}/songs/{id}
+        //// DELETE /api/songs/{id}
         [HttpDelete]
-        [Route("api/music/albums/{albumId}/songs/{id}")]
-        public IHttpActionResult DeleteSong(int albumId, int id)
+        [Route("api/songs/{id}")]
+        [Authorize]
+        public IHttpActionResult DeleteSong(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
-
-            var existingMusicAlbum = this.Data.MusicAlbums.Find(albumId);
-
-            if (existingMusicAlbum == null)
-            {
-                return this.NotFound();
-            }
-
-            if (loggedUserId != existingMusicAlbum.AuthorId)
-            {
-                return this.Unauthorized();
-            }
-
-            var existingSong = this.Data.Songs.All().FirstOrDefault(s => s.MusicAlbumId == albumId && s.Id == id);
+            var existingSong = this.Data.Songs.Find(id);
 
             if (existingSong == null)
             {
@@ -872,7 +583,6 @@
             }
 
             this.Data.Songs.Delete(existingSong);
-            existingMusicAlbum.Songs.Remove(existingSong);
 
             this.Data.SaveChanges();
 
@@ -885,28 +595,17 @@
 
         // START - SONG (LIKES) Endpoints
 
-        //// POST /api/music/albums/{albumId}/song/{id}/likes
+        //// POST /api/songs/{id}/likes
         [HttpPost]
-        [Route("api/music/albums/{albumId}/song/{id}/likes")]
-        public IHttpActionResult LikeSong(int albumId, int id)
+        [Route("api/songs/{id}/likes")]
+        [Authorize]
+        public IHttpActionResult LikeSong(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
+            var currentUser = this.Data.Users.Find(loggedUserId);
 
-            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
-
-            var album = this.Data.MusicAlbums.Find(id);
-
-            if (album == null)
-            {
-                return this.NotFound();
-            }
-
-            var song = this.Data.Songs.All().FirstOrDefault(s => s.MusicAlbumId == albumId && s.Id == id);
+            var song = this.Data.Songs.Find(id);
 
             if (song == null)
             {
@@ -933,28 +632,17 @@
             return this.Ok(string.Format("{0}, uploaded by {1} successfully liked.", song.Title, song.Uploader.UserName));
         }
 
-        //// DELETE /api/music/albums/{albumId}/song/{id}/likes
+        //// DELETE /api/songs/{id}/likes
         [HttpDelete]
-        [Route("api/music/albums/{albumId}/song/{id}/likes")]
-        public IHttpActionResult UnlikeSong(int albumId, int id)
+        [Route("api/songs/{id}/likes")]
+        [Authorize]
+        public IHttpActionResult UnlikeSong(int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
-            if (string.IsNullOrEmpty(loggedUserId))
-            {
-                return this.BadRequest("You have to be logged in to continue.");
-            }
+            var currentUser = this.Data.Users.Find(id);
 
-            var currentUser = this.Data.Users.All().FirstOrDefault(u => u.Id == loggedUserId);
-
-            var album = this.Data.MusicAlbums.Find(id);
-
-            if (album == null)
-            {
-                return this.NotFound();
-            }
-
-            var song = this.Data.Songs.All().FirstOrDefault(s => s.MusicAlbumId == albumId && s.Id == id);
+            var song = this.Data.Songs.Find(id);
 
             if (song == null)
             {
@@ -982,6 +670,6 @@
         }
 
         // END - SONG (LIKES) Endpoints
-
+        
     }
 }
