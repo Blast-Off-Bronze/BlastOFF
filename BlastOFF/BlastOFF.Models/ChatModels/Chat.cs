@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BlastOFF.Models.ChatModels
 {
@@ -19,7 +18,7 @@ namespace BlastOFF.Models.ChatModels
         [Required]
         public string Content { get; set; }
 
-        public DateTime PostedOn { get; set; }
+        public string PostedOn { get; set; }
 
         //[ForeignKey("Sender")]
         //public string SenderId { get; set; }
