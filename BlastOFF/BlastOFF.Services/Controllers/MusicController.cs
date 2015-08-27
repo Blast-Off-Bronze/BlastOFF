@@ -6,7 +6,9 @@
 
     using BlastOFF.Data;
     using BlastOFF.Data.Interfaces;
+    using BlastOFF.Models;
     using BlastOFF.Models.MusicModels;
+    using BlastOFF.Services.Models;
     using BlastOFF.Services.Models.MusicModels;
 
     using Microsoft.AspNet.Identity;
@@ -42,8 +44,7 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult Find(int id)
         {
-            var album =
-                this.Data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
+            var album = this.Data.MusicAlbums.All().Where(a => a.Id == id).Select(MusicAlbumViewModel.Get).FirstOrDefault();
 
             if (album == null)
             {
@@ -181,7 +182,7 @@
         // START - MUSIC ALBUM (LIKES) Endpoints
 
         //// POST /api/music/albums/{id}/likes
-        [HttpGet]
+        [HttpPost]
         [Route("api/music/albums/{id}/likes")]
         public IHttpActionResult LikeMusicAlbum(int id)
         {
@@ -267,7 +268,7 @@
         // START - MUSIC ALBUM (FOLLOWERS) Endpoints
 
         //// POST /api/music/albums/{id}/follow
-        [HttpGet]
+        [HttpPost]
         [Route("api/music/albums/{id}/follow")]
         public IHttpActionResult Follow(int id)
         {
@@ -349,6 +350,201 @@
         }
 
         // END - MUSIC ALBUM (FOLLOWERS) Endpoints
+
+        // START - MUSIC ALBUM (COMMENTS) Endpoints
+
+        //// GET /api/music/albums/{id}/comments
+        [HttpGet]
+        [Route("api/music/albums/{id}/comments")]
+        public IHttpActionResult AllMusicAlbumComments(int id)
+        {
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var comments = this.Data.Comments.All().Where(c => c.MusicAlbumId == id).Select(CommentViewModel.Get);
+
+            this.Data.Dispose();
+
+            return this.Ok(comments);
+        }
+
+        //// GET /api/music/albums/{albumId}/comments/{id}
+        [HttpGet]
+        [Route("api/music/albums/{albumId}/comments/{id}")]
+        public IHttpActionResult FindMusicAlbumCommentById(int albumId, int id)
+        {
+            var album = this.Data.MusicAlbums.Find(albumId);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var comment = this.Data.Comments.All()
+                    .Where(c => c.MusicAlbumId == albumId && c.Id == id)
+                    .Select(CommentViewModel.Get)
+                    .FirstOrDefault();
+
+            if (comment == null)
+            {
+                return this.NotFound();
+            }
+
+            this.Data.Dispose();
+
+            return this.Ok(comment);
+        }
+
+        //// POST /api/music/albums/{albumId}/comments
+        [HttpPost]
+        [Route("api/music/albums/{albumId}/comments")]
+        public IHttpActionResult AddMusicAlbumComment(int albumId, CommentBindingModel comment)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var album = this.Data.MusicAlbums.Find(albumId);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            if (comment == null)
+            {
+                return this.BadRequest("Cannot create an empty comment model.");
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
+            var newComment = new Comment
+            {
+                Content = comment.Content,
+                AuthorId = loggedUserId,
+                PostedOn = DateTime.Now,
+                MusicAlbumId = albumId
+            };
+
+            if (album.Comments.Any(c => c == newComment))
+            {
+                return this.BadRequest(string.Format("This comment already exists for the music album."));
+            }
+
+            this.Data.Comments.Add(newComment);
+            comment.Id = newComment.Id;
+
+            album.Comments.Add(newComment);
+            this.Data.SaveChanges();
+            this.Data.Dispose();
+
+            return this.Ok(comment);
+        }
+
+        //// PUT /api/music/albums/{albumId}/comments/{id}
+        [HttpPut]
+        [Route("api/music/albums/{albumId}/comments/{id}")]
+        public IHttpActionResult UpdateMusicAlbumComment(int albumId, int id, CommentBindingModel comment)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var existingMusicAlbum = this.Data.MusicAlbums.Find(albumId);
+
+            if (existingMusicAlbum == null)
+            {
+                return this.NotFound();
+            }
+
+            var existingComment = this.Data.Comments.All().FirstOrDefault(c => c.MusicAlbumId == albumId && c.Id == id);
+
+            if (existingComment == null)
+            {
+                return this.NotFound();
+            }
+
+            if (loggedUserId != existingComment.AuthorId)
+            {
+                return this.Unauthorized();
+            }
+
+            if (comment == null)
+            {
+                return this.BadRequest("Cannot create an empty comment model.");
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
+            existingComment.Content = comment.Content;
+            
+            this.Data.SaveChanges();
+
+            comment.Id = existingComment.Id;
+
+            this.Data.Dispose();
+
+            return this.Ok(comment);
+        }
+
+        //// DELETE /api/music/albums/{albumId}/comments/{id}
+        [HttpDelete]
+        [Route("api/music/albums/{albumId}/comments/{id}")]
+        public IHttpActionResult DeleteMusicAlbumComment(int albumId, int id)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            if (string.IsNullOrEmpty(loggedUserId))
+            {
+                return this.BadRequest("You have to be logged in to continue.");
+            }
+
+            var existingMusicAlbum = this.Data.MusicAlbums.Find(albumId);
+
+            if (existingMusicAlbum == null)
+            {
+                return this.NotFound();
+            }
+
+            var existingComment = this.Data.Comments.All().FirstOrDefault(c => c.MusicAlbumId == albumId && c.Id == id);
+
+            if (existingComment == null)
+            {
+                return this.NotFound();
+            }
+
+            if (loggedUserId != existingComment.AuthorId)
+            {
+                return this.Unauthorized();
+            }
+
+            this.Data.Comments.Delete(existingComment);
+            existingMusicAlbum.Comments.Remove(existingComment);
+
+            this.Data.SaveChanges();
+
+            this.Data.Dispose();
+
+            return this.Ok(existingComment);
+        }
+
+        //// END - MUSIC ALBUM (COMMENTS) Endpoints
 
 
 
@@ -441,23 +637,23 @@
             }
 
             var newSong = new Song
-                {
-                    Title = song.Title,
-                    Artist = song.Artist,
-                    // FilePath = link to Google Drive,
-                    MusicAlbumId = album.Id,
-                    UploaderId = album.AuthorId,
-                    DateAdded = DateTime.Now,
-                    ViewsCount = 0,
-                    TrackNumber = song.TrackNumber,
-                    OriginalAlbumTitle = song.OriginalAlbumTitle,
-                    OriginalAlbumArtist = song.OriginalAlbumArtist,
-                    OriginalDate = song.OriginalDate,
-                    Genre = song.Genre,
-                    Composer = song.Composer,
-                    Publisher = song.Publisher,
-                    Bpm = song.Bpm
-                };
+            {
+                Title = song.Title,
+                Artist = song.Artist,
+                // FilePath = link to Google Drive,
+                MusicAlbumId = album.Id,
+                UploaderId = album.AuthorId,
+                DateAdded = DateTime.Now,
+                ViewsCount = 0,
+                TrackNumber = song.TrackNumber,
+                OriginalAlbumTitle = song.OriginalAlbumTitle,
+                OriginalAlbumArtist = song.OriginalAlbumArtist,
+                OriginalDate = song.OriginalDate,
+                Genre = song.Genre,
+                Composer = song.Composer,
+                Publisher = song.Publisher,
+                Bpm = song.Bpm
+            };
 
             if (album.Songs.Any(s => s == newSong))
             {
@@ -591,7 +787,7 @@
         // START - SONG (LIKES) Endpoints
 
         //// POST /api/music/albums/{albumId}/song/{id}/likes
-        [HttpGet]
+        [HttpPost]
         [Route("api/music/albums/{albumId}/song/{id}/likes")]
         public IHttpActionResult LikeSong(int albumId, int id)
         {
@@ -686,7 +882,7 @@
             return this.Ok(string.Format("{0}, uploaded by {1} successfully unliked.", song.Title, song.Uploader.UserName));
         }
 
-        // END - MUSIC ALBUM (LIKES) Endpoints
+        // END - SONG (LIKES) Endpoints
 
     }
 }

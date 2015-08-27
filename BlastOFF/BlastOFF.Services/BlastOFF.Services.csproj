@@ -297,6 +297,8 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BlastModels\BlastBindingModel.cs" />
     <Compile Include="Models\BlastModels\BlastViewModel.cs" />
+    <Compile Include="Models\CommentBindingModel.cs" />
+    <Compile Include="Models\CommentViewModel.cs" />
     <Compile Include="Models\ImageModels\ImageAlbumBindingModel.cs" />
     <Compile Include="Models\ImageModels\ImageBindingModel.cs" />
     <Compile Include="Models\MusicModels\MusicAlbumBindingModel.cs" />
