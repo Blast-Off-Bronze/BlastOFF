@@ -27,7 +27,7 @@
         //// GET /api/comments/{id}
         [HttpGet]
         [Route("api/comments/{id}")]
-        public IHttpActionResult FindCommentById(int id)
+        public IHttpActionResult FindCommentById([FromUri]int id)
         {
             var commentCollection = new List<Comment> { this.Data.Comments.Find(id) };
 
