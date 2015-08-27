@@ -46,7 +46,8 @@ namespace BlastOFF.Services.Controllers
                 {
                     Sender = a.SenderUsername,
                     Receiver = a.ReceiverUsername,
-                    a.Content
+                    a.Content,
+                    Time = a.PostedOn
                 });
 
             return this.Ok(message);
@@ -81,7 +82,7 @@ namespace BlastOFF.Services.Controllers
                 ChatRoomName = model.ChatRoomName,
                 SenderUsername = senderUsername,
                 ReceiverUsername = model.RecieverUsername,
-                PostedOn = DateTime.Now.ToString("yyyy MMM d ddd HH:mm")
+                PostedOn = DateTime.Now.ToString("HH:mm (d MMM yyyy)")
             };
 
             this.Data.Chats.Add(message);
