@@ -303,6 +303,7 @@
     <Compile Include="Models\BlastModels\BlastBindingModel.cs" />
     <Compile Include="Models\BlastModels\BlastViewModel.cs" />
     <Compile Include="Models\ChatModels\ChatBindingModel.cs" />
+    <Compile Include="Models\ChatModels\ChatViewModel.cs" />
     <Compile Include="Models\CommentBindingModel.cs" />
     <Compile Include="Models\CommentViewModel.cs" />
     <Compile Include="Models\ImageModels\ImageAlbumBindingModel.cs" />

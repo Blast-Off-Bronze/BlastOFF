@@ -36,14 +36,7 @@ namespace BlastOFF.Services.Controllers
 
             var message = this.Data.Chats.All()
                 .Where(c => c.ChatRoomName == chatRoom)
-                .Select(a => new
-                {
-                    MessageId = a.Id,
-                    From = a.SenderUsername,
-                    To = a.ReceiverUsername,
-                    Message = a.Content,
-                    Time = a.PostedOn
-                });
+                .Select(ChatViewModel.DisplayResult);
 
             return this.Ok(message);
         }
@@ -86,7 +79,7 @@ namespace BlastOFF.Services.Controllers
             return this.Ok(message);
         }
 
-        //PUT api/message
+        // PUT api/message
         [HttpPut]
         [Route("api/message")]
         public IHttpActionResult Edit(int id, ChatBindingModel model)
@@ -112,7 +105,7 @@ namespace BlastOFF.Services.Controllers
             return this.Ok(message);
         }
 
-        //DELETE api/message
+        // DELETE api/message
         [HttpDelete]
         [Route("api/message")]
         public IHttpActionResult Delete(int id)
