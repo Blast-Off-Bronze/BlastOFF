@@ -1,14 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Web.Http;
-using BlastOFF.Data;
-using BlastOFF.Data.Interfaces;
-using BlastOFF.Models.ChatModels;
-using BlastOFF.Services.Models.ChatModels;
-using Microsoft.AspNet.Identity;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Web.Http;
+    using BlastOFF.Data;
+    using BlastOFF.Data.Interfaces;
+    using BlastOFF.Models.ChatModels;
+    using BlastOFF.Services.Models.ChatModels;
+    using Microsoft.AspNet.Identity;
+
     [Authorize]
     public class ChatController : BaseApiController
     {

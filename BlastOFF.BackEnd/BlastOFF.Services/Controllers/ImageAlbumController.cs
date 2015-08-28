@@ -34,8 +34,6 @@
             return this.Ok(imageAlbums);
         }
 
-        
-
         [HttpGet]
         [Route("api/imageAlbums/{id}")]
         public IHttpActionResult GetImageAlbumById([FromUri]int id)
@@ -139,7 +137,6 @@
 
 
         // Image EndPoints
-
 
         [HttpGet]
         [Route("api/images/{id}")]
@@ -457,22 +454,16 @@
                 MusicAlbumId = id
             };
 
-            if (imageAlbum.Comments.Any(c => c == newComment))
-            {
-                return this.BadRequest(string.Format("This comment already exists for the image album."));
-            }
-
             this.Data.Comments.Add(newComment);
             comment.Id = newComment.Id;
 
-            imageAlbum.Comments.Add(newComment);
             this.Data.SaveChanges();
             this.Data.Dispose();
 
             return this.Ok(comment);
         }
 
-        //// POST /api/songs/{id}/likes
+        //// POST /api/images/{id}/likes
         [HttpPost]
         [Route("api/images/{id}/likes")]
         [Authorize]

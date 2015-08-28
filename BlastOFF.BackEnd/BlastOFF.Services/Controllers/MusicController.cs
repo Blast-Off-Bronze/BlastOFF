@@ -282,11 +282,6 @@
                 MusicAlbumId = id
             };
 
-            if (album.Comments.Any(c => c == newMusicAlbumComment))
-            {
-                return this.BadRequest(string.Format("This comment already exists for the music album."));
-            }
-
             this.Data.Comments.Add(newMusicAlbumComment);
             this.Data.SaveChanges();
 
@@ -333,11 +328,6 @@
                 PostedOn = DateTime.Now,
                 MusicAlbumId = id
             };
-
-            if (song.Comments.Any(c => c == newSongComment))
-            {
-                return this.BadRequest(string.Format("This comment already exists for the song."));
-            }
 
             this.Data.Comments.Add(newSongComment);
             this.Data.SaveChanges();

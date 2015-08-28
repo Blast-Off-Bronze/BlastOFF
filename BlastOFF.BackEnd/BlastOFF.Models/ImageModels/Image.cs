@@ -24,7 +24,7 @@ namespace BlastOFF.Models.GalleryModels
         public string Title { get; set; }
 
         [Required]
-        public string FilePath { get; set; }
+        public string ImageData { get; set; }
 
         [Required]
         public int ImageAlbumId { get; set; }
