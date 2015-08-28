@@ -38,6 +38,7 @@ namespace BlastOFF.Services.Controllers
                 .Where(c => c.ChatRoomName == chatRoom)
                 .Select(a => new
                 {
+                    MessageId = a.Id,
                     From = a.SenderUsername,
                     To = a.ReceiverUsername,
                     Message = a.Content,
@@ -56,7 +57,7 @@ namespace BlastOFF.Services.Controllers
 
             if (senderUsername == model.ReceiverUsername)
             {
-                return this.BadRequest("You cannot send a message to yourself.");
+                return this.BadRequest("Enter a valid, diffrent from yours, receiver-username.");
             }
 
             var user = this.Data.Users.All()
@@ -64,9 +65,9 @@ namespace BlastOFF.Services.Controllers
                 .Select(u => u.UserName)
                 .FirstOrDefault();
 
-            if (user == null && model.ReceiverUsername != "All" && model.ReceiverUsername != "all")
+            if (user == null && model.ReceiverUsername.ToLower() != "all")
             {
-                return this.BadRequest("Enter a valid username or send the message to all.");
+                return this.BadRequest("Enter a valid receiver-username or send the message to 'all'.");
             }
 
             var message = new Chat()
@@ -83,6 +84,58 @@ namespace BlastOFF.Services.Controllers
             this.Data.SaveChanges();
 
             return this.Ok(message);
+        }
+
+        //PUT api/message
+        [HttpPut]
+        [Route("api/message")]
+        public IHttpActionResult Edit(int id, ChatBindingModel model)
+        {
+            var username = User.Identity.GetUserName();
+
+            var message = this.Data.Chats.All().FirstOrDefault(c => c.Id == id);
+
+            if (message == null)
+            {
+                return this.NotFound();
+            }
+
+            if (username != message.SenderUsername)
+            {
+                return this.BadRequest("Enter a message id that you posted.");
+            }
+
+            message.Content = model.Content;
+
+            this.Data.SaveChanges();
+
+            return this.Ok(message);
+        }
+
+        //DELETE api/message
+        [HttpDelete]
+        [Route("api/message")]
+        public IHttpActionResult Delete(int id)
+        {
+            var username = User.Identity.GetUserName();
+
+            var message = this.Data.Chats.All().FirstOrDefault(c => c.Id == id);
+
+            if (message == null)
+            {
+                return this.NotFound();
+            }
+
+            if (username != message.SenderUsername)
+            {
+                return this.BadRequest("Enter a message id that you posted.");
+            }
+
+            this.Data.Chats.Delete(id);
+
+            this.Data.SaveChanges();
+
+            return this.Ok("Message delete it.");
         }
     }
 }
