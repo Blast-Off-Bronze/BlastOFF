@@ -32,7 +32,7 @@
         IRepository<Song> Songs { get; }
 
         //// Chat
-        IRepository<Chat> Chats { get; }
+        IRepository<Message> Messages { get; }
 
         //// END - Repositories
 

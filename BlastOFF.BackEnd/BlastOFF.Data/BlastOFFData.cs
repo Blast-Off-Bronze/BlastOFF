@@ -16,7 +16,7 @@ namespace BlastOFF.Data
     {
         //// Repositories
         private IRepository<ApplicationUser> users;
-        private IRepository<Chat> chats;
+        private IRepository<Message> messages;
         private IRepository<Comment> comments;
         private IRepository<Blast> blasts;
         private IRepository<ImageAlbum> imageAlbums;
@@ -54,15 +54,15 @@ namespace BlastOFF.Data
         }
 
         //// Chat
-        public IRepository<Chat> Chats
+        public IRepository<Message> Messages
         {
             get
             {
-                if (this.chats == null)
+                if (this.messages == null)
                 {
-                    this.chats = new Repository<Chat>(this.context);
+                    this.messages = new Repository<Message>(this.context);
                 }
-                return this.chats;
+                return this.messages;
             }
         }
 

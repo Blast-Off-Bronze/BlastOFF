@@ -6,15 +6,15 @@ namespace BlastOFF.Services.Models.ChatModels
 {
     public class ChatViewModel
     {
-        public static Expression<Func<Chat, ChatViewModel>> DisplayResult
+        public static Expression<Func<Message, ChatViewModel>> DisplayResult
         {
             get
             {
                 return c => new ChatViewModel
                 {
                     MessageId = c.Id,
-                    From = c.SenderUsername,
-                    To = c.ReceiverUsername,
+                    From = c.SenderId,
+                    To = c.ReceiverId,
                     Message = c.Content,
                     Time = c.PostedOn
                 };
@@ -30,6 +30,6 @@ namespace BlastOFF.Services.Models.ChatModels
 
         public string Message { get; set; }
 
-        public string Time { get; set; }
+        public DateTime Time { get; set; }
     }
 }

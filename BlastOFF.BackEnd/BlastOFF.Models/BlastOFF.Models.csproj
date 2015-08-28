@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlastModels\Blast.cs" />
-    <Compile Include="ChatModels\Chat.cs" />
+    <Compile Include="ChatModels\Message.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="Enumerations\BlastType.cs" />
     <Compile Include="ImageModels\ImageAlbum.cs" />

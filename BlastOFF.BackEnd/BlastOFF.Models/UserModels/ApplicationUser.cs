@@ -1,4 +1,5 @@
-﻿using BlastOFF.Models.GalleryModels;
+﻿using BlastOFF.Models.ChatModels;
+using BlastOFF.Models.GalleryModels;
 using BlastOFF.Models.MusicModels;
 
 namespace BlastOFF.Models.UserModel
@@ -30,6 +31,9 @@ namespace BlastOFF.Models.UserModel
         private ICollection<ImageAlbum> followedgImageAlbums;
         private ICollection<MusicAlbum> followedMusicAlbums;
 
+        private ICollection<Message> sentMessages;
+        private ICollection<Message> receivedMessages;  
+
         public ApplicationUser()
         {
             this.blasts = new HashSet<Blast>();
@@ -46,6 +50,9 @@ namespace BlastOFF.Models.UserModel
             this.followedUsers = new HashSet<ApplicationUser>();
             this.followedMusicAlbums = new HashSet<MusicAlbum>();
             this.followedgImageAlbums = new HashSet<ImageAlbum>();
+
+            this.sentMessages = new HashSet<Message>();
+            this.receivedMessages = new HashSet<Message>();
         }
 
         public virtual ICollection<Blast> Blasts
@@ -118,6 +125,18 @@ namespace BlastOFF.Models.UserModel
         {
             get { return this.likedComments; }
             set { this.likedComments = value; }
+        }
+
+        public virtual ICollection<Message> SentMessages
+        {
+            get { return this.sentMessages; }
+            set { this.sentMessages = value; }
+        }
+
+        public virtual ICollection<Message> ReceivedMessages
+        {
+            get { return this.receivedMessages; }
+            set { this.receivedMessages = value; }
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(

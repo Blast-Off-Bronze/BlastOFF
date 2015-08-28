@@ -30,7 +30,7 @@ namespace BlastOFF.Data
         public virtual IDbSet<Comment> Comments { get; set; }
 
         ////Chat Db set
-        public virtual IDbSet<Chat> Chats { get; set; }
+        public virtual IDbSet<Message> Messages { get; set; }
         
         //// Gallery Db sets
         public virtual IDbSet<ImageAlbum> ImageAlbums { get; set; }
@@ -95,6 +95,16 @@ namespace BlastOFF.Data
                     m.MapRightKey("ImageAlbum_Id");
                     m.ToTable("ImageAlbumsUserFollowers");
                 });
+
+            //Message mapping
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.SentMessages)
+                .WithRequired(m => m.Sender);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.ReceivedMessages)
+                .WithRequired(m => m.Receiver);
 
             // Likes Mapping
 

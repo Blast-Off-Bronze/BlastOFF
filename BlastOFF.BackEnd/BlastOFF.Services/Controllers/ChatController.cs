@@ -25,20 +25,20 @@ namespace BlastOFF.Services.Controllers
         // GET api/message
         [HttpGet]
         [Route("api/message")]
-        public IHttpActionResult GetMessage(string chatRoom)
+        public IHttpActionResult GetMessages([FromUri]string partnerId)
         {
-            var validateChatRoom = this.Data.Chats.All().FirstOrDefault(c => c.ChatRoomName == chatRoom);
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            if (validateChatRoom == null)
+            if (partnerId == user.Id)
             {
-                return this.NotFound();
+                return this.BadRequest("You cannot chat with youself.");
             }
 
-            var message = this.Data.Chats.All()
-                .Where(c => c.ChatRoomName == chatRoom)
+            var messages = this.Data.Messages.All().Where(m => (m.SenderId == user.Id && m.ReceiverId == partnerId)
+            || (m.SenderId == partnerId && m.ReceiverId == user.Id) && m.Deleted == false)
                 .Select(ChatViewModel.DisplayResult);
 
-            return this.Ok(message);
+            return this.Ok(messages);
         }
 
         // POST api/message
@@ -46,59 +46,29 @@ namespace BlastOFF.Services.Controllers
         [Route("api/message")]
         public IHttpActionResult PostMessage(ChatBindingModel model)
         {
-            var senderUsername = User.Identity.GetUserName();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            if (senderUsername == model.ReceiverUsername)
+            if (currentUser.Id == model.ReceiverId)
             {
                 return this.BadRequest("Enter a valid, diffrent from yours, receiver-username.");
             }
 
-            var user = this.Data.Users.All()
-                .Where(u => u.UserName == model.ReceiverUsername)
-                .Select(u => u.UserName)
-                .FirstOrDefault();
+            var receiverUser = this.Data.Users.Find(model.ReceiverId);
 
-            if (user == null && model.ReceiverUsername.ToLower() != "all")
+            if (receiverUser == null)
             {
-                return this.BadRequest("Enter a valid receiver-username or send the message to 'all'.");
+                return this.BadRequest("Invalid recipient Id.");
             }
 
-            var message = new Chat()
+            var message = new Message()
             {
-                ChatRoomName = model.ChatRoomName,
-                SenderUsername = senderUsername,
-                ReceiverUsername = model.ReceiverUsername,
+                SenderId = currentUser.Id,
+                ReceiverId = model.ReceiverId,
                 Content = model.Content,
-                PostedOn = DateTime.Now.ToString("HH:mm (d MMM yyyy)")
+                PostedOn = DateTime.Now
             };
 
-            this.Data.Chats.Add(message);
-
-            this.Data.SaveChanges();
-
-            return this.Ok(message);
-        }
-
-        // PUT api/message
-        [HttpPut]
-        [Route("api/message")]
-        public IHttpActionResult Edit(int id, ChatBindingModel model)
-        {
-            var username = User.Identity.GetUserName();
-
-            var message = this.Data.Chats.All().FirstOrDefault(c => c.Id == id);
-
-            if (message == null)
-            {
-                return this.NotFound();
-            }
-
-            if (username != message.SenderUsername)
-            {
-                return this.BadRequest("Enter a message id that you posted.");
-            }
-
-            message.Content = model.Content;
+            this.Data.Messages.Add(message);
 
             this.Data.SaveChanges();
 
@@ -108,27 +78,29 @@ namespace BlastOFF.Services.Controllers
         // DELETE api/message
         [HttpDelete]
         [Route("api/message")]
-        public IHttpActionResult Delete(int id)
+        public IHttpActionResult Delete([FromBody]int id)
         {
-            var username = User.Identity.GetUserName();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var message = this.Data.Chats.All().FirstOrDefault(c => c.Id == id);
+            var message = this.Data.Messages.Find(id);
 
             if (message == null)
             {
                 return this.NotFound();
             }
 
-            if (username != message.SenderUsername)
+            if (message.SenderId != user.Id)
             {
                 return this.BadRequest("Enter a message id that you posted.");
             }
 
-            this.Data.Chats.Delete(id);
+            message.Deleted = true;
+
+            this.Data.Messages.Update(message);
 
             this.Data.SaveChanges();
 
-            return this.Ok("Message delete it.");
+            return this.Ok("The message is deleted.");
         }
     }
 }
