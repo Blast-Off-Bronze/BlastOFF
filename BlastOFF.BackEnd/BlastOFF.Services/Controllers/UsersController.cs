@@ -65,10 +65,28 @@
 
         }
 
+        [HttpGet]
+        [Route("api/users/{username}/followers")]
+        public IHttpActionResult GetFollowers([FromUri]string username)
+        {
+            var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
+
+            if (searchedUser == null)
+            {
+                return this.NotFound();
+            }
+
+            // needs view model
+
+            var followers = searchedUser.FollowedBy.ToList();
+
+            return this.Ok(followers);
+        }
+
         [HttpPost]
         [Route("api/users/{username}/follow")]
         [Authorize]
-        public IHttpActionResult FollowUser(string username)
+        public IHttpActionResult FollowUser([FromUri]string username)
         {
             var loggedUserId = this.User.Identity.GetUserId();
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
@@ -102,7 +120,7 @@
         [HttpDelete]
         [Authorize]
         [Route("api/users/{username}/unfollow")]
-        public IHttpActionResult UnfollowUser(string username)
+        public IHttpActionResult UnfollowUser([FromUri]string username)
         {
             var loggedUserId = this.User.Identity.GetUserId();
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
