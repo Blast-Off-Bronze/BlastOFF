@@ -1,4 +1,5 @@
-﻿using BlastOFF.Data.Interfaces;
+﻿using BlastOFF.Models;
+using BlastOFF.Services.Models;
 
 namespace BlastOFF.Services.Controllers
 {
@@ -10,6 +11,9 @@ namespace BlastOFF.Services.Controllers
     using Models.BlastModels;
     using BlastOFF.Models.BlastModels;
     using System.Linq;
+
+    using System.Collections.Generic;
+    using BlastOFF.Data.Interfaces;
 
     public class BlastsController : BaseApiController
     {
@@ -37,22 +41,26 @@ namespace BlastOFF.Services.Controllers
 
         [HttpGet]
         [Route("api/blasts/{id}")]
-        public IHttpActionResult GetBlastById(int id)
+        public IHttpActionResult GetBlastById([FromUri]int id)
         {
-            var blast = this.Data.Blasts.All().Where(b => b.Id == id)
-                .Select(BlastViewModel.Create);
+            var blast = this.Data.Blasts.Find(id);
 
-            if (blast.Count() == 0)
+            var blastToReturn = new List<Blast>() {blast}
+                                .AsQueryable()
+                                .Select(BlastViewModel.Create)
+                                .First();
+
+            if (blastToReturn == null)
             {
                 return this.NotFound();
             }
 
-            return this.Ok(blast);
+            return this.Ok(blastToReturn);
         }
 
         [HttpGet]
         [Route("api/blasts/{username}")]
-        public IHttpActionResult GetBlastsByAuthor(string username)
+        public IHttpActionResult GetBlastsByAuthor([FromUri]string username)
         {
             var blasts = this.Data.Blasts.All().Where(b => b.Author.UserName == username)
                 .Select(BlastViewModel.Create);
@@ -68,9 +76,9 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [Route("api/blast/{id}/like")]
         [Authorize]
-        public IHttpActionResult LikeBlast(int id)
+        public IHttpActionResult LikeBlast([FromUri]int id)
         {
-            var blast = this.Data.Blasts.All().FirstOrDefault(b => b.Id == id);
+            var blast = this.Data.Blasts.Find(id);
 
             if (blast == null)
             {
@@ -78,7 +86,7 @@ namespace BlastOFF.Services.Controllers
             }
 
             var loggedUserId = this.User.Identity.GetUserId();
-            var currentUser = this.Data.Users.All().First(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(loggedUserId);
 
             if (blast.AuthorId == loggedUserId || blast.UserLikes.Any(ul => ul.Id == loggedUserId))
             {
@@ -96,7 +104,7 @@ namespace BlastOFF.Services.Controllers
         [HttpDelete]
         [Route("api/blast/{id}/like")]
         [Authorize]
-        public IHttpActionResult RemoveLike(int id)
+        public IHttpActionResult RemoveLike([FromUri]int id)
         {
             var blast = this.Data.Blasts.All().FirstOrDefault(b => b.Id == id);
 
@@ -130,11 +138,6 @@ namespace BlastOFF.Services.Controllers
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
-            if (loggedUserId == null)
-            {
-                return this.Unauthorized();
-            }
-
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest("Wrong or missing input parameters");
@@ -157,15 +160,10 @@ namespace BlastOFF.Services.Controllers
         [HttpPut]
         [Authorize]
         [Route("api/blasts/{id}")]
-        public IHttpActionResult UpdateBlast(int id, [FromBody]BlastBindingModel model)
+        public IHttpActionResult UpdateBlast([FromUri]int id, [FromBody]BlastBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
             var oldBlast = this.Data.Blasts.Find(id);
-
-            if (loggedUserId == null)
-            {
-                return this.Unauthorized();
-            }
 
             if (oldBlast == null)
             {
@@ -187,6 +185,52 @@ namespace BlastOFF.Services.Controllers
             this.Data.SaveChanges();
 
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/blasts/{id}/comments")]
+        [Authorize]
+        public IHttpActionResult AddBlastComment([FromUri]int id, [FromBody] CommentBindingModel comment)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            var blast = this.Data.Blasts.Find(id);
+
+            if (blast == null)
+            {
+                return this.NotFound();
+            }
+
+            if (comment == null)
+            {
+                return this.BadRequest("Cannot create an empty comment model.");
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
+            var newComment = new Comment
+            {
+                Content = comment.Content,
+                AuthorId = loggedUserId,
+                PostedOn = DateTime.Now,
+                BlastId = id
+            };
+
+            this.Data.Comments.Add(newComment);
+            this.Data.SaveChanges();
+
+            comment.Id = newComment.Id;
+
+            var commentCollection = new List<Comment> { newComment };
+
+            var commentToReturn = commentCollection.AsQueryable().Select(CommentViewModel.Get);
+
+            this.Data.Dispose();
+
+            return this.Ok(commentToReturn);
         }
     }
 }

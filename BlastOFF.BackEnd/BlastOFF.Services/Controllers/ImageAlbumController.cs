@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using System.Collections.Generic;
+
+namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Linq;
@@ -388,7 +390,7 @@
             return this.Ok(string.Format("Music Album {0}, created by {1} successfully unfollowed.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
         }
 
-        //// GET /api/music/albums/{id}/comments
+        //// GET /api/imageAlbums/{id}/comments
         [HttpGet]
         [Route("api/imageAlbums/{id}/comments")]
         public IHttpActionResult AllImageAlbumComments([FromUri]int id)
@@ -407,7 +409,7 @@
             return this.Ok(comments);
         }
 
-        //// GET /api/songs/{id}/comments
+        //// GET /api/images/{id}/comments
         [HttpGet]
         [Route("api/images/{id}/comments")]
         public IHttpActionResult AllImageComments([FromUri]int id)
@@ -426,7 +428,7 @@
             return this.Ok(comments);
         }
 
-        //// POST /api/music/albums/{id}/comments
+        //// POST /api/imageAlbums/{id}/comments
         [HttpPost]
         [Route("api/imageAlbums/{id}/comments")]
         [Authorize]
@@ -451,7 +453,7 @@
                 Content = comment.Content,
                 AuthorId = loggedUserId,
                 PostedOn = DateTime.Now,
-                MusicAlbumId = id
+                ImageAlbumId = id
             };
 
             this.Data.Comments.Add(newComment);
@@ -461,6 +463,52 @@
             this.Data.Dispose();
 
             return this.Ok(comment);
+        }
+
+        [HttpPost]
+        [Route("api/images/{id}/comments")]
+        [Authorize]
+        public IHttpActionResult AddImagesComment([FromUri]int id, [FromBody]CommentBindingModel comment)
+        {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            var image = this.Data.Images.Find(id);
+
+            if (image == null)
+            {
+                return this.NotFound();
+            }
+
+            if (image == null)
+            {
+                return this.BadRequest("Cannot create an empty comment model.");
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
+            var newComment = new Comment
+            {
+                Content = comment.Content,
+                AuthorId = loggedUserId,
+                PostedOn = DateTime.Now,
+                ImageId = id
+            };
+
+            this.Data.Comments.Add(newComment);
+            this.Data.SaveChanges();
+
+            comment.Id = newComment.Id;
+
+            var commentCollection = new List<Comment> { newComment };
+
+            var commentToReturn = commentCollection.AsQueryable().Select(CommentViewModel.Get);
+
+            this.Data.Dispose();
+
+            return this.Ok(commentToReturn);
         }
 
         //// POST /api/images/{id}/likes
