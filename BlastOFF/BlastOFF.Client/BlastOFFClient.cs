@@ -14,32 +14,29 @@
     {
         public static void Main()
         {
-            var dbo = new BlastOFFContext();
+            //var dbo = new BlastOFFContext();
 
-            var songsCount = dbo.Songs.Count();
-            Console.WriteLine("Songs count: {0}", songsCount);
+            //var songsCount = dbo.Songs.Count();
+            //Console.WriteLine("Songs count: {0}", songsCount);
 
-            //too lazy to comment the whole section : )
-            return;
+            //var service = GoogleDriveService.Get();
 
-            var service = GoogleDriveService.Get();
+            //FilesResource.ListRequest listRequest = service.Files.List();
 
-            FilesResource.ListRequest listRequest = service.Files.List();
+            //// List files.
+            //IList<File> files = listRequest.Execute().Items;
 
-            // List files.
-            IList<File> files = listRequest.Execute().Items;
-
-            if (files != null && files.Count > 0)
-            {
-                foreach (var file in files)
-                {
-                    Console.WriteLine("{0} (https://drive.google.com/open?id={1})", file.Title, file.Id);
-                }
-            }
-            else
-            {
-                Console.WriteLine("No files found.");
-            }
+            //if (files != null && files.Count > 0)
+            //{
+            //    foreach (var file in files)
+            //    {
+            //        Console.WriteLine("{0} (https://drive.google.com/open?id={1})", file.Title, file.Id);
+            //    }
+            //}
+            //else
+            //{
+            //    Console.WriteLine("No files found.");
+            //}
         }
     }
 }

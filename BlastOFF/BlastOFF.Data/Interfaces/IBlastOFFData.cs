@@ -1,5 +1,7 @@
 ﻿namespace BlastOFF.Data.Interfaces
 {
+    using Models.ChatModels;
+
     using Models;
     using Models.BlastModels;
     using Models.GalleryModels;
@@ -28,6 +30,9 @@
         IRepository<MusicAlbum> MusicAlbums { get; }
 
         IRepository<Song> Songs { get; }
+
+        //// Chat
+        IRepository<Chat> Chats { get; }
 
         //// END - Repositories
 
