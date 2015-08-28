@@ -25,6 +25,10 @@ requirejs.config({
         // Services
         'storage-service': 'services/storage-service',
 
+        // Directives
+
+        'imageUpload' : 'directives/ImageUploadDirective'
+
         // App
         'app': 'app'
     },
