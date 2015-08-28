@@ -1,9 +1,11 @@
 ﻿namespace BlastOFF.Services
 {
+    using System.Net.Http.Headers;
     using System.Web.Http;
     using System.Web.Http.OData.Extensions;
 
     using Microsoft.Owin.Security.OAuth;
+
     using Newtonsoft.Json.Serialization;
 
     public static class WebApiConfig
@@ -20,12 +22,12 @@
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional });
 
-            config.EnableCors();
-
             config.AddODataQueryFilter();
 
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
-               new CamelCasePropertyNamesContractResolver();
+                new CamelCasePropertyNamesContractResolver();
+
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
 
             var json = config.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;

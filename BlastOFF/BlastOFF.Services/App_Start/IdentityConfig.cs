@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using BlastOFF.Models.UserModel;
-using BlastOFF.Data;
-
-namespace BlastOFF.Services
+﻿namespace BlastOFF.Services
 {
-    // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
+    using Data;
+    using BlastOFF.Models.UserModel;
+
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Microsoft.AspNet.Identity.Owin;
+    using Microsoft.Owin;
 
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
@@ -16,28 +15,31 @@ namespace BlastOFF.Services
         {
         }
 
-        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
+        public static ApplicationUserManager Create(
+            IdentityFactoryOptions<ApplicationUserManager> options,
+            IOwinContext context)
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<BlastOFFContext>()));
-            // Configure validation logic for usernames
+
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
-            {
-                AllowOnlyAlphanumericUserNames = false,
-                RequireUniqueEmail = true
-            };
-            // Configure validation logic for passwords
+                {
+                    AllowOnlyAlphanumericUserNames = false,
+                    RequireUniqueEmail = true
+                };
+
             manager.PasswordValidator = new PasswordValidator
-            {
-                RequiredLength = 6,
-                RequireNonLetterOrDigit = false,
-                RequireDigit = false,
-                RequireLowercase = true,
-                RequireUppercase = false,
-            };
+                {
+                    RequiredLength = 6,
+                    RequireNonLetterOrDigit = false,
+                    RequireDigit = false,
+                    RequireLowercase = true,
+                    RequireUppercase = false,
+                };
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
-                manager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
+                manager.UserTokenProvider =
+                    new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
             return manager;
         }

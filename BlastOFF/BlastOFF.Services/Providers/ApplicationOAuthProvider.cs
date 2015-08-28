@@ -2,17 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.Identity.EntityFramework;
+
+    using BlastOFF.Models.UserModel;
+
     using Microsoft.AspNet.Identity.Owin;
     using Microsoft.Owin.Security;
     using Microsoft.Owin.Security.Cookies;
     using Microsoft.Owin.Security.OAuth;
-    using BlastOFF.Services.Models;
-    using BlastOFF.Models.UserModel;
 
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
@@ -25,7 +23,7 @@
                 throw new ArgumentNullException("publicClientId");
             }
 
-            _publicClientId = publicClientId;
+            this._publicClientId = publicClientId;
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
@@ -40,10 +38,10 @@
                 return;
             }
 
-            ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
-               OAuthDefaults.AuthenticationType);
-            ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
-                CookieAuthenticationDefaults.AuthenticationType);
+            ClaimsIdentity oAuthIdentity =
+                await user.GenerateUserIdentityAsync(userManager, OAuthDefaults.AuthenticationType);
+            ClaimsIdentity cookiesIdentity =
+                await user.GenerateUserIdentityAsync(userManager, CookieAuthenticationDefaults.AuthenticationType);
 
             AuthenticationProperties properties = CreateProperties(user.UserName);
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
@@ -63,7 +61,6 @@
 
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            // Resource owner password credentials does not provide a client ID.
             if (context.ClientId == null)
             {
                 context.Validated();
@@ -74,7 +71,7 @@
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            if (context.ClientId == _publicClientId)
+            if (context.ClientId == this._publicClientId)
             {
                 Uri expectedRootUri = new Uri(context.Request.Uri, "/");
 
@@ -89,10 +86,7 @@
 
         public static AuthenticationProperties CreateProperties(string userName)
         {
-            IDictionary<string, string> data = new Dictionary<string, string>
-            {
-                { "userName", userName }
-            };
+            IDictionary<string, string> data = new Dictionary<string, string> { { "userName", userName } };
             return new AuthenticationProperties(data);
         }
     }
