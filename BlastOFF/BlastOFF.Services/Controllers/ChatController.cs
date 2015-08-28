@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using System.Web.Security;
-using System.Web.UI.WebControls;
 using BlastOFF.Data;
 using BlastOFF.Data.Interfaces;
 using BlastOFF.Models.ChatModels;
-using BlastOFF.Models.GalleryModels;
 using BlastOFF.Services.Models.ChatModels;
 using Microsoft.AspNet.Identity;
 
@@ -16,7 +12,6 @@ namespace BlastOFF.Services.Controllers
     [Authorize]
     public class ChatController : BaseApiController
     {
-
         public ChatController()
             : this(new BlastOFFData())
         {
@@ -32,21 +27,20 @@ namespace BlastOFF.Services.Controllers
         [Route("api/message")]
         public IHttpActionResult GetMessage(string chatRoom)
         {
-
             var validateChatRoom = this.Data.Chats.All().FirstOrDefault(c => c.ChatRoomName == chatRoom);
 
             if (validateChatRoom == null)
             {
-                return this.BadRequest("There is no such a room.");
+                return this.NotFound();
             }
 
             var message = this.Data.Chats.All()
                 .Where(c => c.ChatRoomName == chatRoom)
                 .Select(a => new
                 {
-                    Sender = a.SenderUsername,
-                    Receiver = a.ReceiverUsername,
-                    a.Content,
+                    From = a.SenderUsername,
+                    To = a.ReceiverUsername,
+                    Message = a.Content,
                     Time = a.PostedOn
                 });
 
@@ -56,32 +50,31 @@ namespace BlastOFF.Services.Controllers
         // POST api/message
         [HttpPost]
         [Route("api/message")]
-        public IHttpActionResult PostMessage([FromBody]ChatBindingModel model)
+        public IHttpActionResult PostMessage(ChatBindingModel model)
         {
             var senderUsername = User.Identity.GetUserName();
 
-            if (senderUsername == model.RecieverUsername)
+            if (senderUsername == model.ReceiverUsername)
             {
                 return this.BadRequest("You cannot send a message to yourself.");
             }
 
             var user = this.Data.Users.All()
-                .Where(u => u.UserName == model.RecieverUsername)
+                .Where(u => u.UserName == model.ReceiverUsername)
                 .Select(u => u.UserName)
                 .FirstOrDefault();
 
-
-            if (user == null && model.RecieverUsername != "All")
+            if (user == null && model.ReceiverUsername != "All" && model.ReceiverUsername != "all")
             {
-                return this.BadRequest("There is no such user.");
+                return this.BadRequest("Enter a valid username or send the message to all.");
             }
 
             var message = new Chat()
             {
-                Content = model.Content,
                 ChatRoomName = model.ChatRoomName,
                 SenderUsername = senderUsername,
-                ReceiverUsername = model.RecieverUsername,
+                ReceiverUsername = model.ReceiverUsername,
+                Content = model.Content,
                 PostedOn = DateTime.Now.ToString("HH:mm (d MMM yyyy)")
             };
 
