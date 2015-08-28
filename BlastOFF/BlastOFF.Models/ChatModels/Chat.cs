@@ -18,17 +18,7 @@ namespace BlastOFF.Models.ChatModels
         [Required]
         public string Content { get; set; }
 
+        [Required]
         public string PostedOn { get; set; }
-
-        //[ForeignKey("Sender")]
-        //public string SenderId { get; set; }
-
-        //public ApplicationUser Sender { get; set; }
-
-
-        //[ForeignKey("Receiver")]
-        //public string ReceiverId { get; set; }
-
-        //public ApplicationUser Receiver { get; set; }
     }
 }
