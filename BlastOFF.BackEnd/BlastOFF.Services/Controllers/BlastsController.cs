@@ -58,21 +58,6 @@ namespace BlastOFF.Services.Controllers
             return this.Ok(blastToReturn);
         }
 
-        [HttpGet]
-        [Route("api/blasts/{username}")]
-        public IHttpActionResult GetBlastsByAuthor([FromUri]string username)
-        {
-            var blasts = this.Data.Blasts.All().Where(b => b.Author.UserName == username)
-                .Select(BlastViewModel.Create);
-
-            if (blasts.Count() == 0)
-            {
-                return this.NotFound();
-            }
-
-            return this.Ok(blasts);
-        }
-
         [HttpPost]
         [Route("api/blast/{id}/like")]
         [Authorize]
