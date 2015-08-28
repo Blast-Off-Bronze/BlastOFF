@@ -8,6 +8,9 @@ namespace BlastOFF.Services.Models.ChatModels
         public string Content { get; set; }
 
         [Required]
-        public string RecieverUsername { get; set; }
+        public string ChatRoomName { get; set; }
+
+        [Required]
+        public string ReceiverUsername { get; set; }
     }
 }
