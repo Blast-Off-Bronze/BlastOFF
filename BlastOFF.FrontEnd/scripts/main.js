@@ -13,12 +13,15 @@ requirejs.config({
         // Controllers
         'registration-controller': 'controllers/registration-controller',
         'login-controller': 'controllers/logins-controller',
+        'music-controller': 'controllers/music-controller',
+
 
         // Data Services
         'user-data-service': 'data-services/user-data-service',
 
         // Directives
         'imageUpload': 'directives/ImageUploadDirective',
+        'songUpload' : 'directives/SongUploadDirective',
 
         // Models
         'constants': 'models/constants',
@@ -27,6 +30,8 @@ requirejs.config({
 
         // Services
         'escape-special-chars-service': 'services/escape-special-chars-service',
+        'file-reader-service':'services/file-reader-service',
+        'music-validation-service':'services/music-validation-service',
         'notification-service': 'services/notification-service',
         'storage-service': 'services/storage-service',
 

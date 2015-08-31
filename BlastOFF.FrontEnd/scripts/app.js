@@ -21,6 +21,14 @@ define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD
                 controllerUrl: 'controllers/login-controller'
             }));
 
+        // Song Upload
+        $routeProvider
+            .when('/songs/upload', angularAMD.route({
+                templateUrl: 'templates/song-upload.html',
+                controller: 'musicController',
+                controllerUrl: 'controllers/music-controller'
+            }));
+
         //// Change password
         //$routeProvider
         //    .when('/profile/password', angularAMD.route({
