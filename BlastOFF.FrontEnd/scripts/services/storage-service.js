@@ -4,23 +4,32 @@ define(['app'], function (app) {
     app.factory('storageService', function () {
 
         function getSessionToken() {
+            if (localStorage.getItem('sessionToken')) {
+                return localStorage.getItem('sessionToken');
+            }
+
             return sessionStorage.getItem('sessionToken');
         }
 
-        function setSessionToken(sessionToken) {
-            sessionStorage.setItem('sessionToken', sessionToken);
+        function setSessionToken(sessionToken, wantsToBeRemembered) {
+            if (wantsToBeRemembered) {
+                localStorage.setItem('sessionToken', sessionToken);
+            }
+            else {
+                sessionStorage.setItem('sessionToken', sessionToken);
+            }
         }
 
         function isLogged() {
             if (getSessionToken()) {
                 return true;
             }
-
             return false;
         }
 
         function clearStorage() {
             sessionStorage.clear();
+            localStorage.clear();
         }
 
         return {

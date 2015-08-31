@@ -17,17 +17,18 @@ requirejs.config({
         // Data Services
         'user-data-service': 'data-services/user-data-service',
 
+        // Directives
+        'imageUpload': 'directives/ImageUploadDirective',
+
         // Models
         'constants': 'models/constants',
         'request-headers': 'models/request-headers',
         'requester': 'models/requester',
 
         // Services
+        'escape-special-chars-service': 'services/escape-special-chars-service',
+        'notification-service': 'services/notification-service',
         'storage-service': 'services/storage-service',
-
-        // Directives
-
-        'imageUpload' : 'directives/ImageUploadDirective'
 
         // App
         'app': 'app'

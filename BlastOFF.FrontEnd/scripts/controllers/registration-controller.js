@@ -1,10 +1,12 @@
-define(['app', 'user-data-service'],
+define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-service', 'notification-service', 'constants'],
 
     function (app) {
         'use strict';
 
         app.controller('registrationController',
-            function ($scope, $location, userDataService) {
+            function ($scope, $location, storageService, escapeSpecialCharsService, userDataService, notificationService, constants) {
+
+                $scope.isLogged = storageService.isLogged();
 
                 $scope.guest = {
                     username: "testUser1",
@@ -15,19 +17,30 @@ define(['app', 'user-data-service'],
 
                 $scope.register = function (guestInfo) {
 
-                    var guest = guestInfo;
+                    var guest = escapeSpecialCharsService.escapeSpecialCharacters(guestInfo, false);
 
                     userDataService.register(guest).then(
                         function (response) {
 
-                            console.log(response);
+                            var sessionToken = response['token_type'] + ' ' + response['access_token'];
+                            var username = response['userName'];
 
+                            storageService.setSessionToken(sessionToken);
+
+                            notificationService.alertSuccess(constants.SUCCESSFUL_REGISTRATION_MESSAGE + username + '.');
+
+                            $scope.resetForm();
                         },
                         function (error) {
 
-                            console.log(error);
+                            notificationService.alertError(error);
 
                         });
+                };
+
+                $scope.resetForm = function () {
+                    $scope.guest = {};
+                    $location.path('#/');
                 };
             });
     });
