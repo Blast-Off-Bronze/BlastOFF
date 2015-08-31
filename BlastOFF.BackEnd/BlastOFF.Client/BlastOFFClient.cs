@@ -4,38 +4,41 @@
     using System.Linq;
     using System.Collections.Generic;
 
+    using BlastOFF.Services.Constants;
+
     using Services.Services;
 
     using Google.Apis.Drive.v2;
     using Google.Apis.Drive.v2.Data;
+
     using Data;
 
     public class BlastOFFClient
     {
         public static void Main()
         {
-            //var dbo = new BlastOFFContext();
-
-            //var songsCount = dbo.Songs.Count();
-            //Console.WriteLine("Songs count: {0}", songsCount);
+            //string filePath = "../../../miscellaneous files/test.mp3";
 
             //var service = GoogleDriveService.Get();
 
-            //FilesResource.ListRequest listRequest = service.Files.List();
+            //File body = new File();
+            //body.Parents = new List<ParentReference> { new ParentReference() { Id = MusicConstants.GoogleDriveBlastOFFMusicFolderId } };
 
-            //// List files.
-            //IList<File> files = listRequest.Execute().Items;
+            //// File's content.
+            //byte[] byteArray = System.IO.File.ReadAllBytes(filePath);
 
-            //if (files != null && files.Count > 0)
+            //System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
+
+
+            //try
             //{
-            //    foreach (var file in files)
-            //    {
-            //        Console.WriteLine("{0} (https://drive.google.com/open?id={1})", file.Title, file.Id);
-            //    }
+            //    FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, "audio/mpeg");
+            //    request.Upload();
+            //    Console.WriteLine(request.ResponseBody);
             //}
-            //else
+            //catch (Exception e)
             //{
-            //    Console.WriteLine("No files found.");
+            //    Console.WriteLine("An error occurred: " + e.Message);
             //}
         }
     }

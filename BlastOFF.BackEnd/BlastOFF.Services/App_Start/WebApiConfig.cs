@@ -2,6 +2,7 @@
 {
     using System.Net.Http.Headers;
     using System.Web.Http;
+    using System.Web.Http.Cors;
     using System.Web.Http.OData.Extensions;
 
     using Microsoft.Owin.Security.OAuth;
@@ -23,6 +24,8 @@
                 defaults: new { id = RouteParameter.Optional });
 
             config.AddODataQueryFilter();
+
+            //config.EnableCors(new EnableCorsAttribute("http://localhost:63342", "*", "*"));
 
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
                 new CamelCasePropertyNamesContractResolver();

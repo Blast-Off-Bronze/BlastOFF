@@ -8,7 +8,8 @@
 
     public static class GoogleDriveService
     {
-        private const string GoogleDriveKeyFilePath = "../../../BlastOFF.Services/Credentials/BlastOFF.p12";
+        private const string GoogleDriveKeyFilePath = @"D:\GitHub\BlastOFF\BlastOFF.BackEnd\miscellaneous files\BlastOFF.p12";
+        //private const string GoogleDriveKeyFilePath = "../../../BlastOFF.Services/Credentials/BlastOFF.p12";
         private const string GoogleDriveServiceAccountEmail = "549251813735-6efg2gfp38a6q4moeknilsk2e9n9ajos@developer.gserviceaccount.com";
 
         public static DriveService Get()

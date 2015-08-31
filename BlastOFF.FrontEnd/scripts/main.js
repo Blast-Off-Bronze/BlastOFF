@@ -18,6 +18,7 @@ requirejs.config({
 
         // Data Services
         'user-data-service': 'data-services/user-data-service',
+        'music-data-service': 'data-services/music-data-service',
 
         // Directives
         'imageUpload': 'directives/ImageUploadDirective',
