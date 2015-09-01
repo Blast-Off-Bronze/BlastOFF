@@ -21,10 +21,18 @@ define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD
                 controllerUrl: 'controllers/login-controller'
             }));
 
-        // Song Upload
+        // Add music album
         $routeProvider
-            .when('/songs/upload', angularAMD.route({
-                templateUrl: 'templates/song-upload.html',
+            .when('/music/albums', angularAMD.route({
+                templateUrl: 'templates/music.html',
+                controller: 'musicController',
+                controllerUrl: 'controllers/music-controller'
+            }));
+
+        // Add song
+        $routeProvider
+            .when('/music/albums/:musicAlbumId/songs', angularAMD.route({
+                templateUrl: 'templates/music.html',
                 controller: 'musicController',
                 controllerUrl: 'controllers/music-controller'
             }));

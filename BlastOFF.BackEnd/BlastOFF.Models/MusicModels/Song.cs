@@ -30,6 +30,7 @@
         [Required]
         public string FilePath { get; set; }
 
+        [Required]
         public int MusicAlbumId { get; set; }
 
         public virtual MusicAlbum MusicAlbum { get; set; }

@@ -1,37 +1,28 @@
 ﻿namespace BlastOFF.Services.Controllers
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.IO;
-    using System.IO.Compression;
     using System.Linq;
-    using System.Reflection;
-    using System.Runtime.Serialization.Formatters.Binary;
     using System.Web.Http;
-    using System.Web.Http.Cors;
-    using System.Web.Mvc;
-    using System.Web.Script.Serialization;
 
     using Data;
     using Data.Interfaces;
+
     using BlastOFF.Models.MusicModels;
-    using Constants;
-    using Models;
-    using Models.MusicModels;
-    using Services;
+    using BlastOFF.Services.Constants;
+    using BlastOFF.Services.Services;
 
     using Google.Apis.Drive.v2;
     using Google.Apis.Drive.v2.Data;
 
+    using Models;
+    using Models.MusicModels;
+
     using Microsoft.AspNet.Identity;
 
-    using Newtonsoft.Json;
-
     using Comment = BlastOFF.Models.Comment;
-    using File = Google.Apis.Drive.v2.Data.File;
 
-    [EnableCors(origins: "http://localhost:63342", headers: "*", methods: "*")]
+    // [EnableCors(origins: "http://localhost:63342", headers: "*", methods: "*")]
     public class MusicController : BaseApiController
     {
         public MusicController()
@@ -47,8 +38,8 @@
         //// ALL
 
         //// GET /api/music/albums
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/music/albums")]
+        [HttpGet]
+        [Route("api/music/albums")]
         public IHttpActionResult AllMusicAlbums()
         {
             var albums = this.Data.MusicAlbums.All().Select(MusicAlbumViewModel.Get);
@@ -59,8 +50,8 @@
         }
 
         //// GET /api/music/albums/{id}/songs
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/music/albums/{id}/songs")]
+        [HttpGet]
+        [Route("api/music/albums/{id}/songs")]
         public IHttpActionResult AllSongs([FromUri] int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
@@ -78,8 +69,8 @@
         }
 
         //// GET /api/music/albums/{id}/comments
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/music/albums/{id}/comments")]
+        [HttpGet]
+        [Route("api/music/albums/{id}/comments")]
         public IHttpActionResult AllMusicAlbumComments([FromUri] int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
@@ -97,8 +88,8 @@
         }
 
         //// GET /api/songs/{id}/comments
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/songs/{id}/comments")]
+        [HttpGet]
+        [Route("api/songs/{id}/comments")]
         public IHttpActionResult AllSongComments([FromUri] int id)
         {
             var song = this.Data.Songs.Find(id);
@@ -118,8 +109,8 @@
         //// BY ID
 
         //// GET /api/music/albums/{id}
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/music/albums/{id}")]
+        [HttpGet]
+        [Route("api/music/albums/{id}")]
         public IHttpActionResult FindMusicAlbumById([FromUri] int id)
         {
             var musicAlbumCollection = new List<MusicAlbum> { this.Data.MusicAlbums.Find(id) };
@@ -137,8 +128,8 @@
         }
 
         //// GET /api/songs/{id}
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/songs/{id}")]
+        [HttpGet]
+        [Route("api/songs/{id}")]
         public IHttpActionResult FindSongById([FromUri] int id)
         {
             var songCollection = new List<Song> { this.Data.Songs.Find(id) };
@@ -158,10 +149,10 @@
         //// ADD
 
         //// POST /api/music/albums
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("api/music/albums")]
-        [System.Web.Http.Authorize]
-        public IHttpActionResult AddMusicAlbum([FromBody] MusicAlbumBindingModel musicAlbum)
+        [HttpPost]
+        [Route("api/music/albums")]
+        [Authorize]
+        public IHttpActionResult AddMusicAlbum(MusicAlbumBindingModel musicAlbum)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -175,15 +166,21 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            var newMusicAlbum = new MusicAlbum
-                {
-                    Title = musicAlbum.Title,
-                    AuthorId = loggedUserId,
-                    DateCreated = DateTime.Now,
-                    ViewsCount = 0
-                };
+            if (musicAlbum.CoverImageData != null && musicAlbum.CoverImageData.IndexOf(',') == -1)
+            {
+                musicAlbum.CoverImageData = string.Format("{0}{1}", "data:image/jpg;base64,", musicAlbum.CoverImageData);
+            }
 
-            if (this.Data.MusicAlbums.All().Any(a => a == newMusicAlbum))
+            var newMusicAlbum = new MusicAlbum
+            {
+                Title = musicAlbum.Title,
+                AuthorId = loggedUserId,
+                DateCreated = DateTime.Now,
+                ViewsCount = 0,
+                CoverImageData = musicAlbum.CoverImageData
+            };
+
+            if (this.Data.MusicAlbums.All().Any(a => a.Title == newMusicAlbum.Title && a.AuthorId == newMusicAlbum.AuthorId))
             {
                 return this.BadRequest(string.Format("This music album already exists."));
             }
@@ -193,115 +190,144 @@
 
             musicAlbum.Id = newMusicAlbum.Id;
 
-            var musicAlbumCollection = new List<MusicAlbum> { newMusicAlbum };
-
-            var musicAlbumToReturn = musicAlbumCollection.AsQueryable().Select(MusicAlbumViewModel.Get);
-
             this.Data.Dispose();
 
-            return this.Ok(musicAlbumToReturn);
+            return this.Ok(musicAlbum);
         }
 
         //// POST /api/music/albums/{id}/songs
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("api/songs")]
-        //[Authorize]
-        public IHttpActionResult AddSong([FromBody] object input) //[FromUri]int id,
+        [HttpPost]
+        [Route("api/music/albums/{id}/songs")]
+        [Authorize]
+        public IHttpActionResult AddSong(int id, SongBindingModel song)
         {
+            string loggedUserId = this.User.Identity.GetUserId();
+
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            if (song == null)
+            {
+                return this.BadRequest("Cannot create an empty song model.");
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
+            if (loggedUserId != album.AuthorId)
+            {
+                return this.Unauthorized();
+            }
 
 
 
-            return this.Ok(input);
 
 
 
 
-            //var service = GoogleDriveService.Get();
 
-            //File body = new File();
-            //body.MimeType = "text/plain";
-            //body.Parents = new List<ParentReference>
-            //    {
-            //        new ParentReference { Id = MusicConstants.GoogleDriveBlastOFFMusicFolderId }
-            //    };
 
-            //System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
 
-            //try
-            //{
-            //    FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, "text/plain");
-            //    request.Upload();
-            //    return this.Ok(request.ResponseBody);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("An error occurred: " + e.Message);
-            //    return null;
-            //}
 
-            //// TODO: Upload song to Google Drive and acquire link
 
-            //string loggedUserId = this.User.Identity.GetUserId();
 
-            //var album = this.Data.MusicAlbums.Find(id);
 
-            //if (album == null)
-            //{
-            //    return this.NotFound();
-            //}
+            var metadataStart = song.FilePath.IndexOf("data:audio/mp3;base64,");
+            if (metadataStart != -1)
+            {
+                song.FilePath = song.FilePath.Remove(metadataStart, metadataStart + 22);
+            }
 
-            //if (song == null)
-            //{
-            //    return this.BadRequest("Cannot create an empty song model.");
-            //}
+            byte[] byteArray = Convert.FromBase64String(song.FilePath);
+            System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
 
-            //if (!this.ModelState.IsValid)
-            //{
-            //    return this.BadRequest(this.ModelState);
-            //}
+            var service = GoogleDriveService.Get();
+
+            File body = new File();
+            body.Title = song.Artist + " - " + song.Title + ".mp3";
+            body.MimeType = "audio/mpeg";
+            body.Parents = new List<ParentReference> { new ParentReference { Id = MusicConstants.GoogleDriveBlastOFFMusicFolderId } };
+
+            try
+            {
+                FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, "audio/mpeg");
+                request.Upload();
+
+                song.FilePath = "https://drive.google.com/open?id=" + request.ResponseBody.Id;
+
+
+
+
+                return this.Ok("song uploaded to Google Drive ==>" + request.ResponseBody.Id);
+
+            }
+            catch (Exception e)
+            {
+                return this.BadRequest(string.Format("An error occurred: " + e.Message));
+            }
 
             //var newSong = new Song
             //{
             //    Title = song.Title,
             //    Artist = song.Artist,
-            //    // FilePath = link to Google Drive,
-            //    MusicAlbumId = album.Id,
+            //    FilePath = song.FilePath,
+            //    MusicAlbumId = int.Parse(song.MusicAlbumId),
             //    UploaderId = album.AuthorId,
             //    DateAdded = DateTime.Now,
             //    ViewsCount = 0,
-            //    TrackNumber = song.TrackNumber,
-            //    OriginalAlbumTitle = song.OriginalAlbumTitle,
-            //    OriginalAlbumArtist = song.OriginalAlbumArtist,
-            //    OriginalDate = song.OriginalDate,
-            //    Genre = song.Genre,
-            //    Composer = song.Composer,
-            //    Publisher = song.Publisher,
-            //    Bpm = song.Bpm
+            //    //TrackNumber = int.Parse(song.TrackNumber),
+            //    //OriginalAlbumTitle = song.OriginalAlbumTitle,
+            //    //OriginalAlbumArtist = song.OriginalAlbumArtist,
+            //    //OriginalDate = DateTime.Parse(song.OriginalDate),
+            //    //Genre = song.Genre,
+            //    //Composer = song.Composer,
+            //    //Publisher = song.Publisher,
+            //    //Bpm = int.Parse(song.Bpm)
             //};
 
-            //if (album.Songs.Any(s => s == newSong))
-            //{
-            //    return this.BadRequest(string.Format("This song already exists in album."));
-            //}
+            ////if (album.Songs.Any(s => s == newSong))
+            ////{
+            ////    return this.BadRequest(string.Format("This song already exists in album."));
+            ////}
 
             //this.Data.Songs.Add(newSong);
             //this.Data.SaveChanges();
 
             //song.Id = newSong.Id;
 
-            //var songCollection = new List<Song> { newSong };
-
-            //var songToReturn = songCollection.AsQueryable().Select(SongViewModel.Get);
-
             //this.Data.Dispose();
 
-            //return this.Ok(songToReturn);
+            //return this.Ok(song);
         }
 
+        private bool ValidateImageSize(string imageDataUrl, int kilobyteLimit)
+        {
+            // Image delete
+            if (imageDataUrl == null)
+            {
+                return true;
+            }
+
+            // Every 4 bytes from Base64 is equal to 3 bytes
+            if ((imageDataUrl.Length / 4) * 3 >= kilobyteLimit * 1024)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+
         //// POST /api/music/albums/{id}/comments
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("api/music/albums/{id}/comments")]
-        [System.Web.Http.Authorize]
+        [HttpPost]
+        [Route("api/music/albums/{id}/comments")]
+        [Authorize]
         public IHttpActionResult AddMusicAlbumComment([FromUri] int id, [FromBody] CommentBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -324,12 +350,12 @@
             }
 
             var newMusicAlbumComment = new Comment
-                {
-                    Content = comment.Content,
-                    AuthorId = loggedUserId,
-                    PostedOn = DateTime.Now,
-                    MusicAlbumId = id
-                };
+            {
+                Content = comment.Content,
+                AuthorId = loggedUserId,
+                PostedOn = DateTime.Now,
+                MusicAlbumId = id
+            };
 
             this.Data.Comments.Add(newMusicAlbumComment);
             this.Data.SaveChanges();
@@ -346,9 +372,9 @@
         }
 
         //// POST /api/songs/{id}/comments
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("api/songs/{id}/comments")]
-        [System.Web.Http.Authorize]
+        [HttpPost]
+        [Route("api/songs/{id}/comments")]
+        [Authorize]
         public IHttpActionResult AddSongComment([FromUri] int id, [FromBody] CommentBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -371,12 +397,12 @@
             }
 
             var newSongComment = new Comment
-                {
-                    Content = comment.Content,
-                    AuthorId = loggedUserId,
-                    PostedOn = DateTime.Now,
-                    MusicAlbumId = id
-                };
+            {
+                Content = comment.Content,
+                AuthorId = loggedUserId,
+                PostedOn = DateTime.Now,
+                MusicAlbumId = id
+            };
 
             this.Data.Comments.Add(newSongComment);
             this.Data.SaveChanges();
@@ -395,9 +421,9 @@
         //// UPDATE
 
         //// PUT /api/music/albums/{id}
-        [System.Web.Http.HttpPut]
-        [System.Web.Http.Route("api/music/albums/{id}")]
-        [System.Web.Http.Authorize]
+        [HttpPut]
+        [Route("api/music/albums/{id}")]
+        [Authorize]
         public IHttpActionResult UpdateMusicAlbum([FromUri] int id, [FromBody] MusicAlbumBindingModel musicAlbum)
         {
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
@@ -438,9 +464,9 @@
         }
 
         //// PUT /api/songs/{id}
-        [System.Web.Http.HttpPut]
-        [System.Web.Http.Route("api/songs/{id}")]
-        [System.Web.Http.Authorize]
+        [HttpPut]
+        [Route("api/songs/{id}")]
+        [Authorize]
         public IHttpActionResult UpdateSong([FromUri] int id, [FromBody] SongBindingModel song)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -470,14 +496,14 @@
             existingSong.Title = song.Title;
             existingSong.Artist = song.Artist;
             existingSong.DateAdded = DateTime.Now;
-            existingSong.TrackNumber = song.TrackNumber;
-            existingSong.OriginalAlbumTitle = song.OriginalAlbumTitle;
-            existingSong.OriginalAlbumArtist = song.OriginalAlbumArtist;
-            existingSong.OriginalDate = song.OriginalDate;
-            existingSong.Genre = song.Genre;
-            existingSong.Composer = song.Composer;
-            existingSong.Publisher = song.Publisher;
-            existingSong.Bpm = song.Bpm;
+            //existingSong.TrackNumber = int.Parse(song.TrackNumber);
+            //existingSong.OriginalAlbumTitle = song.OriginalAlbumTitle;
+            //existingSong.OriginalAlbumArtist = song.OriginalAlbumArtist;
+            //existingSong.OriginalDate = DateTime.Parse(song.OriginalDate);
+            //existingSong.Genre = song.Genre;
+            //existingSong.Composer = song.Composer;
+            //existingSong.Publisher = song.Publisher;
+            //existingSong.Bpm = int.Parse(song.Bpm);
 
             this.Data.SaveChanges();
 
@@ -493,9 +519,9 @@
         //// DELETE
 
         //// DELETE /api/music/albums/{id}
-        [System.Web.Http.HttpDelete]
-        [System.Web.Http.Route("api/music/albums/{id}")]
-        [System.Web.Http.Authorize]
+        [HttpDelete]
+        [Route("api/music/albums/{id}")]
+        [Authorize]
         public IHttpActionResult DeleteMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -521,9 +547,9 @@
         }
 
         //// DELETE /api/songs/{id}
-        [System.Web.Http.HttpDelete]
-        [System.Web.Http.Route("api/songs/{id}")]
-        [System.Web.Http.Authorize]
+        [HttpDelete]
+        [Route("api/songs/{id}")]
+        [Authorize]
         public IHttpActionResult DeleteSong([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -551,9 +577,9 @@
         //// LIKE - UNLIKE
 
         //// POST /api/music/albums/{id}/likes
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("api/music/albums/{id}/likes")]
-        [System.Web.Http.Authorize]
+        [HttpPost]
+        [Route("api/music/albums/{id}/likes")]
+        [Authorize]
         public IHttpActionResult LikeMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -584,18 +610,13 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return
-                this.Ok(
-                    string.Format(
-                        "Music Album {0}, created by {1}, successfully liked.",
-                        album.Title,
-                        album.Author.UserName));
+            return this.Ok(string.Format("Music Album {0}, created by {1}, successfully liked.", album.Title, album.Author.UserName));
         }
 
         //// DELETE /api/music/albums/{id}/likes
-        [System.Web.Http.HttpDelete]
-        [System.Web.Http.Route("api/music/albums/{id}/likes")]
-        [System.Web.Http.Authorize]
+        [HttpDelete]
+        [Route("api/music/albums/{id}/likes")]
+        [Authorize]
         public IHttpActionResult UnlikeMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -626,18 +647,13 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return
-                this.Ok(
-                    string.Format(
-                        "Music Album {0}, created by {1}, successfully unliked.",
-                        album.Title,
-                        album.Author.UserName));
+            return this.Ok(string.Format("Music Album {0}, created by {1}, successfully unliked.", album.Title, album.Author.UserName));
         }
 
         //// POST /api/songs/{id}/likes
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("api/songs/{id}/likes")]
-        [System.Web.Http.Authorize]
+        [HttpPost]
+        [Route("api/songs/{id}/likes")]
+        [Authorize]
         public IHttpActionResult LikeSong([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -668,14 +684,13 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return
-                this.Ok(string.Format("{0}, uploaded by {1}, successfully liked.", song.Title, song.Uploader.UserName));
+            return this.Ok(string.Format("{0}, uploaded by {1}, successfully liked.", song.Title, song.Uploader.UserName));
         }
 
         //// DELETE /api/songs/{id}/likes
-        [System.Web.Http.HttpDelete]
-        [System.Web.Http.Route("api/songs/{id}/likes")]
-        [System.Web.Http.Authorize]
+        [HttpDelete]
+        [Route("api/songs/{id}/likes")]
+        [Authorize]
         public IHttpActionResult UnlikeSong([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -706,17 +721,15 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return
-                this.Ok(
-                    string.Format("{0}, uploaded by {1}, successfully unliked.", song.Title, song.Uploader.UserName));
+            return this.Ok(string.Format("{0}, uploaded by {1}, successfully unliked.", song.Title, song.Uploader.UserName));
         }
 
         // FOLLOWERS
 
         //// POST /api/music/albums/{id}/follow
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("api/music/albums/{id}/follow")]
-        [System.Web.Http.Authorize]
+        [HttpPost]
+        [Route("api/music/albums/{id}/follow")]
+        [Authorize]
         public IHttpActionResult FollowMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -747,18 +760,13 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return
-                this.Ok(
-                    string.Format(
-                        "Music Album {0}, created by {1}, successfully followed.",
-                        album.Title,
-                        album.Author.UserName));
+            return this.Ok(string.Format("Music Album {0}, created by {1}, successfully followed.", album.Title, album.Author.UserName));
         }
 
         //// DELETE /api/music/albums/{id}/follow
-        [System.Web.Http.HttpDelete]
-        [System.Web.Http.Route("api/music/albums/{id}/follow")]
-        [System.Web.Http.Authorize]
+        [HttpDelete]
+        [Route("api/music/albums/{id}/follow")]
+        [Authorize]
         public IHttpActionResult UnfollowMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -789,12 +797,7 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return
-                this.Ok(
-                    string.Format(
-                        "Music Album {0}, created by {1}, successfully unfollowed.",
-                        album.Title,
-                        album.Author.UserName));
+            return this.Ok(string.Format("Music Album {0}, created by {1}, successfully unfollowed.", album.Title, album.Author.UserName));
         }
     }
 }
