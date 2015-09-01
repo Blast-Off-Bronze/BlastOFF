@@ -1,9 +1,9 @@
 ﻿namespace BlastOFF.Services.Models.ImageModels
 {
-    public class ImageBindingModel
+    public class ImageModifyBindingModel
     {
         public string Title { get; set; }
 
-        public int ImageAlbumId { get; set; }
+        public string Base64ImageString { get; set; }
     }
 }

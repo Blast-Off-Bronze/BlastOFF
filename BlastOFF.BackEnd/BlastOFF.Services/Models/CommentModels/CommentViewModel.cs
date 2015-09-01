@@ -1,4 +1,4 @@
-﻿namespace BlastOFF.Services.Models
+﻿namespace BlastOFF.Services.Models.CommentModels
 {
     using System;
     using System.Linq.Expressions;
