@@ -7,24 +7,23 @@
 
     using Data;
     using Data.Interfaces;
-
     using BlastOFF.Models.MusicModels;
-    using BlastOFF.Services.Constants;
-    using BlastOFF.Services.Services;
+    using Constants;
+    using Models;
+    using Models.MusicModels;
+    using Services;
 
     using Google.Apis.Drive.v2;
     using Google.Apis.Drive.v2.Data;
-
-    using Models;
-    using Models.MusicModels;
 
     using Microsoft.AspNet.Identity;
 
     using Comment = BlastOFF.Models.Comment;
 
-    // [EnableCors(origins: "http://localhost:63342", headers: "*", methods: "*")]
     public class MusicController : BaseApiController
     {
+        protected const int SongKilobyteLimit = 20480;
+
         public MusicController()
             : this(new BlastOFFData())
         {
@@ -172,15 +171,17 @@
             }
 
             var newMusicAlbum = new MusicAlbum
-            {
-                Title = musicAlbum.Title,
-                AuthorId = loggedUserId,
-                DateCreated = DateTime.Now,
-                ViewsCount = 0,
-                CoverImageData = musicAlbum.CoverImageData
-            };
+                {
+                    Title = musicAlbum.Title,
+                    AuthorId = loggedUserId,
+                    DateCreated = DateTime.Now,
+                    ViewsCount = 0,
+                    CoverImageData = musicAlbum.CoverImageData
+                };
 
-            if (this.Data.MusicAlbums.All().Any(a => a.Title == newMusicAlbum.Title && a.AuthorId == newMusicAlbum.AuthorId))
+            if (
+                this.Data.MusicAlbums.All()
+                    .Any(a => a.Title == newMusicAlbum.Title && a.AuthorId == newMusicAlbum.AuthorId))
             {
                 return this.BadRequest(string.Format("This music album already exists."));
             }
@@ -225,97 +226,62 @@
                 return this.Unauthorized();
             }
 
+            if (!this.ValidateAudioFileType(song.FileDataUrl))
+            {
+                return this.BadRequest("Invalid file type. Valid file type includes .mp3 only");
+            }
 
+            if (!this.ValidateFileSize(song.FileDataUrl, SongKilobyteLimit))
+            {
+                return this.BadRequest(string.Format("Song size should be less than {0} kB.", SongKilobyteLimit));
+            }
 
-
-
-
-
-
-
-
-
-
-
-
-            var metadataStart = song.FilePath.IndexOf("data:audio/mp3;base64,");
+            var metadataStart = song.FileDataUrl.IndexOf("data:audio/mp3;base64,");
             if (metadataStart != -1)
             {
-                song.FilePath = song.FilePath.Remove(metadataStart, metadataStart + 22);
+                song.FileDataUrl = song.FileDataUrl.Remove(metadataStart, metadataStart + 22);
             }
 
-            byte[] byteArray = Convert.FromBase64String(song.FilePath);
-            System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
+            string googleDriveFileName = song.Artist + " - " + song.Title + ".mp3";
+            song.FileDataUrl = this.UploadSongToGoogleDrive(song.FileDataUrl, googleDriveFileName);
 
-            var service = GoogleDriveService.Get();
+            var newSong = new Song
+                {
+                    Title = song.Title,
+                    Artist = song.Artist,
+                    FilePath = song.FileDataUrl,
+                    MusicAlbumId = int.Parse(song.MusicAlbumId),
+                    UploaderId = album.AuthorId,
+                    DateAdded = DateTime.Now,
+                    ViewsCount = 0,
+                    TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber),
+                    OriginalAlbumTitle = song.OriginalAlbumTitle,
+                    OriginalAlbumArtist = song.OriginalAlbumArtist,
+                    OriginalDate = song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate),
+                    Genre = song.Genre,
+                    Composer = song.Composer,
+                    Publisher = song.Publisher,
+                    Bpm = song.Bpm == null ? (int?)null : int.Parse(song.Bpm)
+                };
 
-            File body = new File();
-            body.Title = song.Artist + " - " + song.Title + ".mp3";
-            body.MimeType = "audio/mpeg";
-            body.Parents = new List<ParentReference> { new ParentReference { Id = MusicConstants.GoogleDriveBlastOFFMusicFolderId } };
-
-            try
+            if (album.Songs.Contains(newSong))
             {
-                FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, "audio/mpeg");
-                request.Upload();
-
-                song.FilePath = "https://drive.google.com/open?id=" + request.ResponseBody.Id;
-
-
-
-
-                return this.Ok("song uploaded to Google Drive ==>" + request.ResponseBody.Id);
-
-            }
-            catch (Exception e)
-            {
-                return this.BadRequest(string.Format("An error occurred: " + e.Message));
+                return this.BadRequest(string.Format("This song already exists in album."));
             }
 
-            //var newSong = new Song
-            //{
-            //    Title = song.Title,
-            //    Artist = song.Artist,
-            //    FilePath = song.FilePath,
-            //    MusicAlbumId = int.Parse(song.MusicAlbumId),
-            //    UploaderId = album.AuthorId,
-            //    DateAdded = DateTime.Now,
-            //    ViewsCount = 0,
-            //    //TrackNumber = int.Parse(song.TrackNumber),
-            //    //OriginalAlbumTitle = song.OriginalAlbumTitle,
-            //    //OriginalAlbumArtist = song.OriginalAlbumArtist,
-            //    //OriginalDate = DateTime.Parse(song.OriginalDate),
-            //    //Genre = song.Genre,
-            //    //Composer = song.Composer,
-            //    //Publisher = song.Publisher,
-            //    //Bpm = int.Parse(song.Bpm)
-            //};
+            this.Data.Songs.Add(newSong);
+            this.Data.SaveChanges();
 
-            ////if (album.Songs.Any(s => s == newSong))
-            ////{
-            ////    return this.BadRequest(string.Format("This song already exists in album."));
-            ////}
+            song.Id = newSong.Id;
 
-            //this.Data.Songs.Add(newSong);
-            //this.Data.SaveChanges();
+            this.Data.Dispose();
 
-            //song.Id = newSong.Id;
-
-            //this.Data.Dispose();
-
-            //return this.Ok(song);
+            return this.Ok(song);
         }
 
-        private bool ValidateImageSize(string imageDataUrl, int kilobyteLimit)
+        private bool ValidateAudioFileType(string fileDataUrl)
         {
-            // Image delete
-            if (imageDataUrl == null)
-            {
-                return true;
-            }
-
-            // Every 4 bytes from Base64 is equal to 3 bytes
-            if ((imageDataUrl.Length / 4) * 3 >= kilobyteLimit * 1024)
+            if (fileDataUrl.IndexOf("data:audio/mp3;base64,") == -1)
             {
                 return false;
             }
@@ -323,6 +289,45 @@
             return true;
         }
 
+        private bool ValidateFileSize(string fileDataUrl, int kilobyteLimit)
+        {
+            if ((fileDataUrl.Length / 4) * 3 >= kilobyteLimit * 1024)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private string UploadSongToGoogleDrive(string fileDataUrl, string fileName)
+        {
+            const string AudioMimeType = "audio/mpeg";
+
+            byte[] byteArray = Convert.FromBase64String(fileDataUrl);
+            System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
+
+            var service = GoogleDriveService.Get();
+
+            File body = new File();
+            body.Title = fileName;
+            body.MimeType = AudioMimeType;
+            body.Parents = new List<ParentReference>
+                {
+                    new ParentReference { Id = MusicConstants.GoogleDriveBlastOFFMusicFolderId }
+                };
+
+            try
+            {
+                FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, AudioMimeType);
+                request.Upload();
+
+                return "https://drive.google.com/open?id=" + request.ResponseBody.Id;
+            }
+            catch (Exception exception)
+            {
+                return string.Format("An error occurred: " + exception.Message);
+            }
+        }
 
         //// POST /api/music/albums/{id}/comments
         [HttpPost]
@@ -350,12 +355,12 @@
             }
 
             var newMusicAlbumComment = new Comment
-            {
-                Content = comment.Content,
-                AuthorId = loggedUserId,
-                PostedOn = DateTime.Now,
-                MusicAlbumId = id
-            };
+                {
+                    Content = comment.Content,
+                    AuthorId = loggedUserId,
+                    PostedOn = DateTime.Now,
+                    MusicAlbumId = id
+                };
 
             this.Data.Comments.Add(newMusicAlbumComment);
             this.Data.SaveChanges();
@@ -397,12 +402,12 @@
             }
 
             var newSongComment = new Comment
-            {
-                Content = comment.Content,
-                AuthorId = loggedUserId,
-                PostedOn = DateTime.Now,
-                MusicAlbumId = id
-            };
+                {
+                    Content = comment.Content,
+                    AuthorId = loggedUserId,
+                    PostedOn = DateTime.Now,
+                    MusicAlbumId = id
+                };
 
             this.Data.Comments.Add(newSongComment);
             this.Data.SaveChanges();
@@ -496,14 +501,14 @@
             existingSong.Title = song.Title;
             existingSong.Artist = song.Artist;
             existingSong.DateAdded = DateTime.Now;
-            //existingSong.TrackNumber = int.Parse(song.TrackNumber);
-            //existingSong.OriginalAlbumTitle = song.OriginalAlbumTitle;
-            //existingSong.OriginalAlbumArtist = song.OriginalAlbumArtist;
-            //existingSong.OriginalDate = DateTime.Parse(song.OriginalDate);
-            //existingSong.Genre = song.Genre;
-            //existingSong.Composer = song.Composer;
-            //existingSong.Publisher = song.Publisher;
-            //existingSong.Bpm = int.Parse(song.Bpm);
+            existingSong.TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber);
+            existingSong.OriginalAlbumTitle = song.OriginalAlbumTitle;
+            existingSong.OriginalAlbumArtist = song.OriginalAlbumArtist;
+            existingSong.OriginalDate = song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate);
+            existingSong.Genre = song.Genre;
+            existingSong.Composer = song.Composer;
+            existingSong.Publisher = song.Publisher;
+            existingSong.Bpm = song.Bpm == null ? (int?)null : int.Parse(song.Bpm);
 
             this.Data.SaveChanges();
 
@@ -610,7 +615,12 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return this.Ok(string.Format("Music Album {0}, created by {1}, successfully liked.", album.Title, album.Author.UserName));
+            return
+                this.Ok(
+                    string.Format(
+                        "Music Album {0}, created by {1}, successfully liked.",
+                        album.Title,
+                        album.Author.UserName));
         }
 
         //// DELETE /api/music/albums/{id}/likes
@@ -647,7 +657,12 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return this.Ok(string.Format("Music Album {0}, created by {1}, successfully unliked.", album.Title, album.Author.UserName));
+            return
+                this.Ok(
+                    string.Format(
+                        "Music Album {0}, created by {1}, successfully unliked.",
+                        album.Title,
+                        album.Author.UserName));
         }
 
         //// POST /api/songs/{id}/likes
@@ -684,7 +699,8 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return this.Ok(string.Format("{0}, uploaded by {1}, successfully liked.", song.Title, song.Uploader.UserName));
+            return
+                this.Ok(string.Format("{0}, uploaded by {1}, successfully liked.", song.Title, song.Uploader.UserName));
         }
 
         //// DELETE /api/songs/{id}/likes
@@ -721,7 +737,9 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return this.Ok(string.Format("{0}, uploaded by {1}, successfully unliked.", song.Title, song.Uploader.UserName));
+            return
+                this.Ok(
+                    string.Format("{0}, uploaded by {1}, successfully unliked.", song.Title, song.Uploader.UserName));
         }
 
         // FOLLOWERS
@@ -760,7 +778,12 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return this.Ok(string.Format("Music Album {0}, created by {1}, successfully followed.", album.Title, album.Author.UserName));
+            return
+                this.Ok(
+                    string.Format(
+                        "Music Album {0}, created by {1}, successfully followed.",
+                        album.Title,
+                        album.Author.UserName));
         }
 
         //// DELETE /api/music/albums/{id}/follow
@@ -797,7 +820,12 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return this.Ok(string.Format("Music Album {0}, created by {1}, successfully unfollowed.", album.Title, album.Author.UserName));
+            return
+                this.Ok(
+                    string.Format(
+                        "Music Album {0}, created by {1}, successfully unfollowed.",
+                        album.Title,
+                        album.Author.UserName));
         }
     }
 }

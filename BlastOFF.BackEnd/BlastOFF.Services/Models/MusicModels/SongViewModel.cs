@@ -22,18 +22,15 @@
                     DateAdded = s.DateAdded,
                     ViewsCount = s.ViewsCount,
                     LikesCount = s.UserLikes.Count,
-                    CommentsCount = s.Comments.Count
-                    //Details = new
-                    //{
-                    //    s.TrackNumber,
-                    //    s.OriginalAlbumTitle,
-                    //    s.OriginalAlbumArtist,
-                    //    s.OriginalDate,
-                    //    s.Genre,
-                    //    s.Composer,
-                    //    s.Publisher,
-                    //    s.Bpm
-                    //}
+                    CommentsCount = s.Comments.Count,
+                    TrackNumber = s.TrackNumber,
+                    OriginalAlbumTitle = s.OriginalAlbumTitle,
+                    OriginalAlbumArtist = s.OriginalAlbumArtist,
+                    OriginalDate = s.OriginalDate,
+                    Genre = s.Genre,
+                    Composer = s.Composer,
+                    Publisher = s.Publisher,
+                    Bpm = s.Bpm
                 };
             }
         }
@@ -58,6 +55,20 @@
 
         public int CommentsCount { get; set; }
 
-        //public object Details { get; set; }
+        public int? TrackNumber { get; set; }
+
+        public string OriginalAlbumTitle { get; set; }
+
+        public string OriginalAlbumArtist { get; set; }
+
+        public DateTime? OriginalDate { get; set; }
+
+        public string Genre { get; set; }
+
+        public string Composer { get; set; }
+
+        public string Publisher { get; set; }
+
+        public int? Bpm { get; set; }
     }
 }

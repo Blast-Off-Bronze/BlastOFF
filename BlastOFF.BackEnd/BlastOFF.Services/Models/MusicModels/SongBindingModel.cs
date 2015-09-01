@@ -10,7 +10,7 @@
 
         public string Artist { get; set; }
 
-        public string FilePath { get; set; }
+        public string FileDataUrl { get; set; }
 
         public string MusicAlbumId { get; set; }
 

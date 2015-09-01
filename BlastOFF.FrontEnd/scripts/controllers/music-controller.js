@@ -18,7 +18,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 $scope.song = {
                     title: 'Song_01',
                     artist: 'Artist_01',
-                    filePath: '',
+                    fileDataUrl: '',
                     musicAlbumId: musicAlbumId
                     //trackNumber: null,
                     //originalAlbumTitle: null,
