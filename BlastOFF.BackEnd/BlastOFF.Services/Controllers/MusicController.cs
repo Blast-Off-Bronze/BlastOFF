@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using BlastOFF.Services.Models.CommentModels;
+
+namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Collections;
