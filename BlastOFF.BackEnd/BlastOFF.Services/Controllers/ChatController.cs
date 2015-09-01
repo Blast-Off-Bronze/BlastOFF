@@ -44,7 +44,7 @@
         // POST api/message
         [HttpPost]
         [Route("api/message")]
-        public IHttpActionResult PostMessage(ChatBindingModel model)
+        public IHttpActionResult PostMessage([FromBody]ChatCreateBindingModel model)
         {
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 

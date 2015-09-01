@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class CommentBindingModel
+    public class CommentCreateBindingModel
     {
         public int Id { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using BlastOFF.Models;
 using BlastOFF.Services.Models;
+using BlastOFF.Services.Models.CommentModels;
 
 namespace BlastOFF.Services.Controllers
 {
