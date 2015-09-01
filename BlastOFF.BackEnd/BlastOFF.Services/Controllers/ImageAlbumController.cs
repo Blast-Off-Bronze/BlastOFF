@@ -53,7 +53,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [Authorize]
         [Route("api/imageAlbums")]
-        public IHttpActionResult CreateNewImageAlbum([FromBody]ImageAlbumBindingModel model)
+        public IHttpActionResult CreateNewImageAlbum([FromBody]ImageAlbumCreateBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -83,7 +83,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPut]
         [Authorize]
         [Route("api/imageAlbums/{id}")]
-        public IHttpActionResult EditImageAlbum([FromUri]int id, [FromBody]ImageAlbumBindingModel model)
+        public IHttpActionResult EditImageAlbum([FromUri]int id, [FromBody]ImageAlbumModifyBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -157,7 +157,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [Authorize]
         [Route("api/images")]
-        public IHttpActionResult CreateNewImage([FromBody]ImageBindingModel model)
+        public IHttpActionResult CreateNewImage([FromBody]ImageCreateBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -176,7 +176,8 @@ namespace BlastOFF.Services.Controllers
                 Title = model.Title,
                 UploadedById = loggedUserId,
                 DateCreated = DateTime.Now,
-                ImageAlbumId = model.ImageAlbumId
+                ImageAlbumId = model.ImageAlbumId,
+                ImageData = model.Base64ImageString
             };
 
             this.Data.Images.Add(image);
@@ -188,7 +189,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPut]
         [Authorize]
         [Route("api/images/{id}")]
-        public IHttpActionResult EditImage([FromUri]int id, [FromBody]ImageBindingModel model)
+        public IHttpActionResult EditImage([FromUri]int id, [FromBody]ImageModifyBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -210,6 +211,7 @@ namespace BlastOFF.Services.Controllers
             }
 
             image.Title = model.Title;
+            
 
             this.Data.Images.Update(image);
             this.Data.SaveChanges();

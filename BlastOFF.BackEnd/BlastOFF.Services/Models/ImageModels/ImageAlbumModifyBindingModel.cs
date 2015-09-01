@@ -1,6 +1,6 @@
 ﻿namespace BlastOFF.Services.Models.ImageModels
 {
-    public class ImageAlbumBindingModel
+    public class ImageAlbumModifyBindingModel
     {
         public string Title { get; set; }
     }
