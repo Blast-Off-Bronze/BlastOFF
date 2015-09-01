@@ -2,11 +2,11 @@ define(['app'], function (app) {
     app.factory('fileReaderService', function ($q) {
         var fileReaderService = {};
 
-        fileReaderService.readAsArrayBuffer = function (file, scope) {
+        fileReaderService.readAsDataURL = function (file, scope) {
             var deferrer = $q.defer();
 
             var reader = getReader(deferrer, scope);
-            reader.readAsArrayBuffer(file);
+            reader.readAsDataURL(file);
 
             return deferrer.promise;
         };

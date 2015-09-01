@@ -1,20 +1,57 @@
-define(['app', 'songUpload', 'storage-service', 'music-data-service'],
+define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-service', 'constants'],
 
     function (app) {
         'use strict';
 
         app.controller('musicController',
-            function ($scope, $location, storageService, musicDataService) {
+            function ($scope, $routeParams, $location, $http, storageService, musicDataService, constants) {
 
                 $scope.isLogged = storageService.isLogged();
 
-                $scope.uploadSong = function (song) {
+                var musicAlbumId = $routeParams.musicAlbumId;
 
-                    var uintArray = new Uint8Array(song);
+                $scope.musicAlbum = {
+                    title: 'MusicAlbum_01',
+                    coverImageData: ''
+                };
 
-                    console.log(uintArray);
+                $scope.song = {
+                    title: 'Song_01',
+                    artist: 'Artist_01',
+                    filePath: '',
+                    musicAlbumId: musicAlbumId
+                    //trackNumber: null,
+                    //originalAlbumTitle: null,
+                    //originalAlbumArtist: null,
+                    //originalDate: null,
+                    //genre: null,
+                    //composer: null,
+                    //publisher: null,
+                    //bpm: null
+                };
 
-                    musicDataService.addSong(uintArray).then(
+                $scope.addMusicAlbum = function (musicAlbum) {
+
+                    console.log(musicAlbum);
+
+                    musicDataService.addMusicAlbum(musicAlbum).then(
+                        function (response) {
+
+                            console.log(response);
+
+                        },
+                        function (error) {
+
+                            console.log(error);
+
+                        });
+                };
+
+                $scope.addSong = function (song) {
+
+                    console.log(song);
+
+                    musicDataService.addSong(musicAlbumId, song).then(
                         function (response) {
 
                             console.log(response);

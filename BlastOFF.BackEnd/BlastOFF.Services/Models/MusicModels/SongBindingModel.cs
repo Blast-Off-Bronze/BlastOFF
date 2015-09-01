@@ -10,13 +10,17 @@
 
         public string Artist { get; set; }
 
-        public int? TrackNumber { get; set; }
+        public string FilePath { get; set; }
+
+        public string MusicAlbumId { get; set; }
+
+        public string TrackNumber { get; set; }
 
         public string OriginalAlbumTitle { get; set; }
 
         public string OriginalAlbumArtist { get; set; }
 
-        public DateTime? OriginalDate { get; set; }
+        public string OriginalDate { get; set; }
 
         public string Genre { get; set; }
 
@@ -24,6 +28,6 @@
 
         public string Publisher { get; set; }
 
-        public int? Bpm { get; set; }
+        public string Bpm { get; set; }
     }
 }

@@ -6,7 +6,7 @@ define(['app', 'file-reader-service', 'music-validation-service', 'constants'], 
             },
             link: function ($scope, element) {
                 function getFile(file) {
-                    fileReaderService.readAsArrayBuffer(file, $scope)
+                    fileReaderService.readAsDataURL(file, $scope)
                         .then(function (result) {
                             $timeout(function () {
                                 $scope.ngModel = result;

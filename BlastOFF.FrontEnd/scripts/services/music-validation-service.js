@@ -7,16 +7,15 @@ define(['app', 'notification-service', 'constants'], function (app) {
                 return true;
             }
 
-            //// FIX !!!
-            //if (song.type=) {
-            //    var error = {
-            //        message: constants.INVALID_SONG_FORMAT_MESSAGE + constants.DEFAULT_SONG_FORMAT
-            //    };
-            //
-            //    notificationService.alertError(error);
-            //
-            //    return false;
-            //}
+            if (false) {
+                var error = {
+                    message: constants.INVALID_SONG_FORMAT_MESSAGE + constants.DEFAULT_SONG_FORMAT
+                };
+
+                notificationService.alertError(error);
+
+                return false;
+            }
 
             return true;
         };
@@ -26,9 +25,7 @@ define(['app', 'notification-service', 'constants'], function (app) {
                 var error = {
                     message: constants.INVALID_SONG_SIZE_MESSAGE + (maxSize / (constants.BYTE_SIZE)) + constants.DEFAULT_FILE_SIZE_UNIT
                 };
-
                 notificationService.alertError(error);
-
                 return false;
             }
             return true;

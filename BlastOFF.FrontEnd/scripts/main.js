@@ -22,6 +22,7 @@ requirejs.config({
 
         // Directives
         'imageUpload': 'directives/ImageUploadDirective',
+        'coverImageUpload' : 'directives/CoverImageUploadDirective',
         'songUpload' : 'directives/SongUploadDirective',
 
         // Models
@@ -33,6 +34,7 @@ requirejs.config({
         'escape-special-chars-service': 'services/escape-special-chars-service',
         'file-reader-service':'services/file-reader-service',
         'music-validation-service':'services/music-validation-service',
+        'cover-image-validation-service':'services/cover-image-validation-service',
         'notification-service': 'services/notification-service',
         'storage-service': 'services/storage-service',
 
