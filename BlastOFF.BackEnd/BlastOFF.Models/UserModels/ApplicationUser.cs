@@ -1,4 +1,6 @@
-﻿using BlastOFF.Models.ChatModels;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using BlastOFF.Models.ChatModels;
 using BlastOFF.Models.GalleryModels;
 using BlastOFF.Models.MusicModels;
 
@@ -54,6 +56,8 @@ namespace BlastOFF.Models.UserModel
             this.sentMessages = new HashSet<Message>();
             this.receivedMessages = new HashSet<Message>();
         }
+
+        public DateTime BirthDate { get; set; }
 
         public virtual ICollection<Blast> Blasts
         {
@@ -140,11 +144,15 @@ namespace BlastOFF.Models.UserModel
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(
-            UserManager<ApplicationUser> manager,
-            string authType)
+            UserManager<ApplicationUser> manager, string authenticationType)
         {
-            var userIdentity = await manager.CreateIdentityAsync(this, authType);
+            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
+            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
 
+            userIdentity.AddClaim(new Claim(ClaimTypes.Name, userIdentity.Name));
+            userIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, this.Id));
+
+            // Add custom user claims here
             return userIdentity;
         }
     }

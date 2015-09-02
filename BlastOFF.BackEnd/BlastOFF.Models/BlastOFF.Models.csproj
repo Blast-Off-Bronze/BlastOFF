@@ -67,6 +67,7 @@
     <Compile Include="MusicModels\Song.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModels\ApplicationUser.cs" />
+    <Compile Include="UserModels\UserSession.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,6 +1,7 @@
 using System.Data.Entity.ModelConfiguration.Conventions;
 using BlastOFF.Models;
 using BlastOFF.Models.ChatModels;
+using BlastOFF.Models.UserModels;
 
 namespace BlastOFF.Data
 {
@@ -41,6 +42,8 @@ namespace BlastOFF.Data
         public virtual IDbSet<MusicAlbum> MusicAlbums { get; set; }
 
         public virtual IDbSet<Song> Songs { get; set; }
+
+        public virtual IDbSet<UserSession> UserSessions { get; set; }
 
         // END - DB SETS
 

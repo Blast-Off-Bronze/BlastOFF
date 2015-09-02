@@ -1,4 +1,7 @@
-﻿namespace BlastOFF.Services.Providers
+﻿using BlastOFF.Data;
+using Microsoft.AspNet.Identity.EntityFramework;
+
+namespace BlastOFF.Services.Providers
 {
     using System;
     using System.Collections.Generic;
@@ -23,12 +26,13 @@
                 throw new ArgumentNullException("publicClientId");
             }
 
-            this._publicClientId = publicClientId;
+            _publicClientId = publicClientId;
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+            var userManager = new ApplicationUserManager(
+                new UserStore<ApplicationUser>(new BlastOFFContext()));
 
             ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
 
@@ -38,10 +42,16 @@
                 return;
             }
 
-            ClaimsIdentity oAuthIdentity =
-                await user.GenerateUserIdentityAsync(userManager, OAuthDefaults.AuthenticationType);
-            ClaimsIdentity cookiesIdentity =
-                await user.GenerateUserIdentityAsync(userManager, CookieAuthenticationDefaults.AuthenticationType);
+
+            ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
+               OAuthDefaults.AuthenticationType);
+            ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
+                CookieAuthenticationDefaults.AuthenticationType);
+
+            oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+            cookiesIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+            oAuthIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            cookiesIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             AuthenticationProperties properties = CreateProperties(user.UserName);
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
@@ -61,6 +71,7 @@
 
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
+            // Resource owner password credentials does not provide a client ID.
             if (context.ClientId == null)
             {
                 context.Validated();
@@ -71,7 +82,7 @@
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            if (context.ClientId == this._publicClientId)
+            if (context.ClientId == _publicClientId)
             {
                 Uri expectedRootUri = new Uri(context.Request.Uri, "/");
 
@@ -86,7 +97,11 @@
 
         public static AuthenticationProperties CreateProperties(string userName)
         {
-            IDictionary<string, string> data = new Dictionary<string, string> { { "userName", userName } };
+            IDictionary<string, string> data = new Dictionary<string, string>
+            {
+                { "userName", userName }
+            };
+
             return new AuthenticationProperties(data);
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Data.Interfaces
+﻿using BlastOFF.Models.UserModels;
+
+namespace BlastOFF.Data.Interfaces
 {
     using Models.ChatModels;
 
@@ -33,6 +35,8 @@
 
         //// Chat
         IRepository<Message> Messages { get; }
+
+        IRepository<UserSession> UserSessions { get; }
 
         //// END - Repositories
 

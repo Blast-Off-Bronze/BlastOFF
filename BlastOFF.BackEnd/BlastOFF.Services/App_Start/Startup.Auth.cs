@@ -14,30 +14,28 @@
 
     public partial class Startup
     {
-        public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
+        public const string TokenEndpointPath = "/api/token";
+        public const string PublicClientId = "self";
 
-        public static string PublicClientId { get; private set; }
+        static Startup()
+        {
+            OAuthOptions = new OAuthAuthorizationServerOptions
+            {
+                TokenEndpointPath = new PathString(TokenEndpointPath),
+                Provider = new ApplicationOAuthProvider(PublicClientId),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(365),
+                AllowInsecureHttp = true
+            };
+        }
+
+        public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
 
         public void ConfigureAuth(IAppBuilder app)
         {
-            app.CreatePerOwinContext(BlastOFFContext.Create);
-            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            // Enable CORS
+            app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions());
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-
-            if (OAuthOptions == null)
-            {
-                PublicClientId = "self";
-                OAuthOptions = new OAuthAuthorizationServerOptions
-                    {
-                        TokenEndpointPath = new PathString("/Token"),
-                        Provider = new ApplicationOAuthProvider(PublicClientId),
-                        AccessTokenExpireTimeSpan = TimeSpan.FromHours(12),
-                        AllowInsecureHttp = true
-                    };
-            }
-
+            // Enable the application to use bearer tokens to authenticate users
             app.UseOAuthBearerTokens(OAuthOptions);
         }
     }

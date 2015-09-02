@@ -1,4 +1,5 @@
 ﻿using BlastOFF.Models.ChatModels;
+using BlastOFF.Models.UserModels;
 
 namespace BlastOFF.Data
 {
@@ -23,6 +24,7 @@ namespace BlastOFF.Data
         private IRepository<Image> images;
         private IRepository<MusicAlbum> musicAlbums;
         private IRepository<Song> songs;
+        private IRepository<UserSession> userSessions;
 
         private IBlastOFFContext context;
         private bool disposed = false;
@@ -63,6 +65,18 @@ namespace BlastOFF.Data
                     this.messages = new Repository<Message>(this.context);
                 }
                 return this.messages;
+            }
+        }
+
+        public IRepository<UserSession> UserSessions
+        {
+            get
+            {
+                if (this.userSessions == null)
+                {
+                    this.userSessions = new Repository<UserSession>(this.context);
+                }
+                return this.userSessions;
             }
         }
 
