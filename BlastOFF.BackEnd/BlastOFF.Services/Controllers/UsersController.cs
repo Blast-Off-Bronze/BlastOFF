@@ -158,7 +158,7 @@ namespace BlastOFF.Services.Controllers
 
         // POST api/User/Logout
         [HttpPost]
-        [Route("Logout")]
+        [Route("api/account/logout")]
         public IHttpActionResult Logout()
         {
             // This does not actually perform logout! The OWIN OAuth implementation
