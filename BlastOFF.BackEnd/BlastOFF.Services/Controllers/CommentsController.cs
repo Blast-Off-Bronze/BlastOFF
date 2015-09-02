@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using BlastOFF.Services.Models.CommentModels;
+
+namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -47,7 +49,7 @@
         [HttpPut]
         [Route("api/comments/{id}")]
         [Authorize]
-        public IHttpActionResult UpdateComment([FromUri] int id, [FromBody] CommentBindingModel comment)
+        public IHttpActionResult UpdateComment([FromUri] int id, [FromBody] CommentEditBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 

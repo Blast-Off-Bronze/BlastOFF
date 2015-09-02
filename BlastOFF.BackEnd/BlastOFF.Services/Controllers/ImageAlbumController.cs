@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BlastOFF.Services.Models.CommentModels;
 
 namespace BlastOFF.Services.Controllers
 {
@@ -434,7 +435,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [Route("api/imageAlbums/{id}/comments")]
         [Authorize]
-        public IHttpActionResult AddImageAlbumComment([FromUri]int id, [FromBody]CommentBindingModel comment)
+        public IHttpActionResult AddImageAlbumComment([FromUri]int id, [FromBody]CommentCreateBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -470,7 +471,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [Route("api/images/{id}/comments")]
         [Authorize]
-        public IHttpActionResult AddImagesComment([FromUri]int id, [FromBody]CommentBindingModel comment)
+        public IHttpActionResult AddImagesComment([FromUri]int id, [FromBody]CommentCreateBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 

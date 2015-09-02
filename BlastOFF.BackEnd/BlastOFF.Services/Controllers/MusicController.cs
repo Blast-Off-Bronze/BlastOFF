@@ -335,7 +335,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [Route("api/music/albums/{id}/comments")]
         [Authorize]
-        public IHttpActionResult AddMusicAlbumComment([FromUri] int id, [FromBody] CommentBindingModel comment)
+        public IHttpActionResult AddMusicAlbumComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -382,7 +382,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [Route("api/songs/{id}/comments")]
         [Authorize]
-        public IHttpActionResult AddSongComment([FromUri] int id, [FromBody] CommentBindingModel comment)
+        public IHttpActionResult AddSongComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 

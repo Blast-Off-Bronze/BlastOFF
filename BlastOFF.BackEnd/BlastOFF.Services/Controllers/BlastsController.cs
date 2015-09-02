@@ -176,7 +176,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [Route("api/blasts/{id}/comments")]
         [Authorize]
-        public IHttpActionResult AddBlastComment([FromUri]int id, [FromBody] CommentBindingModel comment)
+        public IHttpActionResult AddBlastComment([FromUri]int id, [FromBody] CommentCreateBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
