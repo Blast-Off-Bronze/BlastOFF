@@ -7,20 +7,17 @@
 
     public class CommentViewModel
     {
-        public static Expression<Func<Comment, CommentViewModel>> Get
+        public static CommentViewModel Create(Comment c)
         {
-            get
+            return new CommentViewModel
             {
-                return c => new CommentViewModel
-                {
-                    Id = c.Id,
-                    Content = c.Content,
-                    PostedOn = c.PostedOn,
-                    AuthorId = c.AuthorId,
-                    Author = c.Author.UserName,
-                    LikesCount = c.LikedBy.Count
-                };
-            }
+                Id = c.Id,
+                Content = c.Content,
+                PostedOn = c.PostedOn,
+                AuthorId = c.AuthorId,
+                Author = c.Author.UserName,
+                LikesCount = c.LikedBy.Count
+            };
         }
 
         public int Id { get; set; }

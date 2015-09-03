@@ -210,13 +210,12 @@ namespace BlastOFF.Services.Controllers
 
             comment.Id = newComment.Id;
 
-            var commentCollection = new List<Comment> { newComment };
 
-            var commentToReturn = commentCollection.AsQueryable().Select(CommentViewModel.Get);
+            var returnItem = CommentViewModel.Create(newComment);
 
             this.Data.Dispose();
 
-            return this.Ok(commentToReturn);
+            return this.Ok(returnItem);
         }
     }
 }

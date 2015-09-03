@@ -25,7 +25,7 @@
         // GET api/message
         [HttpGet]
         [Route("api/message")]
-        public IHttpActionResult GetMessages([FromUri]string partnerId)
+        public IHttpActionResult GetMessages([FromUri] string partnerId)
         {
             var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
@@ -36,7 +36,7 @@
 
             var messages = this.Data.Messages.All().Where(m => (m.SenderId == user.Id && m.ReceiverId == partnerId)
             || (m.SenderId == partnerId && m.ReceiverId == user.Id) && m.Deleted == false)
-                .Select(ChatViewModel.DisplayResult);
+                .Select(m => MessageViewModel.Create(m));
 
             return this.Ok(messages);
         }
@@ -44,7 +44,7 @@
         // POST api/message
         [HttpPost]
         [Route("api/message")]
-        public IHttpActionResult PostMessage([FromBody]ChatCreateBindingModel model)
+        public IHttpActionResult PostMessage([FromBody] MessageCreateBindingModel model)
         {
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
@@ -65,20 +65,22 @@
                 SenderId = currentUser.Id,
                 ReceiverId = model.ReceiverId,
                 Content = model.Content,
-                PostedOn = DateTime.Now
+                SentDateTime = DateTime.Now
             };
 
             this.Data.Messages.Add(message);
 
             this.Data.SaveChanges();
 
-            return this.Ok(message);
+            var resultItem = MessageViewModel.Create(message);
+
+            return this.Ok(resultItem);
         }
 
         // DELETE api/message
         [HttpDelete]
         [Route("api/message")]
-        public IHttpActionResult Delete([FromBody]int id)
+        public IHttpActionResult Delete([FromBody] int id)
         {
             var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 

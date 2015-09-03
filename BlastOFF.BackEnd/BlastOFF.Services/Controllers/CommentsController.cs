@@ -1,19 +1,18 @@
-﻿using BlastOFF.Services.Models.CommentModels;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Web.Http;
 
     using BlastOFF.Data;
     using BlastOFF.Data.Interfaces;
-    using BlastOFF.Models;
-    using BlastOFF.Services.Models;
 
     using Microsoft.AspNet.Identity;
 
+    using BlastOFF.Services.Models.CommentModels;
+    using BlastOFF.Services.UserSessionUtils;
+
+    [SessionAuthorize]
     public class CommentsController : BaseApiController
     {
         public CommentsController()
@@ -29,11 +28,10 @@ namespace BlastOFF.Services.Controllers
         //// GET /api/comments/{id}
         [HttpGet]
         [Route("api/comments/{id}")]
-        public IHttpActionResult FindCommentById([FromUri]int id)
+        [AllowAnonymous]
+        public IHttpActionResult FindCommentById([FromUri] int id)
         {
-            var commentCollection = new List<Comment> { this.Data.Comments.Find(id) };
-
-            var comment = commentCollection.AsQueryable().Select(CommentViewModel.Get);
+            var comment = this.Data.Comments.Find(id);
 
             if (comment == null)
             {
@@ -42,14 +40,15 @@ namespace BlastOFF.Services.Controllers
 
             this.Data.Dispose();
 
-            return this.Ok(comment);
+            var returnItem = CommentViewModel.Create(comment);
+
+            return this.Ok(returnItem);
         }
 
         //// PUT /api/comments/{id}
         [HttpPut]
         [Route("api/comments/{id}")]
-        [Authorize]
-        public IHttpActionResult UpdateComment([FromUri] int id, [FromBody] CommentEditBindingModel comment)
+        public IHttpActionResult UpdateComment([FromUri] int id, [FromBody] CommentEditBindingModel model)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -65,7 +64,7 @@ namespace BlastOFF.Services.Controllers
                 return this.Unauthorized();
             }
 
-            if (comment == null)
+            if (model == null)
             {
                 return this.BadRequest("Cannot create an empty comment model.");
             }
@@ -75,24 +74,21 @@ namespace BlastOFF.Services.Controllers
                 return this.BadRequest(this.ModelState);
             }
 
-            existingComment.Content = comment.Content;
+            existingComment.Content = model.Content;
             existingComment.PostedOn = DateTime.Now;
 
             this.Data.SaveChanges();
 
-            var commentCollection = new List<Comment> { existingComment };
-
-            var commentToReturn = commentCollection.AsQueryable().Select(CommentViewModel.Get);
+            var returnItem = CommentViewModel.Create(existingComment);
 
             this.Data.Dispose();
 
-            return this.Ok(commentToReturn);
+            return this.Ok(returnItem);
         }
 
         //// DELETE /api/comments/{id}
         [HttpDelete]
         [Route("api/comments/{id}")]
-        [Authorize]
         public IHttpActionResult DeleteComment([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -121,7 +117,6 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/comments/{id}/likes
         [HttpPost]
         [Route("api/comments/{id}/likes")]
-        [Authorize]
         public IHttpActionResult LikeComment([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -158,7 +153,6 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/comments/{id}/likes
         [HttpDelete]
         [Route("api/comments/{id}/likes")]
-        [Authorize]
         public IHttpActionResult UnlikeComment([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();

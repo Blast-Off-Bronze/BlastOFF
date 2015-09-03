@@ -57,7 +57,7 @@ namespace BlastOFF.Models.UserModel
             this.receivedMessages = new HashSet<Message>();
         }
 
-        public DateTime BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         public virtual ICollection<Blast> Blasts
         {

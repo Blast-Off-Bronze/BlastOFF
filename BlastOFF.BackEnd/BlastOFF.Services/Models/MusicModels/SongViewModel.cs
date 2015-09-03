@@ -1,38 +1,34 @@
 ﻿namespace BlastOFF.Services.Models.MusicModels
 {
     using System;
-    using System.Linq.Expressions;
 
     using BlastOFF.Models.MusicModels;
 
     public class SongViewModel
     {
-        public static Expression<Func<Song, SongViewModel>> Get
+        public static SongViewModel Create(Song s)
         {
-            get
+            return new SongViewModel
             {
-                return s => new SongViewModel
-                {
-                    Id = s.Id,
-                    Title = s.Title,
-                    Artist = s.Artist,
-                    FilePath = s.FilePath,
-                    MusicAlbumId = s.MusicAlbumId,
-                    MusicAlbum = s.MusicAlbum.Title,
-                    DateAdded = s.DateAdded,
-                    ViewsCount = s.ViewsCount,
-                    LikesCount = s.UserLikes.Count,
-                    CommentsCount = s.Comments.Count,
-                    TrackNumber = s.TrackNumber,
-                    OriginalAlbumTitle = s.OriginalAlbumTitle,
-                    OriginalAlbumArtist = s.OriginalAlbumArtist,
-                    OriginalDate = s.OriginalDate,
-                    Genre = s.Genre,
-                    Composer = s.Composer,
-                    Publisher = s.Publisher,
-                    Bpm = s.Bpm
-                };
-            }
+                Id = s.Id,
+                Title = s.Title,
+                Artist = s.Artist,
+                FilePath = s.FilePath,
+                MusicAlbumId = s.MusicAlbumId,
+                MusicAlbum = s.MusicAlbum.Title,
+                DateAdded = s.DateAdded,
+                ViewsCount = s.ViewsCount,
+                LikesCount = s.UserLikes.Count,
+                CommentsCount = s.Comments.Count,
+                TrackNumber = s.TrackNumber,
+                OriginalAlbumTitle = s.OriginalAlbumTitle,
+                OriginalAlbumArtist = s.OriginalAlbumArtist,
+                OriginalDate = s.OriginalDate,
+                Genre = s.Genre,
+                Composer = s.Composer,
+                Publisher = s.Publisher,
+                Bpm = s.Bpm
+            };
         }
 
         public int Id { get; set; }

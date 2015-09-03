@@ -2,12 +2,9 @@
 
 namespace BlastOFF.Services.Models.ChatModels
 {
-    public class ChatCreateBindingModel
+    public class MessageModifyBindingModel
     {
         [Required]
         public string Content { get; set; }
-
-        [Required]
-        public string ReceiverId { get; set; }
     }
 }

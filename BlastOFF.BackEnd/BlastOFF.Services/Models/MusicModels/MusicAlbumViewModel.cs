@@ -3,32 +3,28 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
     using BlastOFF.Models.MusicModels;
 
     public class MusicAlbumViewModel
     {
-        public static Expression<Func<MusicAlbum, MusicAlbumViewModel>> Get
+        public static MusicAlbumViewModel Create(MusicAlbum a)
         {
-            get
-            {
-                return a => new MusicAlbumViewModel
-                        {
-                            Id = a.Id,
-                            Title = a.Title,
-                            Author = a.Author.UserName,
-                            AuthorId = a.Author.Id,
-                            DateCreated = a.DateCreated,
-                            ViewsCount = a.ViewsCount,
-                            CoverImageData = a.CoverImageData,
-                            LikesCount = a.UserLikes.Count,
-                            CommentsCount = a.Comments.Count,
-                            FollowersCount = a.Followers.Count,
-                            SongsCount = a.Songs.Count,
-                            Songs = a.Songs.Select(s => s.Title).Take(3)
-                        };
-            }
+            return new MusicAlbumViewModel
+                    {
+                        Id = a.Id,
+                        Title = a.Title,
+                        Author = a.Author.UserName,
+                        AuthorId = a.Author.Id,
+                        DateCreated = a.DateCreated,
+                        ViewsCount = a.ViewsCount,
+                        CoverImageData = a.CoverImageData,
+                        LikesCount = a.UserLikes.Count,
+                        CommentsCount = a.Comments.Count,
+                        FollowersCount = a.Followers.Count,
+                        SongsCount = a.Songs.Count,
+                        Songs = a.Songs.Select(s => s.Title).Take(3)
+                    };
         }
 
         public int Id { get; set; }

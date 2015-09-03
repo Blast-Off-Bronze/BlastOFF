@@ -31,13 +31,13 @@
                     {
                         Content = m.Content,
                         Receiver = m.Receiver.UserName,
-                        PostedOn = m.PostedOn
+                        PostedOn = m.SentDateTime
                     }),
                     ReceivedMessagesDetails = model.ReceivedMessages.Select(m => new
                     {
                         Content = m.Content,
                         Sender = m.Sender.UserName,
-                        PostedOn = m.PostedOn
+                        PostedOn = m.SentDateTime
                     })
                 };
             }

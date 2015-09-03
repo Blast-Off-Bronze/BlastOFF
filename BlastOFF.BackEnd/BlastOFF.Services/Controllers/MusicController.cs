@@ -1,4 +1,5 @@
 ﻿using BlastOFF.Services.Models.CommentModels;
+using BlastOFF.Services.UserSessionUtils;
 
 namespace BlastOFF.Services.Controllers
 {
@@ -22,6 +23,7 @@ namespace BlastOFF.Services.Controllers
 
     using Comment = BlastOFF.Models.Comment;
 
+    [SessionAuthorize]
     public class MusicController : BaseApiController
     {
         protected const int SongKilobyteLimit = 20480;
@@ -41,9 +43,10 @@ namespace BlastOFF.Services.Controllers
         //// GET /api/music/albums
         [HttpGet]
         [Route("api/music/albums")]
+        [AllowAnonymous]
         public IHttpActionResult AllMusicAlbums()
         {
-            var albums = this.Data.MusicAlbums.All().Select(MusicAlbumViewModel.Get);
+            var albums = this.Data.MusicAlbums.All().Select(a => MusicAlbumViewModel.Create(a));
 
             this.Data.Dispose();
 
@@ -53,6 +56,7 @@ namespace BlastOFF.Services.Controllers
         //// GET /api/music/albums/{id}/songs
         [HttpGet]
         [Route("api/music/albums/{id}/songs")]
+        [AllowAnonymous]
         public IHttpActionResult AllSongs([FromUri] int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
@@ -62,7 +66,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var songs = album.Songs.AsQueryable().Select(SongViewModel.Get);
+            var songs = album.Songs.AsQueryable().Select(s => SongViewModel.Create(s));
 
             this.Data.Dispose();
 
@@ -72,6 +76,7 @@ namespace BlastOFF.Services.Controllers
         //// GET /api/music/albums/{id}/comments
         [HttpGet]
         [Route("api/music/albums/{id}/comments")]
+        [AllowAnonymous]
         public IHttpActionResult AllMusicAlbumComments([FromUri] int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
@@ -81,7 +86,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var comments = album.Comments.AsQueryable().Select(CommentViewModel.Get);
+            var comments = album.Comments.AsQueryable().Select(c => CommentViewModel.Create(c));
 
             this.Data.Dispose();
 
@@ -91,6 +96,7 @@ namespace BlastOFF.Services.Controllers
         //// GET /api/songs/{id}/comments
         [HttpGet]
         [Route("api/songs/{id}/comments")]
+        [AllowAnonymous]
         public IHttpActionResult AllSongComments([FromUri] int id)
         {
             var song = this.Data.Songs.Find(id);
@@ -100,7 +106,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var comments = song.Comments.AsQueryable().Select(CommentViewModel.Get);
+            var comments = song.Comments.AsQueryable().Select(c => CommentViewModel.Create(c));
 
             this.Data.Dispose();
 
@@ -112,11 +118,10 @@ namespace BlastOFF.Services.Controllers
         //// GET /api/music/albums/{id}
         [HttpGet]
         [Route("api/music/albums/{id}")]
+        [AllowAnonymous]
         public IHttpActionResult FindMusicAlbumById([FromUri] int id)
         {
-            var musicAlbumCollection = new List<MusicAlbum> { this.Data.MusicAlbums.Find(id) };
-
-            var album = musicAlbumCollection.AsQueryable().Select(MusicAlbumViewModel.Get);
+            var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
             {
@@ -125,17 +130,18 @@ namespace BlastOFF.Services.Controllers
 
             this.Data.Dispose();
 
-            return this.Ok(album);
+            var albumToReturn = MusicAlbumViewModel.Create(album);
+
+            return this.Ok(albumToReturn);
         }
 
         //// GET /api/songs/{id}
         [HttpGet]
         [Route("api/songs/{id}")]
+        [AllowAnonymous]
         public IHttpActionResult FindSongById([FromUri] int id)
         {
-            var songCollection = new List<Song> { this.Data.Songs.Find(id) };
-
-            var song = songCollection.AsQueryable().Select(SongViewModel.Get);
+            var song = this.Data.Songs.Find(id);
 
             if (song == null)
             {
@@ -144,7 +150,9 @@ namespace BlastOFF.Services.Controllers
 
             this.Data.Dispose();
 
-            return this.Ok(song);
+            var songToReturn = SongViewModel.Create(song);
+
+            return this.Ok(songToReturn);
         }
 
         //// ADD
@@ -152,8 +160,7 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/music/albums
         [HttpPost]
         [Route("api/music/albums")]
-        [Authorize]
-        public IHttpActionResult AddMusicAlbum(MusicAlbumBindingModel musicAlbum)
+        public IHttpActionResult AddMusicAlbum([FromBody] MusicAlbumBindingModel musicAlbum)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -191,18 +198,17 @@ namespace BlastOFF.Services.Controllers
             this.Data.MusicAlbums.Add(newMusicAlbum);
             this.Data.SaveChanges();
 
-            musicAlbum.Id = newMusicAlbum.Id;
-
             this.Data.Dispose();
 
-            return this.Ok(musicAlbum);
+            var musicAlbumToReturn = MusicAlbumViewModel.Create(newMusicAlbum);
+
+            return this.Ok(musicAlbumToReturn);
         }
 
         //// POST /api/music/albums/{id}/songs
         [HttpPost]
         [Route("api/music/albums/{id}/songs")]
-        [Authorize]
-        public IHttpActionResult AddSong(int id, SongBindingModel song)
+        public IHttpActionResult AddSong([FromUri] int id, [FromBody] SongBindingModel song)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -274,11 +280,11 @@ namespace BlastOFF.Services.Controllers
             this.Data.Songs.Add(newSong);
             this.Data.SaveChanges();
 
-            song.Id = newSong.Id;
+            var songToReturn = SongViewModel.Create(newSong);
 
             this.Data.Dispose();
 
-            return this.Ok(song);
+            return this.Ok(songToReturn);
         }
 
         private bool ValidateAudioFileType(string fileDataUrl)
@@ -334,7 +340,6 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/music/albums/{id}/comments
         [HttpPost]
         [Route("api/music/albums/{id}/comments")]
-        [Authorize]
         public IHttpActionResult AddMusicAlbumComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -367,11 +372,7 @@ namespace BlastOFF.Services.Controllers
             this.Data.Comments.Add(newMusicAlbumComment);
             this.Data.SaveChanges();
 
-            comment.Id = newMusicAlbumComment.Id;
-
-            var commentCollection = new List<Comment> { newMusicAlbumComment };
-
-            var commentToReturn = commentCollection.AsQueryable().Select(CommentViewModel.Get);
+            var commentToReturn = CommentViewModel.Create(newMusicAlbumComment);
 
             this.Data.Dispose();
 
@@ -381,7 +382,6 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/songs/{id}/comments
         [HttpPost]
         [Route("api/songs/{id}/comments")]
-        [Authorize]
         public IHttpActionResult AddSongComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -414,11 +414,7 @@ namespace BlastOFF.Services.Controllers
             this.Data.Comments.Add(newSongComment);
             this.Data.SaveChanges();
 
-            comment.Id = newSongComment.Id;
-
-            var commentCollection = new List<Comment> { newSongComment };
-
-            var commentToReturn = commentCollection.AsQueryable().Select(CommentViewModel.Get);
+            var commentToReturn = CommentViewModel.Create(newSongComment);
 
             this.Data.Dispose();
 
@@ -430,7 +426,6 @@ namespace BlastOFF.Services.Controllers
         //// PUT /api/music/albums/{id}
         [HttpPut]
         [Route("api/music/albums/{id}")]
-        [Authorize]
         public IHttpActionResult UpdateMusicAlbum([FromUri] int id, [FromBody] MusicAlbumBindingModel musicAlbum)
         {
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
@@ -461,9 +456,7 @@ namespace BlastOFF.Services.Controllers
 
             this.Data.SaveChanges();
 
-            var musicAlbumCollection = new List<MusicAlbum> { existingMusicAlbum };
-
-            var musicAlbumToReturn = musicAlbumCollection.AsQueryable().Select(MusicAlbumViewModel.Get);
+            var musicAlbumToReturn = MusicAlbumViewModel.Create(existingMusicAlbum);
 
             this.Data.Dispose();
 
@@ -473,7 +466,6 @@ namespace BlastOFF.Services.Controllers
         //// PUT /api/songs/{id}
         [HttpPut]
         [Route("api/songs/{id}")]
-        [Authorize]
         public IHttpActionResult UpdateSong([FromUri] int id, [FromBody] SongBindingModel song)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -514,9 +506,7 @@ namespace BlastOFF.Services.Controllers
 
             this.Data.SaveChanges();
 
-            var songCollection = new List<Song> { existingSong };
-
-            var songToReturn = songCollection.AsQueryable().Select(SongViewModel.Get);
+            var songToReturn = SongViewModel.Create(existingSong);
 
             this.Data.Dispose();
 
@@ -528,7 +518,6 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/music/albums/{id}
         [HttpDelete]
         [Route("api/music/albums/{id}")]
-        [Authorize]
         public IHttpActionResult DeleteMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -556,7 +545,6 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/songs/{id}
         [HttpDelete]
         [Route("api/songs/{id}")]
-        [Authorize]
         public IHttpActionResult DeleteSong([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -586,7 +574,6 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/music/albums/{id}/likes
         [HttpPost]
         [Route("api/music/albums/{id}/likes")]
-        [Authorize]
         public IHttpActionResult LikeMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -628,7 +615,6 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/music/albums/{id}/likes
         [HttpDelete]
         [Route("api/music/albums/{id}/likes")]
-        [Authorize]
         public IHttpActionResult UnlikeMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -670,7 +656,6 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/songs/{id}/likes
         [HttpPost]
         [Route("api/songs/{id}/likes")]
-        [Authorize]
         public IHttpActionResult LikeSong([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -708,7 +693,6 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/songs/{id}/likes
         [HttpDelete]
         [Route("api/songs/{id}/likes")]
-        [Authorize]
         public IHttpActionResult UnlikeSong([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -749,7 +733,6 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/music/albums/{id}/follow
         [HttpPost]
         [Route("api/music/albums/{id}/follow")]
-        [Authorize]
         public IHttpActionResult FollowMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -791,7 +774,6 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/music/albums/{id}/follow
         [HttpDelete]
         [Route("api/music/albums/{id}/follow")]
-        [Authorize]
         public IHttpActionResult UnfollowMusicAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();

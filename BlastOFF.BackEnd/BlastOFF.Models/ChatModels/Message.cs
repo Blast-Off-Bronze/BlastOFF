@@ -26,7 +26,10 @@
         [DefaultValue(false)]
         public bool Deleted { get; set; }
 
+        [DefaultValue(false)]
+        public bool Seen { get; set; }
+
         [Required]
-        public DateTime PostedOn { get; set; }
+        public DateTime SentDateTime { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BlastOFF.Services.Models.CommentModels;
+using BlastOFF.Services.UserSessionUtils;
 
 namespace BlastOFF.Services.Controllers
 {
@@ -14,6 +15,7 @@ namespace BlastOFF.Services.Controllers
     using BlastOFF.Services.Models.ImageModels;
     using Microsoft.AspNet.Identity;
 
+    [SessionAuthorize]
     public class ImageAlbumController : BaseApiController
     {
         public ImageAlbumController()
@@ -29,17 +31,21 @@ namespace BlastOFF.Services.Controllers
         // Image Albums EndPoints
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("api/imageAlbums")]
         public IHttpActionResult GetAllImageAlbums()
         {
-            var imageAlbums = this.Data.ImageAlbums.All().ToList();
+            var imageAlbums = this.Data.ImageAlbums.All()
+                .Select(a => ImageAlbumViewModel.Create(a, null))
+                .ToList();
 
             return this.Ok(imageAlbums);
         }
 
         [HttpGet]
         [Route("api/imageAlbums/{id}")]
-        public IHttpActionResult GetImageAlbumById([FromUri]int id)
+        [AllowAnonymous]
+        public IHttpActionResult GetImageAlbumById([FromUri] int id)
         {
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
@@ -52,15 +58,19 @@ namespace BlastOFF.Services.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         [Route("api/imageAlbums")]
-        public IHttpActionResult CreateNewImageAlbum([FromBody]ImageAlbumCreateBindingModel model)
+        public IHttpActionResult CreateNewImageAlbum([FromBody] ImageAlbumCreateBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
+            if (model == null)
+            {
+                return this.BadRequest("No data.");
+            }
+
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Wrong or missing input parameters");
+                return this.BadRequest(this.ModelState);
             }
 
             var imageAlbum = new ImageAlbum()
@@ -78,13 +88,15 @@ namespace BlastOFF.Services.Controllers
             this.Data.ImageAlbums.Add(imageAlbum); 
             this.Data.SaveChanges();
 
-            return Ok();
+            var user = this.Data.Users.Find(loggedUserId);
+            var returnItem = ImageAlbumViewModel.Create(imageAlbum, user);
+
+            return this.Ok(returnItem);
         }
 
         [HttpPut]
-        [Authorize]
         [Route("api/imageAlbums/{id}")]
-        public IHttpActionResult EditImageAlbum([FromUri]int id, [FromBody]ImageAlbumModifyBindingModel model)
+        public IHttpActionResult EditImageAlbum([FromUri]int id, [FromBody] ImageAlbumModifyBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -110,13 +122,14 @@ namespace BlastOFF.Services.Controllers
             this.Data.ImageAlbums.Update(imageAlbum);
             this.Data.SaveChanges();
 
-            return Ok();
+            var returnItem = ImageAlbumViewModel.Create(imageAlbum, null);
+
+            return Ok(returnItem);
         }
 
         [HttpDelete]
-        [Authorize]
         [Route("api/imageAlbums/{id}")]
-        public IHttpActionResult DeleteImageAlbum([FromUri]int id)
+        public IHttpActionResult DeleteImageAlbum([FromUri] int id)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -143,7 +156,8 @@ namespace BlastOFF.Services.Controllers
 
         [HttpGet]
         [Route("api/images/{id}")]
-        public IHttpActionResult GetImageById(int id)
+        [AllowAnonymous]
+        public IHttpActionResult GetImageById([FromUri] int id)
         {
             var imagе = this.Data.Images.Find(id);
 
@@ -152,13 +166,14 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            return this.Ok(imagе);
+            var returnItem = ImageViewModel.Create(imagе);
+
+            return this.Ok(returnItem);
         }
 
         [HttpPost]
-        [Authorize]
         [Route("api/images")]
-        public IHttpActionResult CreateNewImage([FromBody]ImageCreateBindingModel model)
+        public IHttpActionResult CreateNewImage([FromBody] ImageCreateBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -184,13 +199,14 @@ namespace BlastOFF.Services.Controllers
             this.Data.Images.Add(image);
             this.Data.SaveChanges();
 
-            return Ok();
+            var returnItem = ImageViewModel.Create(image);
+
+            return Ok(returnItem);
         }
 
         [HttpPut]
-        [Authorize]
         [Route("api/images/{id}")]
-        public IHttpActionResult EditImage([FromUri]int id, [FromBody]ImageModifyBindingModel model)
+        public IHttpActionResult EditImage([FromUri] int id, [FromBody] ImageModifyBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -217,13 +233,14 @@ namespace BlastOFF.Services.Controllers
             this.Data.Images.Update(image);
             this.Data.SaveChanges();
 
-            return Ok();
+            var returnItem = ImageViewModel.Create(image);
+
+            return Ok(returnItem);
         }
 
         [HttpDelete]
-        [Authorize]
         [Route("api/imageAlbums/{id}")]
-        public IHttpActionResult DeleteImage([FromUri]int id)
+        public IHttpActionResult DeleteImage([FromUri] int id)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -248,8 +265,7 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/music/albums/{id}/likes
         [HttpPost]
         [Route("api/imageAlbums/{id}/likes")]
-        [Authorize]
-        public IHttpActionResult LikeImagecAlbum([FromUri]int id)
+        public IHttpActionResult LikeImagecAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -285,8 +301,7 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/music/albums/{id}/likes
         [HttpDelete]
         [Route("api/imageAlbums/{id}/likes")]
-        [Authorize]
-        public IHttpActionResult UnlikeImageAlbum([FromUri]int id)
+        public IHttpActionResult UnlikeImageAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -322,8 +337,7 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/music/albums/{id}/follow
         [HttpPost]
         [Route("api/imageAlbums/{id}/follow")]
-        [Authorize]
-        public IHttpActionResult FollowImageAlbum([FromUri]int id)
+        public IHttpActionResult FollowImageAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -359,8 +373,7 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/music/albums/{id}/follow
         [HttpDelete]
         [Route("api/imageAlbums/{id}/follow")]
-        [Authorize]
-        public IHttpActionResult UnfollowImageAlbum([FromUri]int id)
+        public IHttpActionResult UnfollowImageAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -396,7 +409,8 @@ namespace BlastOFF.Services.Controllers
         //// GET /api/imageAlbums/{id}/comments
         [HttpGet]
         [Route("api/imageAlbums/{id}/comments")]
-        public IHttpActionResult AllImageAlbumComments([FromUri]int id)
+        [AllowAnonymous]
+        public IHttpActionResult AllImageAlbumComments([FromUri] int id)
         {
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
@@ -405,7 +419,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var comments = imageAlbum.Comments.AsQueryable().Select(CommentViewModel.Get);
+            var comments = imageAlbum.Comments.AsQueryable().Select(c => CommentViewModel.Create(c));
 
             this.Data.Dispose();
 
@@ -415,7 +429,8 @@ namespace BlastOFF.Services.Controllers
         //// GET /api/images/{id}/comments
         [HttpGet]
         [Route("api/images/{id}/comments")]
-        public IHttpActionResult AllImageComments([FromUri]int id)
+        [AllowAnonymous]
+        public IHttpActionResult AllImageComments([FromUri] int id)
         {
             var image = this.Data.Images.Find(id);
 
@@ -424,7 +439,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var comments = image.Comments.AsQueryable().Select(CommentViewModel.Get);
+            var comments = image.Comments.AsQueryable().Select(c => CommentViewModel.Create(c));
 
             this.Data.Dispose();
 
@@ -434,8 +449,7 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/imageAlbums/{id}/comments
         [HttpPost]
         [Route("api/imageAlbums/{id}/comments")]
-        [Authorize]
-        public IHttpActionResult AddImageAlbumComment([FromUri]int id, [FromBody]CommentCreateBindingModel comment)
+        public IHttpActionResult AddImageAlbumComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -453,25 +467,25 @@ namespace BlastOFF.Services.Controllers
 
             var newComment = new Comment
             {
-                Content = comment.Content,
+                Content = model.Content,
                 AuthorId = loggedUserId,
                 PostedOn = DateTime.Now,
                 ImageAlbumId = id
             };
 
             this.Data.Comments.Add(newComment);
-            comment.Id = newComment.Id;
 
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            return this.Ok(comment);
+            var commentToReturn = CommentViewModel.Create(newComment);
+
+            return this.Ok(commentToReturn);
         }
 
         [HttpPost]
         [Route("api/images/{id}/comments")]
-        [Authorize]
-        public IHttpActionResult AddImagesComment([FromUri]int id, [FromBody]CommentCreateBindingModel comment)
+        public IHttpActionResult AddImagesComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -494,7 +508,7 @@ namespace BlastOFF.Services.Controllers
 
             var newComment = new Comment
             {
-                Content = comment.Content,
+                Content = model.Content,
                 AuthorId = loggedUserId,
                 PostedOn = DateTime.Now,
                 ImageId = id
@@ -503,11 +517,7 @@ namespace BlastOFF.Services.Controllers
             this.Data.Comments.Add(newComment);
             this.Data.SaveChanges();
 
-            comment.Id = newComment.Id;
-
-            var commentCollection = new List<Comment> { newComment };
-
-            var commentToReturn = commentCollection.AsQueryable().Select(CommentViewModel.Get);
+            var commentToReturn = CommentViewModel.Create(newComment);
 
             this.Data.Dispose();
 
@@ -517,8 +527,7 @@ namespace BlastOFF.Services.Controllers
         //// POST /api/images/{id}/likes
         [HttpPost]
         [Route("api/images/{id}/likes")]
-        [Authorize]
-        public IHttpActionResult LikeImage([FromUri]int id)
+        public IHttpActionResult LikeImage([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -554,8 +563,7 @@ namespace BlastOFF.Services.Controllers
         //// DELETE /api/songs/{id}/likes
         [HttpDelete]
         [Route("api/images/{id}/likes")]
-        [Authorize]
-        public IHttpActionResult UnlikeImage(int id)
+        public IHttpActionResult UnlikeImage([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -590,8 +598,7 @@ namespace BlastOFF.Services.Controllers
 
         [HttpDelete]
         [Route("api/images/{id}")]
-        [Authorize]
-        public IHttpActionResult DeleteSong([FromUri]int id)
+        public IHttpActionResult DeleteSong([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 

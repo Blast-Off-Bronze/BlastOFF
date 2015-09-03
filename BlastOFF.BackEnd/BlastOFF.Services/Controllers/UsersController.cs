@@ -58,7 +58,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("api/account/register")]
-        public async Task<IHttpActionResult> RegisterUser(RegisterUserBindingModel model)
+        public async Task<IHttpActionResult> RegisterUser([FromBody]RegisterUserBindingModel model)
         {
             if (this.User.Identity.GetUserId() != null)
             {
@@ -238,7 +238,6 @@ namespace BlastOFF.Services.Controllers
 
         [HttpPost]
         [Route("api/users/{username}/follow")]
-        [Authorize]
         public IHttpActionResult FollowUser([FromUri]string username)
         {
             var loggedUserId = this.User.Identity.GetUserId();
@@ -271,7 +270,6 @@ namespace BlastOFF.Services.Controllers
         }
 
         [HttpDelete]
-        [Authorize]
         [Route("api/users/{username}/unfollow")]
         public IHttpActionResult UnfollowUser([FromUri]string username)
         {

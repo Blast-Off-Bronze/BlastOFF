@@ -300,6 +300,8 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Constants\MusicConstants.cs" />
+    <Compile Include="Models\ImageModels\ImageAlbumViewModel.cs" />
+    <Compile Include="Models\ImageModels\ImageViewModel.cs" />
     <Compile Include="Models\UserModels\LoginUserBindingModel.cs" />
     <Compile Include="Models\UserModels\RegisterUserBindingModel.cs" />
     <Compile Include="UserSessionUtils\SessionAuthorizeAttribute.cs" />
@@ -321,9 +323,9 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BlastModels\BlastBindingModel.cs" />
     <Compile Include="Models\BlastModels\BlastViewModel.cs" />
-    <Compile Include="Models\ChatModels\ChatCreateBindingModel.cs" />
-    <Compile Include="Models\ChatModels\ChatModifyBindingModel.cs" />
-    <Compile Include="Models\ChatModels\ChatViewModel.cs" />
+    <Compile Include="Models\ChatModels\MessageCreateBindingModel.cs" />
+    <Compile Include="Models\ChatModels\MessageModifyBindingModel.cs" />
+    <Compile Include="Models\ChatModels\MessageViewModel.cs" />
     <Compile Include="Models\CommentModels\CommentCreateBindingModel.cs" />
     <Compile Include="Models\CommentModels\CommentEditBindingModel.cs" />
     <Compile Include="Models\CommentModels\CommentViewModel.cs" />
