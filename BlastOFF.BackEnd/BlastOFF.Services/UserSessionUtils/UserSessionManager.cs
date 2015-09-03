@@ -1,16 +1,16 @@
-﻿using System;
-using System.Linq;
-using BlastOFF.Data;
-using BlastOFF.Data.Interfaces;
-using BlastOFF.Models.UserModels;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin;
-
-namespace BlastOFF.Services.UserSessionUtils
+﻿namespace BlastOFF.Services.UserSessionUtils
 {
+    using System;
+    using System.Linq;
+    using BlastOFF.Data;
+    using BlastOFF.Data.Interfaces;
+    using BlastOFF.Models.UserModels;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.Owin;
+
     public class UserSessionManager
     {
-        private static readonly TimeSpan DefaultSessionTimeout = new TimeSpan(0, 0, 30, 0);
+        private static readonly TimeSpan DefaultSessionTimeout = new TimeSpan(0, 1, 0, 0);
 
         protected IOwinContext OwinContext { get; set; }
         protected IBlastOFFData Data { get; private set; }

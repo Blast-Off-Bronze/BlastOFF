@@ -1,18 +1,14 @@
 ﻿namespace BlastOFF.Services.Models.UserModels
 {
     using BlastOFF.Models.UserModel;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
     public class UserViewModel
     {
-        public static Expression<Func<ApplicationUser, UserViewModel>> Create
+        public static UserViewModel Create(ApplicationUser model)
         {
-            get
-            {
-                return model => new UserViewModel
+                return new UserViewModel
                 {
                     Username = model.UserName,
                     PhoneNumber = model.PhoneNumber,
@@ -26,7 +22,6 @@
                     LikedMusicAlbums = model.LikedMusicAlbums.Select(a => a.Title),
                     LikedImageAlbums = model.LikedImageAlbums.Select(a => a.Title)
                 };
-            }
         }
 
         public string Username { get; set; }

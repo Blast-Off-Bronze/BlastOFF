@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BlastOFF.Services.Models.UserModels
+﻿namespace BlastOFF.Services.Models.UserModels
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class RegisterUserBindingModel
     {
         [Required]

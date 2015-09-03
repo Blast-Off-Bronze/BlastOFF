@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BlastOFF.Services.Models.ChatModels
+﻿namespace BlastOFF.Services.Models.ChatModels
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class MessageCreateBindingModel
     {
         [Required]

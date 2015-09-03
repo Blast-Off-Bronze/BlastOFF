@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using BlastOFF.Services.Models.CommentModels;
-using BlastOFF.Services.UserSessionUtils;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Linq;
@@ -14,6 +10,9 @@ namespace BlastOFF.Services.Controllers
     using BlastOFF.Services.Models;
     using BlastOFF.Services.Models.ImageModels;
     using Microsoft.AspNet.Identity;
+
+    using BlastOFF.Services.Models.CommentModels;
+    using BlastOFF.Services.UserSessionUtils;
 
     [SessionAuthorize]
     public class ImageAlbumController : BaseApiController
@@ -262,7 +261,7 @@ namespace BlastOFF.Services.Controllers
             return Ok();
         }
 
-        //// POST /api/music/albums/{id}/likes
+        //// POST /api/imageAlbums/{id}/likes
         [HttpPost]
         [Route("api/imageAlbums/{id}/likes")]
         public IHttpActionResult LikeImagecAlbum([FromUri] int id)
@@ -298,7 +297,7 @@ namespace BlastOFF.Services.Controllers
             return this.Ok(string.Format("Image Album {0}, created by {1} successfully liked.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
         }
 
-        //// DELETE /api/music/albums/{id}/likes
+        //// DELETE /api/imageAlbums/{id}/likes
         [HttpDelete]
         [Route("api/imageAlbums/{id}/likes")]
         public IHttpActionResult UnlikeImageAlbum([FromUri] int id)
@@ -334,7 +333,7 @@ namespace BlastOFF.Services.Controllers
             return this.Ok(string.Format("Image Album {0}, created by {1} successfully unliked.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
         }
 
-        //// POST /api/music/albums/{id}/follow
+        //// POST /api/imageAlbums/{id}/follow
         [HttpPost]
         [Route("api/imageAlbums/{id}/follow")]
         public IHttpActionResult FollowImageAlbum([FromUri] int id)
@@ -370,7 +369,7 @@ namespace BlastOFF.Services.Controllers
             return this.Ok(string.Format("Image Album {0}, created by {1} successfully followed.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
         }
 
-        //// DELETE /api/music/albums/{id}/follow
+        //// DELETE /api/imageAlbums/{id}/follow
         [HttpDelete]
         [Route("api/imageAlbums/{id}/follow")]
         public IHttpActionResult UnfollowImageAlbum([FromUri] int id)
@@ -419,7 +418,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var comments = imageAlbum.Comments.AsQueryable().Select(c => CommentViewModel.Create(c));
+            var comments = imageAlbum.Comments.Select(c => CommentViewModel.Create(c));
 
             this.Data.Dispose();
 
@@ -439,7 +438,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var comments = image.Comments.AsQueryable().Select(c => CommentViewModel.Create(c));
+            var comments = image.Comments.Select(c => CommentViewModel.Create(c));
 
             this.Data.Dispose();
 
@@ -494,11 +493,6 @@ namespace BlastOFF.Services.Controllers
             if (image == null)
             {
                 return this.NotFound();
-            }
-
-            if (image == null)
-            {
-                return this.BadRequest("Cannot create an empty comment model.");
             }
 
             if (!this.ModelState.IsValid)
@@ -560,7 +554,7 @@ namespace BlastOFF.Services.Controllers
             return this.Ok(string.Format("{0}, uploaded by {1} successfully liked.", image.Title, image.UploadedBy.UserName));
         }
 
-        //// DELETE /api/songs/{id}/likes
+        //// DELETE /api/images/{id}/likes
         [HttpDelete]
         [Route("api/images/{id}/likes")]
         public IHttpActionResult UnlikeImage([FromUri] int id)

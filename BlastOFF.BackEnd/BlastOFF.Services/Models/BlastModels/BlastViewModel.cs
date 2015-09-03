@@ -1,33 +1,26 @@
-﻿namespace BlastOFF.Services.Models.BlastModels
+﻿using BlastOFF.Services.Models.CommentModels;
+
+namespace BlastOFF.Services.Models.BlastModels
 {
     using BlastOFF.Models.BlastModels;
     using BlastOFF.Models.Enumerations;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
     public class BlastViewModel
     {
-        public static Expression<Func<Blast, BlastViewModel>> Create
+        public static BlastViewModel Create(Blast model)
         {
-            get
+            return new BlastViewModel
             {
-                return model => new BlastViewModel
-                {
-                    Content = model.Content,
-                    PostedOn = model.PostedOn,
-                    BlastType = model.BlastType,
-                    Author = model.Author.UserName,
-                    Comments = model.Comments.Select(c => new
-                    {
-                        CommentAuthor = c.Author,
-                        CommentedOn = c.PostedOn,
-                        Content = c.Content
-                    }),
-                    LikedBy = model.UserLikes.Select(ul => ul.UserName)
-                };
-            }
+                Content = model.Content,
+                PostedOn = model.PostedOn,
+                BlastType = model.BlastType,
+                Author = model.Author.UserName,
+                Comments = model.Comments.Select(c => CommentViewModel.Create(c)),
+                LikedBy = model.UserLikes.Select(ul => ul.UserName)
+            };
         }
 
         public string Content { get; set; }

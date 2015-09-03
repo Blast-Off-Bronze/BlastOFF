@@ -1,15 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Script.Serialization;
-using BlastOFF.Models.UserModel;
-using BlastOFF.Services.UserSessionUtils;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Testing;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System.Linq;
     using Microsoft.AspNet.Identity;
@@ -19,6 +8,17 @@ namespace BlastOFF.Services.Controllers
     using Data;
     using Data.Interfaces;
     using Models.UserModels;
+
+    using System.Collections.Generic;
+    using System.Net;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using System.Web.Script.Serialization;
+    using BlastOFF.Models.UserModel;
+    using BlastOFF.Services.UserSessionUtils;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Microsoft.Owin.Security;
+    using Microsoft.Owin.Testing;
 
     [SessionAuthorize]
     public class UsersController : BaseApiController
@@ -181,7 +181,7 @@ namespace BlastOFF.Services.Controllers
         public IHttpActionResult GetBlastsByAuthor([FromUri]string username)
         {
             var blasts = this.Data.Blasts.All().Where(b => b.Author.UserName == username)
-                .Select(BlastViewModel.Create);
+                .Select(b => BlastViewModel.Create(b));
 
             if (blasts.Count() == 0)
             {
@@ -212,7 +212,7 @@ namespace BlastOFF.Services.Controllers
             }
 
             var userProfile = this.Data.Users.All().Where(u => u.UserName == username)
-                .Select(UserViewModel.Create);
+                .Select(u => UserViewModel.Create(u));
 
             return this.Ok(userProfile);
 

@@ -1,6 +1,4 @@
-﻿using BlastOFF.Data;
-using Microsoft.AspNet.Identity.EntityFramework;
-
+﻿
 namespace BlastOFF.Services.Providers
 {
     using System;
@@ -10,10 +8,12 @@ namespace BlastOFF.Services.Providers
 
     using BlastOFF.Models.UserModel;
 
-    using Microsoft.AspNet.Identity.Owin;
     using Microsoft.Owin.Security;
     using Microsoft.Owin.Security.Cookies;
     using Microsoft.Owin.Security.OAuth;
+
+    using BlastOFF.Data;
+    using Microsoft.AspNet.Identity.EntityFramework;
 
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {

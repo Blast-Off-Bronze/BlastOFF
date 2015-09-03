@@ -1,7 +1,4 @@
-﻿using BlastOFF.Services.Models.CommentModels;
-using BlastOFF.Services.UserSessionUtils;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -20,6 +17,9 @@ namespace BlastOFF.Services.Controllers
     using Google.Apis.Drive.v2.Data;
 
     using Microsoft.AspNet.Identity;
+
+    using BlastOFF.Services.Models.CommentModels;
+    using BlastOFF.Services.UserSessionUtils;
 
     using Comment = BlastOFF.Models.Comment;
 
@@ -66,7 +66,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var songs = album.Songs.AsQueryable().Select(s => SongViewModel.Create(s));
+            var songs = album.Songs.Select(s => SongViewModel.Create(s));
 
             this.Data.Dispose();
 
@@ -86,7 +86,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var comments = album.Comments.AsQueryable().Select(c => CommentViewModel.Create(c));
+            var comments = album.Comments.Select(c => CommentViewModel.Create(c));
 
             this.Data.Dispose();
 
@@ -106,7 +106,7 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            var comments = song.Comments.AsQueryable().Select(c => CommentViewModel.Create(c));
+            var comments = song.Comments.Select(c => CommentViewModel.Create(c));
 
             this.Data.Dispose();
 

@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Controllers;
-using BlastOFF.Data;
-using BlastOFF.Data.Interfaces;
-
 namespace BlastOFF.Services.UserSessionUtils
 {
+    using System.Web.Http;
+    using System.Web.Http.Controllers;
+    using BlastOFF.Data;
+    using BlastOFF.Data.Interfaces;
+
     public class SessionAuthorizeAttribute : AuthorizeAttribute
     {
         public SessionAuthorizeAttribute()

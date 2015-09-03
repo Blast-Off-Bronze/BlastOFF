@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq.Expressions;
-using BlastOFF.Models.GalleryModels;
-
-namespace BlastOFF.Services.Models.ImageModels
+﻿namespace BlastOFF.Services.Models.ImageModels
 {
+    using System;
+    using BlastOFF.Models.GalleryModels;
+
     public class ImageViewModel
     {
         public static ImageViewModel Create(Image i)

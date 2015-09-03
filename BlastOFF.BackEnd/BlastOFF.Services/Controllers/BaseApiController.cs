@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNet.Identity;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System.Web.Http;
 
     using Data.Interfaces;
+
+    using Microsoft.AspNet.Identity;
 
     public abstract class BaseApiController : ApiController
     {
@@ -51,6 +51,5 @@ namespace BlastOFF.Services.Controllers
 
             return null;
         }
-
     }
 }

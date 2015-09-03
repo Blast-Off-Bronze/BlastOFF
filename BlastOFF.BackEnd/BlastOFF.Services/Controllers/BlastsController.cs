@@ -1,8 +1,4 @@
-﻿using BlastOFF.Models;
-using BlastOFF.Services.Models;
-using BlastOFF.Services.Models.CommentModels;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Web.Http;
@@ -16,6 +12,12 @@ namespace BlastOFF.Services.Controllers
     using System.Collections.Generic;
     using BlastOFF.Data.Interfaces;
 
+    using BlastOFF.Models;
+    using BlastOFF.Services.Models.CommentModels;
+
+    using BlastOFF.Services.UserSessionUtils;
+
+    [SessionAuthorize]
     public class BlastsController : BaseApiController
     {
         public BlastsController()
@@ -30,9 +32,9 @@ namespace BlastOFF.Services.Controllers
 
         }
 
-
         [HttpGet]
         [Route("api/blasts")]
+        [AllowAnonymous]
         public IHttpActionResult GetAll()
         {
             var blasts = this.Data.Blasts.All().Select(BlastViewModel.Create);
@@ -42,27 +44,24 @@ namespace BlastOFF.Services.Controllers
 
         [HttpGet]
         [Route("api/blasts/{id}")]
-        public IHttpActionResult GetBlastById([FromUri]int id)
+        [AllowAnonymous]
+        public IHttpActionResult GetBlastById([FromUri] int id)
         {
             var blast = this.Data.Blasts.Find(id);
 
-            var blastToReturn = new List<Blast>() {blast}
-                                .AsQueryable()
-                                .Select(BlastViewModel.Create)
-                                .First();
-
-            if (blastToReturn == null)
+            if (blast == null)
             {
                 return this.NotFound();
             }
+
+            var blastToReturn = BlastViewModel.Create(blast);
 
             return this.Ok(blastToReturn);
         }
 
         [HttpPost]
         [Route("api/blast/{id}/like")]
-        [Authorize]
-        public IHttpActionResult LikeBlast([FromUri]int id)
+        public IHttpActionResult LikeBlast([FromUri] int id)
         {
             var blast = this.Data.Blasts.Find(id);
 
@@ -89,10 +88,9 @@ namespace BlastOFF.Services.Controllers
 
         [HttpDelete]
         [Route("api/blast/{id}/like")]
-        [Authorize]
-        public IHttpActionResult RemoveLike([FromUri]int id)
+        public IHttpActionResult RemoveLike([FromUri] int id)
         {
-            var blast = this.Data.Blasts.All().FirstOrDefault(b => b.Id == id);
+            var blast = this.Data.Blasts.Find(id);
 
             if (blast == null)
             {
@@ -107,7 +105,7 @@ namespace BlastOFF.Services.Controllers
                 return this.BadRequest();
             }
 
-            var currentUser = this.Data.Users.All().First(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(loggedUserId);
 
             blast.UserLikes.Remove(currentUser);
             currentUser.LikedBlasts.Remove(blast);
@@ -118,9 +116,8 @@ namespace BlastOFF.Services.Controllers
 
 
         [HttpPost]
-        [Authorize]
         [Route("api/blasts")]
-        public IHttpActionResult CreateNewBlast([FromBody]BlastBindingModel model)
+        public IHttpActionResult CreateNewBlast([FromBody] BlastBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -140,13 +137,14 @@ namespace BlastOFF.Services.Controllers
             this.Data.Blasts.Add(newBlast);
             this.Data.SaveChanges();
 
-            return Ok();
+            var blastToReturn = BlastViewModel.Create(newBlast);
+
+            return Ok(blastToReturn);
         }
 
         [HttpPut]
-        [Authorize]
         [Route("api/blasts/{id}")]
-        public IHttpActionResult UpdateBlast([FromUri]int id, [FromBody]BlastBindingModel model)
+        public IHttpActionResult UpdateBlast([FromUri] int id, [FromBody] BlastBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
             var oldBlast = this.Data.Blasts.Find(id);
@@ -170,13 +168,14 @@ namespace BlastOFF.Services.Controllers
             oldBlast.BlastType = model.BlastType;
             this.Data.SaveChanges();
 
-            return Ok();
+            var blastToReturn = BlastViewModel.Create(oldBlast);
+
+            return Ok(blastToReturn);
         }
 
         [HttpPost]
         [Route("api/blasts/{id}/comments")]
-        [Authorize]
-        public IHttpActionResult AddBlastComment([FromUri]int id, [FromBody] CommentCreateBindingModel comment)
+        public IHttpActionResult AddBlastComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
             string loggedUserId = this.User.Identity.GetUserId();
 
@@ -207,9 +206,6 @@ namespace BlastOFF.Services.Controllers
 
             this.Data.Comments.Add(newComment);
             this.Data.SaveChanges();
-
-            comment.Id = newComment.Id;
-
 
             var returnItem = CommentViewModel.Create(newComment);
 

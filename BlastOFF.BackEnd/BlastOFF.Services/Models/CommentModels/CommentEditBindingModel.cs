@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BlastOFF.Services.Models.CommentModels
+﻿namespace BlastOFF.Services.Models.CommentModels
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class CommentEditBindingModel
     {
         [Required]
