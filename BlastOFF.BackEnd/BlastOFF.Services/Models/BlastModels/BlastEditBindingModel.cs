@@ -1,9 +1,9 @@
-﻿namespace BlastOFF.Services.Models.CommentModels
+﻿namespace BlastOFF.Services.Models.BlastModels
 {
-    using System.ComponentModel.DataAnnotations;
     using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-    public class CommentEditBindingModel
+    public class BlastEditBindingModel
     {
         [Required]
         [DisplayName("Content")]

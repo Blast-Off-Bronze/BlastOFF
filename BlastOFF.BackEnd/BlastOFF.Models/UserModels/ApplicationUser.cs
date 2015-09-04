@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using BlastOFF.Models.ChatModels;
+using BlastOFF.Models.Enumerations;
 using BlastOFF.Models.GalleryModels;
 using BlastOFF.Models.MusicModels;
 
@@ -60,6 +61,10 @@ namespace BlastOFF.Models.UserModel
         public DateTime? BirthDate { get; set; }
 
         public string ProfileImage { get; set; }
+
+        public Gender Gender { get; set; }
+
+        public string Name { get; set; }
 
         public virtual ICollection<Blast> Blasts
         {

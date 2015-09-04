@@ -9,7 +9,6 @@
     using BlastOFF.Models.BlastModels;
     using System.Linq;
 
-    using System.Collections.Generic;
     using BlastOFF.Data.Interfaces;
 
     using BlastOFF.Models;
@@ -117,7 +116,7 @@
 
         [HttpPost]
         [Route("api/blasts")]
-        public IHttpActionResult CreateNewBlast([FromBody] BlastBindingModel model)
+        public IHttpActionResult CreateNewBlast([FromBody] BlastCreateBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
@@ -144,7 +143,7 @@
 
         [HttpPut]
         [Route("api/blasts/{id}")]
-        public IHttpActionResult UpdateBlast([FromUri] int id, [FromBody] BlastBindingModel model)
+        public IHttpActionResult UpdateBlast([FromUri] int id, [FromBody] BlastEditBindingModel model)
         {
             var loggedUserId = this.User.Identity.GetUserId();
             var oldBlast = this.Data.Blasts.Find(id);
@@ -165,7 +164,7 @@
             }
 
             oldBlast.Content = model.Content;
-            oldBlast.BlastType = model.BlastType;
+
             this.Data.SaveChanges();
 
             var blastToReturn = BlastViewModel.Create(oldBlast);

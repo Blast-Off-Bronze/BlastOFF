@@ -31,7 +31,8 @@
                     Content = m.Content,
                     Sender = m.Sender.UserName,
                     PostedOn = m.SentDateTime
-                })
+                }),
+                ProfileImage = model.ProfileImage
             };
         }
 

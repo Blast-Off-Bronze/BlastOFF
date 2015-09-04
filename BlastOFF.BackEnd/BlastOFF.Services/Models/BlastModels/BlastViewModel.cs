@@ -1,12 +1,12 @@
-﻿using BlastOFF.Services.Models.CommentModels;
-
-namespace BlastOFF.Services.Models.BlastModels
+﻿namespace BlastOFF.Services.Models.BlastModels
 {
     using BlastOFF.Models.BlastModels;
     using BlastOFF.Models.Enumerations;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using BlastOFF.Services.Models.CommentModels;
 
     public class BlastViewModel
     {

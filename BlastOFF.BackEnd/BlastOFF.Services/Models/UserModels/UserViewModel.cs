@@ -20,7 +20,8 @@
                     LikedSongs = model.LikedSongs.Select(a => a.Title),
                     LikedImages = model.LikedImages.Select(i => i.Title),
                     LikedMusicAlbums = model.LikedMusicAlbums.Select(a => a.Title),
-                    LikedImageAlbums = model.LikedImageAlbums.Select(a => a.Title)
+                    LikedImageAlbums = model.LikedImageAlbums.Select(a => a.Title),
+                    ProfileImage = model.ProfileImage
                 };
         }
 
@@ -29,6 +30,8 @@
         public string PhoneNumber { get; set; }
 
         public string Email { get; set; }
+
+        public string ProfileImage { get; set; }
 
         public virtual IEnumerable<string> FollowedUsers { get; set; }
 

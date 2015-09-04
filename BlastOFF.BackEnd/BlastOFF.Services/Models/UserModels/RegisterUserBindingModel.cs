@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Models.UserModels
+﻿using BlastOFF.Models.Enumerations;
+
+namespace BlastOFF.Services.Models.UserModels
 {
     using System.ComponentModel.DataAnnotations;
 
@@ -20,7 +22,6 @@
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
         [Display(Name = "Name")]
         public string Name { get; set; }
 
@@ -28,8 +29,7 @@
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        /*
         [Display(Name = "Gender")]
-        public Gender Gender { get; set; }*/
+        public Gender Gender { get; set; }
     }
 }

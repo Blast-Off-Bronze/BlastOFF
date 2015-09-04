@@ -85,9 +85,9 @@
             var user = new ApplicationUser()
             {
                 UserName = model.Username,
-                //Name = model.Name,
+                Name = model.Name,
                 Email = model.Email,
-                //Gender = model.Gender
+                Gender = model.Gender
             };
 
             var identityResult = await this.UserManager.CreateAsync(user, model.Password);

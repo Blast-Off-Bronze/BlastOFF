@@ -1,15 +1,16 @@
 ﻿namespace BlastOFF.Services.Models.CommentModels
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel;
 
     public class CommentCreateBindingModel
     {
-        public int Id { get; set; }
-
         [Required]
+        [DisplayName("Content")]
         public string Content { get; set; }
 
         [Required]
+        [DisplayName("Author Id")]
         public string AuthorId { get; set; }
 
         public int? BlastId { get; set; }

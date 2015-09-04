@@ -300,6 +300,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Constants\MusicConstants.cs" />
+    <Compile Include="Models\BlastModels\BlastEditBindingModel.cs" />
     <Compile Include="Models\ImageModels\ImageAlbumViewModel.cs" />
     <Compile Include="Models\ImageModels\ImageViewModel.cs" />
     <Compile Include="Models\UserModels\LoginUserBindingModel.cs" />
@@ -317,7 +318,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\BlastModels\BlastBindingModel.cs" />
+    <Compile Include="Models\BlastModels\BlastCreateBindingModel.cs" />
     <Compile Include="Models\BlastModels\BlastViewModel.cs" />
     <Compile Include="Models\ChatModels\MessageCreateBindingModel.cs" />
     <Compile Include="Models\ChatModels\MessageModifyBindingModel.cs" />

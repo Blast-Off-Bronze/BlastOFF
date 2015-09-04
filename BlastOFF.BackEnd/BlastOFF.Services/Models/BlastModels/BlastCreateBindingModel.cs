@@ -3,12 +3,16 @@
     using System.ComponentModel.DataAnnotations;
 
     using BlastOFF.Models.Enumerations;
-    
-    public class BlastBindingModel
+
+    using System.ComponentModel;
+
+    public class BlastCreateBindingModel
     {
         [Required]
+        [DisplayName("Content")]
         public string Content { get; set; }
 
+        [DisplayName("Blast Type")]
         public BlastType BlastType { get; set; }
     }
 }
