@@ -3,7 +3,7 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
     function (app) {
         'use strict';
 
-        app.controller('registrationController',
+        app.controller('headerController',
             function ($scope, $location, storageService, escapeSpecialCharsService, userDataService, notificationService, constants) {
 
                 $scope.isLogged = storageService.isLogged();
@@ -11,25 +11,29 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 $scope.guest = {
                     username: "",
                     password: "",
-                    confirmPassword: "",
-                    email: ""
+                    wantsToBeRemembered: false
                 };
 
-                $scope.register = function (guestInfo) {
+                $scope.login = function (guestInfo) {
 
                     var guest = escapeSpecialCharsService.escapeSpecialCharacters(guestInfo, false);
 
-                    userDataService.register(guest).then(
+                    userDataService.login(guest).then(
                         function (response) {
 
                             var sessionToken = response['token_type'] + ' ' + response['access_token'];
                             var username = response['userName'];
 
-                            storageService.setSessionToken(sessionToken);
+                            if (guest.wantsToBeRemembered) {
+                                storageService.setSessionToken(sessionToken, true);
+                            } else {
+                                storageService.setSessionToken(sessionToken, false);
+                            }
 
-                            notificationService.alertSuccess(constants.SUCCESSFUL_REGISTRATION_MESSAGE + username + '.');
+                            notificationService.alertSuccess(constants.SUCCESSFUL_LOGIN_MESSAGE + username + '.');
 
                             $scope.resetForm();
+
                         },
                         function (error) {
 

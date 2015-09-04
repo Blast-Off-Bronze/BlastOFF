@@ -33,6 +33,9 @@
 
         public virtual ApplicationUser Author { get; set; }
 
+        [DefaultValue(true)]
+        public bool IsPublic { get; set; }
+
         [Required]
         public DateTime DateCreated { get; set; }
 

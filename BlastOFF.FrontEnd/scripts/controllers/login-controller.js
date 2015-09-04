@@ -9,8 +9,8 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 $scope.isLogged = storageService.isLogged();
 
                 $scope.guest = {
-                    username: "testUser1",
-                    password: "12345a",
+                    username: "",
+                    password: "",
                     wantsToBeRemembered: false
                 };
 

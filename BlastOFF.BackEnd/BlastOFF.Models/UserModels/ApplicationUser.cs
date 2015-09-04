@@ -59,6 +59,8 @@ namespace BlastOFF.Models.UserModel
 
         public DateTime? BirthDate { get; set; }
 
+        public string ProfileImage { get; set; }
+
         public virtual ICollection<Blast> Blasts
         {
             get { return this.blasts; }

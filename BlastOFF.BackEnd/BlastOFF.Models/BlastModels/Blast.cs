@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Models.BlastModels
+﻿using System.ComponentModel;
+
+namespace BlastOFF.Models.BlastModels
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +23,9 @@
 
         [Key]
         public int Id { get; set; }
+
+        [DefaultValue(true)]
+        public bool IsPublic { get; set; }
 
         [Required]
         public string Content { get; set; }

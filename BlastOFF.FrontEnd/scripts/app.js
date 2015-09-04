@@ -86,7 +86,7 @@ define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD
         //        controllerUrl: 'controllers/wall-controller'
         //    }));
 
-        //$routeProvider.otherwise({redirectTo: '/'});
+        $routeProvider.otherwise({redirectTo: '/'});
 
         //$locationProvider.html5Mode(true);
     });

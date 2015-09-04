@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using BlastOFF.Models.UserModel;
 
 namespace BlastOFF.Models.GalleryModels
@@ -31,6 +32,9 @@ namespace BlastOFF.Models.GalleryModels
         public string CreatedById { get; set; }
 
         public virtual ApplicationUser CreatedBy { get; set; }
+
+        [DefaultValue(true)]
+        public bool IsPublic { get; set; }
 
         [Required]
         public DateTime DateCreated { get; set; }

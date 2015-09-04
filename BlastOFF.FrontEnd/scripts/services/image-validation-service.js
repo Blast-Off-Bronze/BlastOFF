@@ -1,5 +1,5 @@
 define(['app', 'notification-service', 'constants'], function (app) {
-    app.factory('coverImageValidationService', function (notificationService, constants) {
+    app.factory('imageValidationService', function (notificationService, constants) {
         var validationService = {};
 
         validationService.validateImageFormat = function (image) {
@@ -9,7 +9,7 @@ define(['app', 'notification-service', 'constants'], function (app) {
 
             if (image.type !== 'image/jpeg') {
                 var error = {
-                    message: constants.INVALID_COVER_IMAGE_FORMAT_MESSAGE + constants.DEFAULT_COVER_IMAGE_FORMAT
+                    message: constants.INVALID_IMAGE_FORMAT_MESSAGE + constants.DEFAULT_IMAGE_FORMAT
                 };
                 notificationService.alertError(error);
                 return false;
@@ -23,6 +23,7 @@ define(['app', 'notification-service', 'constants'], function (app) {
                 var error = {
                     message: constants.INVALID_COVER_IMAGE_SIZE_MESSAGE + (maxSize / constants.BYTE_SIZE) + constants.DEFAULT_FILE_SIZE_UNIT
                 };
+
                 notificationService.alertError(error);
                 return false;
             }

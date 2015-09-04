@@ -116,7 +116,7 @@
 
         //// POST /api/comments/{id}/likes
         [HttpPost]
-        [Route("api/comments/{id}/likes")]
+        [Route("api/comments/{id}/like")]
         public IHttpActionResult LikeComment([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -152,7 +152,7 @@
 
         //// DELETE /api/comments/{id}/likes
         [HttpDelete]
-        [Route("api/comments/{id}/likes")]
+        [Route("api/comments/{id}/unlike")]
         public IHttpActionResult UnlikeComment([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();

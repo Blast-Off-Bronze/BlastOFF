@@ -263,7 +263,7 @@
 
         //// POST /api/imageAlbums/{id}/likes
         [HttpPost]
-        [Route("api/imageAlbums/{id}/likes")]
+        [Route("api/imageAlbums/{id}/like")]
         public IHttpActionResult LikeImagecAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -299,7 +299,7 @@
 
         //// DELETE /api/imageAlbums/{id}/likes
         [HttpDelete]
-        [Route("api/imageAlbums/{id}/likes")]
+        [Route("api/imageAlbums/{id}/unlike")]
         public IHttpActionResult UnlikeImageAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -371,7 +371,7 @@
 
         //// DELETE /api/imageAlbums/{id}/follow
         [HttpDelete]
-        [Route("api/imageAlbums/{id}/follow")]
+        [Route("api/imageAlbums/{id}/unfollow")]
         public IHttpActionResult UnfollowImageAlbum([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -520,7 +520,7 @@
 
         //// POST /api/images/{id}/likes
         [HttpPost]
-        [Route("api/images/{id}/likes")]
+        [Route("api/images/{id}/like")]
         public IHttpActionResult LikeImage([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();
@@ -556,7 +556,7 @@
 
         //// DELETE /api/images/{id}/likes
         [HttpDelete]
-        [Route("api/images/{id}/likes")]
+        [Route("api/images/{id}/unlike")]
         public IHttpActionResult UnlikeImage([FromUri] int id)
         {
             string loggedUserId = this.User.Identity.GetUserId();

@@ -6,16 +6,21 @@
 
         <title></title>
 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
         <link rel="stylesheet" href="styles/animate/animate.min.css"/>
 
+        <link rel="stylesheet" href="styles/header.css"/>
+
         <script src="libraries/require/require.min.js" data-main="scripts/main"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     </head>
 
     <body>
-        <a href="#/registration">Register</a>
-        <a href="#/login">Login</a>
-        <a href="#/music/albums">Add Music Album</a>
-        <a href="#/music/albums/3/songs">Add Song</a>
+        <div ng-include="'templates/header.html'"></div>
 
         <div class="page" ng-view></div>
     </body>
