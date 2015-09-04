@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using System.Web.Http.OData;
+
+namespace BlastOFF.Services.Controllers
 {
     using System.Linq;
     using Microsoft.AspNet.Identity;

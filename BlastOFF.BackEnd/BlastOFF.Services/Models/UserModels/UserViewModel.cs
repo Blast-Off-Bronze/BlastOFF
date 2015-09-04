@@ -21,7 +21,8 @@
                     LikedImages = model.LikedImages.Select(i => i.Title),
                     LikedMusicAlbums = model.LikedMusicAlbums.Select(a => a.Title),
                     LikedImageAlbums = model.LikedImageAlbums.Select(a => a.Title),
-                    ProfileImage = model.ProfileImage
+                    ProfileImage = model.ProfileImage,
+                    NotSeenMessagesCount = model.ReceivedMessages.Count(m => m.Seen == false)
                 };
         }
 
@@ -32,6 +33,8 @@
         public string Email { get; set; }
 
         public string ProfileImage { get; set; }
+
+        public int NotSeenMessagesCount { get; set; }
 
         public virtual IEnumerable<string> FollowedUsers { get; set; }
 

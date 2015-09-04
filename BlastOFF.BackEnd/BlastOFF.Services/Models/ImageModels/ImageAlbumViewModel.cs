@@ -4,11 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using BlastOFF.Models.GalleryModels;
-    using BlastOFF.Models.UserModel;
 
     public class ImageAlbumViewModel
     {
-        public static ImageAlbumViewModel Create(ImageAlbum a, ApplicationUser user)
+        public static ImageAlbumViewModel Create(ImageAlbum a)
         {
             return new ImageAlbumViewModel()
             {

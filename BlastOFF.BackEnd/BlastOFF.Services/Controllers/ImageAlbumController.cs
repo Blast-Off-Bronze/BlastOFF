@@ -34,9 +34,8 @@
         [Route("api/imageAlbums")]
         public IHttpActionResult GetAllImageAlbums()
         {
-            var imageAlbums = this.Data.ImageAlbums.All()
-                .Select(a => ImageAlbumViewModel.Create(a, null))
-                .ToList();
+            var imageAlbums = this.Data.ImageAlbums.All().ToList()
+                .Select(a => ImageAlbumViewModel.Create(a));
 
             return this.Ok(imageAlbums);
         }
@@ -53,7 +52,9 @@
                 return this.NotFound();
             }
 
-            return this.Ok(imageAlbum);
+            var returnItem = ImageAlbumViewModel.Create(imageAlbum);
+
+            return this.Ok(returnItem);
         }
 
         [HttpPost]
@@ -88,7 +89,7 @@
             this.Data.SaveChanges();
 
             var user = this.Data.Users.Find(loggedUserId);
-            var returnItem = ImageAlbumViewModel.Create(imageAlbum, user);
+            var returnItem = ImageAlbumViewModel.Create(imageAlbum);
 
             return this.Ok(returnItem);
         }
@@ -121,7 +122,7 @@
             this.Data.ImageAlbums.Update(imageAlbum);
             this.Data.SaveChanges();
 
-            var returnItem = ImageAlbumViewModel.Create(imageAlbum, null);
+            var returnItem = ImageAlbumViewModel.Create(imageAlbum);
 
             return Ok(returnItem);
         }
