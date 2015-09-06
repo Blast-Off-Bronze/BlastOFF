@@ -5,6 +5,13 @@ define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD
 
     app.config(function ($routeProvider, $locationProvider) {
 
+        $routeProvider
+            .when('/', angularAMD.route({
+                templateUrl: 'templates/home.html',
+                controller: 'homeController',
+                controllerUrl: 'controllers/home-controller'
+            }));
+
         // Registration
         $routeProvider
             .when('/registration', angularAMD.route({

@@ -4,7 +4,7 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
         'use strict';
 
         app.controller('loginController',
-            function ($scope, $location, storageService, escapeSpecialCharsService, userDataService, notificationService, constants) {
+            function ($scope, $location, $rootScope, storageService, escapeSpecialCharsService, userDataService, notificationService, constants) {
 
                 $scope.isLogged = storageService.isLogged();
 
@@ -34,6 +34,7 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
 
                             $scope.resetForm();
 
+                            $rootScope.$broadcast('currentUserDataUpdated');
                         },
                         function (error) {
 

@@ -11,10 +11,11 @@ requirejs.config({
         'noty': '../libraries/noty/jquery.noty.packaged.min',
 
         // Controllers
+        'home-controller': 'controllers/home-controller',
+        'header-controller': 'controllers/header-controller',
         'registration-controller': 'controllers/registration-controller',
         'login-controller': 'controllers/logins-controller',
         'music-controller': 'controllers/music-controller',
-        'header-controller': 'controllers/header-controller',
 
         // Data Services
         'user-data-service': 'data-services/user-data-service',
