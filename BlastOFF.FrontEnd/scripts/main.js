@@ -56,5 +56,5 @@ requirejs.config({
         'noty': ['jquery']
     },
 
-    deps: ['app', 'jquery']
+    deps: ['app', 'jquery', 'header-controller']
 });
