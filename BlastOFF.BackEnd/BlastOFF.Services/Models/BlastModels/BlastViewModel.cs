@@ -12,7 +12,7 @@
     {
         public static BlastViewModel Create(Blast model)
         {
-            return new BlastViewModel
+            return new BlastViewModel()
             {
                 Content = model.Content,
                 PostedOn = model.PostedOn,
@@ -31,7 +31,7 @@
 
         public string Author { get; set; }
 
-        public IEnumerable<object> Comments { get; set; }
+        public IEnumerable<CommentViewModel> Comments { get; set; }
 
         public IEnumerable<string> LikedBy { get; set; }
     }

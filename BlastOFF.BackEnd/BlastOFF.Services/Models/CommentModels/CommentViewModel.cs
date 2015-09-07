@@ -8,7 +8,7 @@
     {
         public static CommentViewModel Create(Comment c)
         {
-            return new CommentViewModel
+            return new CommentViewModel()
             {
                 Id = c.Id,
                 Content = c.Content,
