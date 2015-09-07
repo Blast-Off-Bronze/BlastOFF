@@ -18,7 +18,7 @@
                 PostedOn = model.PostedOn,
                 BlastType = model.BlastType,
                 Author = model.Author.UserName,
-                Comments = model.Comments.Select(c => CommentViewModel.Create(c)),
+                Comments = model.Comments.ToList().Select(c => CommentViewModel.Create(c)),
                 LikedBy = model.UserLikes.Select(ul => ul.UserName)
             };
         }

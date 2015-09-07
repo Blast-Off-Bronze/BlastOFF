@@ -7,7 +7,7 @@
     {
         public static ImageViewModel Create(Image i)
         {
-            return new ImageViewModel
+            return new ImageViewModel()
             {
                 Id = i.Id,
                 Title = i.Title,
