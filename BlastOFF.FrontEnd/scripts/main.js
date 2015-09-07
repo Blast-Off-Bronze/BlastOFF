@@ -17,6 +17,7 @@ requirejs.config({
         'login-controller': 'controllers/logins-controller',
         'music-controller': 'controllers/music-controller',
         'image-controller': 'controllers/image-controller',
+        'blast-controller': 'controllers/blast-controller',
 
         // Data Services
         'user-data-service': 'data-services/user-data-service',
@@ -24,6 +25,7 @@ requirejs.config({
         'image-data-service': 'data-services/image-data-service',
         'comment-data-service': 'data-services/comment-data-service',
         'message-data-service': 'data-services/message-data-service',
+        'blast-data-service': 'data-services/blast-data-service',
 
         // Directives
         'imageUpload': 'directives/ImageUploadDirective',

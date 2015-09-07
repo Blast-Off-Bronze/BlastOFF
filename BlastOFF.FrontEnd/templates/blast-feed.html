@@ -1,0 +1,85 @@
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="../styles/blast-feed-style.css" rel="stylesheet">
+<div class="container">
+    <div class="row profile">
+        <div class="col-md-3" id="profileCol">
+            <div class="profile-sidebar">
+                <div class="profile-userpic">
+                    <img src="http://bootdey.com/img/Content/User_for_snippets.png" class="img-responsive" alt="">
+                </div>
+                <div class="profile-usertitle">
+                    <div class="profile-usertitle-name">
+                        Clark rodriguez
+                    </div>
+                </div>
+                <div class="profile-userbuttons">
+                    <button type="button" class="btn btn-info btn-sm">
+                        <i class="fa fa-user-plus"></i>
+                        Follow
+                    </button>
+                </div>
+                <div class="profile-usermenu">
+                    <ul class="nav">
+                        <li class="active">
+                            <a href="#">
+                                <i class="glyphicon glyphicon-home"></i>
+                                Overview </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="glyphicon glyphicon-user"></i>
+                                Account Settings </a>
+                        </li>
+                        <li>
+                            <a href="#" target="_blank">
+                                <i class="glyphicon glyphicon-ok"></i>
+                                Tasks </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="glyphicon glyphicon-flag"></i>
+                                Help </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9" id="contentCol">
+            <div class="profile-content">
+                <div class="row hidden-xs hidden-sm">
+                    <a href="#" class="btn btn-info" id="toggle-link">
+                        <i class="fa fa-arrow-left"></i>
+                        Hide menu
+                    </a>
+                    <hr class="hr-sep">
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <textarea class="form-control" rows="3" placeholder="Write an idea..."></textarea>
+                    </div>
+                </div>
+                <hr>
+                <!-- post 1 -->
+                <div class="row" ng-repeat="blast in allBlasts">
+                    <div class="col-md-2">
+                        <img src="http://bootdey.com/img/Content/user_3.jpg" class="img-responsive  img-circle">
+                    </div>
+                    <div class="col-md-10">
+                        <div class="row post">
+                            <div class="col-md-12">
+                                <!--<p>{{blast}}</p>-->
+                                <p>{{blast.content}}</p>
+                                <a data-placement="top" class="btn btn-success btn-xs glyphicon glyphicon-ok tip" href="#" title="View"></a>
+                                <a data-placement="top" class="btn btn-danger  btn-xs glyphicon glyphicon-trash tip" href="#" title="Delete"></a>
+                                <a data-placement="top" class="btn btn-info  btn-xs glyphicon glyphicon-share tip" href="#" title="Share"></a>
+                                <p>date = {{blast.postedOn}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>                                

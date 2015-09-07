@@ -51,6 +51,13 @@ define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD
                 controllerUrl: 'controllers/image-controller'
             }));
 
+         $routeProvider
+            .when('/blast-feed', angularAMD.route({
+                templateUrl: 'templates/blast-feed.html',
+                controller: 'blastController',
+                controllerUrl: 'controllers/blast-controller'
+            }));
+
         //// Change password
         //$routeProvider
         //    .when('/profile/password', angularAMD.route({
