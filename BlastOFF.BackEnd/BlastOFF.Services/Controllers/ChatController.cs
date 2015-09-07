@@ -63,7 +63,7 @@
             var message = new Message()
             {
                 SenderId = currentUser.Id,
-                ReceiverId = model.ReceiverId,
+                ReceiverId = receiverUser.Id,
                 Content = model.Content,
                 SentDateTime = DateTime.Now
             };

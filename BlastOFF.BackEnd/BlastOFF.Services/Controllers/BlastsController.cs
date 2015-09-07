@@ -118,14 +118,12 @@
         [Route("api/blasts")]
         public IHttpActionResult CreateNewBlast([FromBody] BlastCreateBindingModel model)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest("Wrong or missing input parameters");
             }
-
-            var user = this.Data.Users.Find(loggedUserId);
 
             var newBlast = new Blast
             {
@@ -137,8 +135,8 @@
 
             this.Data.Blasts.Add(newBlast);
             this.Data.SaveChanges();
-
-            var blastToReturn = BlastViewModel.Create(this.Data.Blasts.Find(newBlast.Id));
+         
+            var blastToReturn = BlastViewModel.Create(newBlast);
 
             return Ok(blastToReturn);
         }

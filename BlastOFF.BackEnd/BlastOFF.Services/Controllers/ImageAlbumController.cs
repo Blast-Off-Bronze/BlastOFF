@@ -73,7 +73,7 @@
         [Route("api/imageAlbums")]
         public IHttpActionResult CreateNewImageAlbum([FromBody] ImageAlbumCreateBindingModel model)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (model == null)
             {
@@ -88,19 +88,18 @@
             var imageAlbum = new ImageAlbum()
             {
                 Title = model.Title,
-                CreatedById = loggedUserId,
+                CreatedById = user.Id,
                 DateCreated = DateTime.Now
             };
 
-            if (this.Data.ImageAlbums.All().Any(a => a.CreatedById == loggedUserId && a.Title == imageAlbum.Title))
+            if (this.Data.ImageAlbums.All().Any(a => a.CreatedById == user.Id && a.Title == imageAlbum.Title))
             {
                 return this.BadRequest(string.Format("A image album with the specified title already exists."));
             }
 
             this.Data.ImageAlbums.Add(imageAlbum); 
             this.Data.SaveChanges();
-
-            var user = this.Data.Users.Find(loggedUserId);
+                        
             var returnItem = ImageAlbumViewModel.Create(imageAlbum);
 
             return this.Ok(returnItem);
@@ -187,7 +186,7 @@
         [Route("api/images")]
         public IHttpActionResult CreateNewImage([FromBody] ImageCreateBindingModel model)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (!this.ModelState.IsValid)
             {
@@ -199,19 +198,21 @@
                 return this.BadRequest("There is no image album with this id.");
             }
 
+            var imageAlbum = this.Data.ImageAlbums.Find(model.ImageAlbumId);
+
             var image = new Image()
             {
                 Title = model.Title,
-                UploadedById = loggedUserId,
+                UploadedById = user.Id,
                 DateCreated = DateTime.Now,
-                ImageAlbumId = model.ImageAlbumId,
+                ImageAlbumId = imageAlbum.Id,
                 ImageData = model.Base64ImageString
             };
 
             this.Data.Images.Add(image);
             this.Data.SaveChanges();
 
-            var returnItem = ImageViewModel.Create(this.Data.Images.Find(image.Id));
+            var returnItem = ImageViewModel.Create(image);
 
             return Ok(returnItem);
         }
@@ -463,7 +464,7 @@
         [Route("api/imageAlbums/{id}/comments")]
         public IHttpActionResult AddImageAlbumComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
@@ -480,7 +481,7 @@
             var newComment = new Comment
             {
                 Content = model.Content,
-                AuthorId = loggedUserId,
+                AuthorId = user.Id,
                 PostedOn = DateTime.Now,
                 ImageAlbumId = id
             };
@@ -499,7 +500,7 @@
         [Route("api/images/{id}/comments")]
         public IHttpActionResult AddImagesComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var image = this.Data.Images.Find(id);
 
@@ -516,7 +517,7 @@
             var newComment = new Comment
             {
                 Content = model.Content,
-                AuthorId = loggedUserId,
+                AuthorId = user.Id,
                 PostedOn = DateTime.Now,
                 ImageId = id
             };
