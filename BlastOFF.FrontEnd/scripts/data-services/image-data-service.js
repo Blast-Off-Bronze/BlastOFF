@@ -33,6 +33,13 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.delete(headers, imageServiceUrl + image);
         }
 
+        function getMyAlbums() {
+
+            var headers = new requestHeaders().get();
+
+            return requester.get(headers, imageAlbumServiceUrl + 'my');
+        }
+
         function modifyImageAlbum(imageAlbum) {
 
             var headers = new requestHeaders().get();
@@ -104,8 +111,8 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         }
 
         return {
-            addMusicAlbum: addMusicAlbum,
-            addSong: addSong,
+            addImageAlbum: addImageAlbum,
+            addImage: addImage,
             deleteImage: deleteImage,
             deleteImageAlbum: deleteImageAlbum,
             modifyImage: modifyImage,
@@ -117,7 +124,9 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             likeImage: likeImage,
             unlikeImage: unlikeImage,
             commentImage: commentImage,
-            commentImageAlbum: commentImageAlbum
+            commentImageAlbum: commentImageAlbum,
+
+            getMyAlbums: getMyAlbums
         }
     });
 });

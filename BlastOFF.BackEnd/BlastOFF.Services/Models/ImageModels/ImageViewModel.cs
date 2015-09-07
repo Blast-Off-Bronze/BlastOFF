@@ -25,7 +25,7 @@
 
         public string Title { get; set; }
 
-        public int? ImageAlbumId { get; set; }
+        public int ImageAlbumId { get; set; }
 
         public string ImageAlbum { get; set; }
 

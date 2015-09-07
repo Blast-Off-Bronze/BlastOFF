@@ -16,6 +16,7 @@ requirejs.config({
         'registration-controller': 'controllers/registration-controller',
         'login-controller': 'controllers/logins-controller',
         'music-controller': 'controllers/music-controller',
+        'image-controller': 'controllers/image-controller',
 
         // Data Services
         'user-data-service': 'data-services/user-data-service',
@@ -41,6 +42,7 @@ requirejs.config({
         'image-validation-service':'services/image-validation-service',
         'notification-service': 'services/notification-service',
         'storage-service': 'services/storage-service',
+        'redirection-service': 'services/redirection-service',
 
         // App
         'app': 'app'

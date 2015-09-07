@@ -13,6 +13,7 @@ define(['app'], function (app) {
         'COVER_IMAGE_SIZE_LIMIT': 1024, // 1 mB
         'SONG_SIZE_LIMIT': 20480, // 20 mB
         'BYTE_SIZE': 1024,
+        'DEFAULT_REDIRECTION_TIMEOUT': 1000,
 
         // Messages
         'SUCCESSFUL_REGISTRATION_MESSAGE': 'You were successfully registered as ',

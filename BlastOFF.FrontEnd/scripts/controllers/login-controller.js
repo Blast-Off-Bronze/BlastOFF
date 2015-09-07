@@ -1,10 +1,10 @@
-define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-service', 'notification-service', 'constants'],
+define(['app', 'storage-service', 'redirection-service', 'escape-special-chars-service', 'user-data-service', 'notification-service', 'constants'],
 
     function (app) {
         'use strict';
 
         app.controller('loginController',
-            function ($scope, $location, $rootScope, storageService, escapeSpecialCharsService, userDataService, notificationService, constants) {
+            function ($scope, $location, $rootScope, redirectionService, storageService, escapeSpecialCharsService, userDataService, notificationService, constants) {
 
                 $scope.isLogged = storageService.isLogged();
 
@@ -46,6 +46,10 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 $scope.resetForm = function () {
                     $scope.guest = {};
                     $location.path('#/');
+                };
+
+                $scope.redirect = function () {
+                    redirectionService.redirect();
                 };
             });
     });

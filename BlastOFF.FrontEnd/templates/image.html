@@ -1,0 +1,21 @@
+<div ng-include="'templates/partials/header.html'"></div>
+
+<div ng-show="isLogged">
+    <br/>
+
+    <input type="text" ng-model="imageAlbum.title"/>
+
+    <button type="button" ng-click="addImageAlbum(imageAlbum)">Add Image Album</button>
+
+    <hr/>
+    <h1>Your image albums:</h1>
+    <p ng-repeat="imageAlbum in myImageAlbums" ng-click="chooseAlbum(imageAlbum.id)">{{imageAlbum.title}}</p>
+    <hr/>
+    <input type="file" cover-image-upload="onFileSelect($files)" ng-model="image.base64ImageString"/>
+
+    <br/>
+    <input type="text" ng-model="image.title"/>
+    <br/>
+
+    <button type="button" ng-click="addImage(image)">Upload Image</button>
+</div>

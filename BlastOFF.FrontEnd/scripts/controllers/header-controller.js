@@ -47,6 +47,7 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                         .then(function (response) {
                             storageService.clearStorage();
                             $scope.isLogged = storageService.isLogged();
+                            notificationService.alertSuccess(response['message']);
                         }, function (error) {
                             notificationService.alertError(error);
                         });
@@ -60,7 +61,7 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 //Event Listeners
 
                 $scope.$on('currentUserDataUpdated', function () {
-                        $scope.isLogged = storageService.isLogged();
-                    });
+                    $scope.isLogged = storageService.isLogged();
+                });
             });
     });

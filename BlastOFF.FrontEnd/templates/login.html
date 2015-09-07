@@ -2,7 +2,7 @@
 
 <br/>
 
-<form>
+<form ng-if="!isLogged">
     <label>Username</label>
     <br/>
     <input type="text" ng-model="guest.username"/>
@@ -24,3 +24,14 @@
 
     <button type="button" ng-click="login(guest)">Login</button>
 </form>
+
+<main class="jumbotron" ng-if="isLogged">
+    <header class="page-sub-header">
+        <div class="container-fluid">
+            <div class="row">
+                <h2>You are already logged in</h2>
+                <div ng-bind="redirect()"></div>
+            </div>
+        </div>
+    </header>
+</main>

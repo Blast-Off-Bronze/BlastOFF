@@ -1,37 +1,39 @@
 <div ng-include="'templates/partials/header.html'"></div>
 
-<br/>
+<div ng-show="isLogged">
+    <br/>
 
-<input type="text" ng-model="musicAlbum.title"/>
+    <input type="text" ng-model="musicAlbum.title"/>
 
-<br/>
-<br/>
+    <br/>
+    <br/>
 
-<input type="file" cover-image-upload="onFileSelect($files)" ng-model="musicAlbum.coverImageData"/>
+    <input type="file" cover-image-upload="onFileSelect($files)" ng-model="musicAlbum.coverImageData"/>
 
-<br/>
-<br/>
+    <br/>
+    <br/>
 
-<button type="button" ng-click="addMusicAlbum(musicAlbum)">Add Music Album</button>
+    <button type="button" ng-click="addMusicAlbum(musicAlbum)">Add Music Album</button>
 
-<br/>
-<br/>
-<hr/>
-<br/>
+    <br/>
+    <br/>
+    <hr/>
+    <br/>
 
-<input type="text" ng-model="song.title"/>
+    <input type="text" ng-model="song.title"/>
 
-<br/>
-<br/>
+    <br/>
+    <br/>
 
-<input type="text" ng-model="song.artist"/>
+    <input type="text" ng-model="song.artist"/>
 
-<br/>
-<br/>
+    <br/>
+    <br/>
 
-<input type="file" song-upload="onFileSelect($files)" ng-model="song.fileDataUrl"/>
+    <input type="file" song-upload="onFileSelect($files)" ng-model="song.fileDataUrl"/>
 
-<br/>
-<br/>
+    <br/>
+    <br/>
 
-<button type="button" ng-click="addSong(song)">Upload Song</button>
+    <button type="button" ng-click="addSong(song)">Upload Song</button>
+</div>

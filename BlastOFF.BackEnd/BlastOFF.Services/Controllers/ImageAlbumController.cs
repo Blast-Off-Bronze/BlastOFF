@@ -41,6 +41,18 @@
         }
 
         [HttpGet]
+        [Route("api/imageAlbums/my")]
+        public IHttpActionResult GetMyImageAlbums()
+        {
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var imageAlbums = this.Data.ImageAlbums.All().Where(a => a.CreatedById == user.Id).ToList()
+                .Select(a => ImageAlbumViewModel.Create(a));
+
+            return this.Ok(imageAlbums);
+        }
+
+        [HttpGet]
         [Route("api/imageAlbums/{id}")]
         [AllowAnonymous]
         public IHttpActionResult GetImageAlbumById([FromUri] int id)

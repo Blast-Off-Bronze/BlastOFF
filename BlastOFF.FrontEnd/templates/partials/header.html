@@ -16,14 +16,15 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar-collapse-2">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#/registration">Register</a></li>
-                    <li><a href="#/login">Login</a></li>
-                    <li><a href="#/music/albums">Add Music Album</a></li>
-                    <li><a href="#/music/albums/3/songs">Add Song</a></li>
+                    <li><a href="#/registration" ng-show="!isLogged">Register</a></li>
+                    <li><a href="#/login" ng-show="!isLogged">Login</a></li>
+                    <li><a href="#/music/albums" ng-show="isLogged">Add Music Album</a></li>
+                    <li><a href="#/music/albums/3/songs" ng-show="isLogged">Add Song</a></li>
+                    <li><a href="#/image" ng-show="isLogged">Image Section</a></li>
                     <li>
                         <a class="btn btn-default btn-outline btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse3" aria-expanded="false" aria-controls="nav-collapse3">Search</a>
                     </li>
-                    <li><a href="#" ng-click="logout()" ng-show="isLogged">Logout</a></li>
+                    <li><button type="button" ng-click="logout()" ng-show="isLogged">Logout</button></li>
                 </ul>
                 <div class="collapse nav navbar-nav nav-collapse slide-down" id="nav-collapse3">
                     <form class="navbar-form navbar-right" role="search">

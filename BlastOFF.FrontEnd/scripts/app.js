@@ -44,6 +44,13 @@ define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD
                 controllerUrl: 'controllers/music-controller'
             }));
 
+        $routeProvider
+            .when('/image', angularAMD.route({
+                templateUrl: 'templates/image.html',
+                controller: 'imageController',
+                controllerUrl: 'controllers/image-controller'
+            }));
+
         //// Change password
         //$routeProvider
         //    .when('/profile/password', angularAMD.route({
