@@ -21,6 +21,7 @@ namespace BlastOFF.Data.Migrations
         protected override void Seed(BlastOFFContext dbo)
         {
             //// Add songs
+            /*
             if (!dbo.Songs.Any())
             {
                 string songsInputFile = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "database seed files/songs.txt");
@@ -58,7 +59,7 @@ namespace BlastOFF.Data.Migrations
                 }
 
                 dbo.SaveChanges();
-            }
+            }*/
         }
     }
 }

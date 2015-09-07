@@ -42,19 +42,19 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         function userFollowers(username) {
             var headers = new requestHeaders().get();
 
-            return requester.get(headers, constants.BASE_URL + username + '/followers');
+            return requester.get(headers, usersServiceUrl + username + '/followers');
         }
 
         function followUser(username) {
             var headers = new requestHeaders().get();
 
-            return requester.post(headers, constants.BASE_URL + username + '/follow', null);
+            return requester.post(headers, usersServiceUrl + username + '/follow', null);
         }
 
         function unfollowUser(username) {
             var headers = new requestHeaders().get();
 
-            return requester.delete(headers, constants.BASE_URL + username + '/unfollow');
+            return requester.remove(headers, usersServiceUrl + username + '/unfollow');
         }
 
         /*function previewUser(username) {

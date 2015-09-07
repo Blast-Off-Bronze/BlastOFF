@@ -18,6 +18,7 @@ requirejs.config({
         'music-controller': 'controllers/music-controller',
         'image-controller': 'controllers/image-controller',
         'blast-controller': 'controllers/blast-controller',
+        'user-profile-controller': 'controllers/user-profile-controller',
 
         // Data Services
         'user-data-service': 'data-services/user-data-service',

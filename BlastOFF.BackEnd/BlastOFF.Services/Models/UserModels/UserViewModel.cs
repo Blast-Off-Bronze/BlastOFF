@@ -6,7 +6,7 @@
 
     public class UserViewModel
     {
-        public static UserViewModel Create(ApplicationUser model)
+        public static UserViewModel Create(ApplicationUser model, ApplicationUser currentUser)
         {
                 return new UserViewModel
                 {
@@ -22,9 +22,11 @@
                     LikedMusicAlbums = model.LikedMusicAlbums.Select(a => a.Title),
                     LikedImageAlbums = model.LikedImageAlbums.Select(a => a.Title),
                     ProfileImage = model.ProfileImage,
-                    NotSeenMessagesCount = model.ReceivedMessages.Count(m => m.Seen == false)
+                    FollowedByMe = model.FollowedBy.Any(u => u.Id == currentUser.Id)
                 };
         }
+
+        public bool FollowedByMe { get; set; }
 
         public string Username { get; set; }
 
@@ -33,8 +35,6 @@
         public string Email { get; set; }
 
         public string ProfileImage { get; set; }
-
-        public int NotSeenMessagesCount { get; set; }
 
         public virtual IEnumerable<string> FollowedUsers { get; set; }
 

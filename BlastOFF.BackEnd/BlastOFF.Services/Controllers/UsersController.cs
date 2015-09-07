@@ -1,6 +1,4 @@
-﻿using System.Web.Http.OData;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System.Linq;
     using Microsoft.AspNet.Identity;
@@ -60,7 +58,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("api/account/register")]
-        public async Task<IHttpActionResult> RegisterUser([FromBody]RegisterUserBindingModel model)
+        public async Task<IHttpActionResult> RegisterUser([FromBody] RegisterUserBindingModel model)
         {
             if (this.User.Identity.GetUserId() != null)
             {
@@ -112,7 +110,7 @@ namespace BlastOFF.Services.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("api/account/login")]
-        public async Task<IHttpActionResult> LoginUser(LoginUserBindingModel model)
+        public async Task<IHttpActionResult> LoginUser([FromBody] LoginUserBindingModel model)
         {
             if (this.User.Identity.GetUserId() != null)
             {
@@ -180,7 +178,7 @@ namespace BlastOFF.Services.Controllers
 
         [HttpGet]
         [Route("api/users/{username}/blasts")]
-        public IHttpActionResult GetBlastsByAuthor([FromUri]string username)
+        public IHttpActionResult GetBlastsByAuthor([FromUri] string username)
         {
             var blasts = this.Data.Blasts.All().Where(b => b.Author.UserName == username)
                 .Select(b => BlastViewModel.Create(b));
@@ -195,9 +193,9 @@ namespace BlastOFF.Services.Controllers
 
         [HttpGet]
         [Route("api/users/{username}/profile")]
-        public IHttpActionResult ViewProfile([FromUri]string username)
+        public IHttpActionResult ViewProfile([FromUri] string username)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
             if (searchedUser == null)
@@ -205,24 +203,21 @@ namespace BlastOFF.Services.Controllers
                 return this.NotFound();
             }
 
-            if (searchedUser.Id == loggedUserId)
+            if (searchedUser.Id == currentUser.Id)
             {
-                var ownProfile = this.Data.Users.All().Where(u => u.UserName == username)
-                    .Select(UserViewOwnModel.Create);
+                var ownProfile = UserViewOwnModel.Create(currentUser);
 
                 return this.Ok(ownProfile);
             }
 
-            var userProfile = this.Data.Users.All().Where(u => u.UserName == username)
-                .Select(u => UserViewModel.Create(u));
+            var userProfile = UserViewModel.Create(searchedUser, currentUser);
 
             return this.Ok(userProfile);
-
         }
 
         [HttpGet]
         [Route("api/users/{username}/followers")]
-        public IHttpActionResult GetFollowers([FromUri]string username)
+        public IHttpActionResult GetFollowers([FromUri] string username)
         {
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
@@ -240,7 +235,7 @@ namespace BlastOFF.Services.Controllers
 
         [HttpPost]
         [Route("api/users/{username}/follow")]
-        public IHttpActionResult FollowUser([FromUri]string username)
+        public IHttpActionResult FollowUser([FromUri] string username)
         {
             var loggedUserId = this.User.Identity.GetUserId();
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
@@ -273,7 +268,7 @@ namespace BlastOFF.Services.Controllers
 
         [HttpDelete]
         [Route("api/users/{username}/unfollow")]
-        public IHttpActionResult UnfollowUser([FromUri]string username)
+        public IHttpActionResult UnfollowUser([FromUri] string username)
         {
             var loggedUserId = this.User.Identity.GetUserId();
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
