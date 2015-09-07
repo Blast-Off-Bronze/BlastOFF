@@ -7,7 +7,6 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         function getAllBlasts() {
 
             var headers = new requestHeaders().get();
-            alert("yooo");
             return requester.get(headers, serviceUrl);
         }
 

@@ -211,7 +211,7 @@
             this.Data.Images.Add(image);
             this.Data.SaveChanges();
 
-            var returnItem = ImageViewModel.Create(image);
+            var returnItem = ImageViewModel.Create(this.Data.Images.Find(image.Id));
 
             return Ok(returnItem);
         }

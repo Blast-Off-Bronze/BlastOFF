@@ -36,7 +36,7 @@
         [AllowAnonymous]
         public IHttpActionResult GetAll()
         {
-            var blasts = this.Data.Blasts.All().Select(BlastViewModel.Create);
+            var blasts = this.Data.Blasts.All().ToList().Select(b => BlastViewModel.Create(b));
 
             return this.Ok(blasts);
         }
@@ -125,9 +125,11 @@
                 return this.BadRequest("Wrong or missing input parameters");
             }
 
+            var user = this.Data.Users.Find(loggedUserId);
+
             var newBlast = new Blast
             {
-                AuthorId = loggedUserId,
+                AuthorId = user.Id,
                 Content = model.Content,
                 PostedOn = DateTime.Now,
                 BlastType = model.BlastType
@@ -136,7 +138,7 @@
             this.Data.Blasts.Add(newBlast);
             this.Data.SaveChanges();
 
-            var blastToReturn = BlastViewModel.Create(newBlast);
+            var blastToReturn = BlastViewModel.Create(this.Data.Blasts.Find(newBlast.Id));
 
             return Ok(blastToReturn);
         }
