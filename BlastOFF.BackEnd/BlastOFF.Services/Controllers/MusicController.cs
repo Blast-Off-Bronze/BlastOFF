@@ -162,7 +162,7 @@
         [Route("api/music/albums")]
         public IHttpActionResult AddMusicAlbum([FromBody] MusicAlbumBindingModel musicAlbum)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (musicAlbum == null)
             {
@@ -180,13 +180,12 @@
             }
 
             var newMusicAlbum = new MusicAlbum
-                {
-                    Title = musicAlbum.Title,
-                    AuthorId = loggedUserId,
-                    DateCreated = DateTime.Now,
-                    ViewsCount = 0,
-                    CoverImageData = musicAlbum.CoverImageData
-                };
+            {
+                Title = musicAlbum.Title,
+                AuthorId = user.Id,
+                DateCreated = DateTime.Now,
+                CoverImageData = musicAlbum.CoverImageData
+            };
 
             if (
                 this.Data.MusicAlbums.All()
@@ -210,7 +209,7 @@
         [Route("api/music/albums/{id}/songs")]
         public IHttpActionResult AddSong([FromUri] int id, [FromBody] SongBindingModel song)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -229,7 +228,7 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            if (loggedUserId != album.AuthorId)
+            if (user.Id != album.AuthorId)
             {
                 return this.Unauthorized();
             }
@@ -245,6 +244,7 @@
             }
 
             var metadataStart = song.FileDataUrl.IndexOf("data:audio/mp3;base64,");
+
             if (metadataStart != -1)
             {
                 song.FileDataUrl = song.FileDataUrl.Remove(metadataStart, metadataStart + 22);
@@ -261,7 +261,6 @@
                     MusicAlbumId = int.Parse(song.MusicAlbumId),
                     UploaderId = album.AuthorId,
                     DateAdded = DateTime.Now,
-                    ViewsCount = 0,
                     TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber),
                     OriginalAlbumTitle = song.OriginalAlbumTitle,
                     OriginalAlbumArtist = song.OriginalAlbumArtist,
@@ -342,7 +341,7 @@
         [Route("api/music/albums/{id}/comments")]
         public IHttpActionResult AddMusicAlbumComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -364,7 +363,7 @@
             var newMusicAlbumComment = new Comment
                 {
                     Content = comment.Content,
-                    AuthorId = loggedUserId,
+                    AuthorId = user.Id,
                     PostedOn = DateTime.Now,
                     MusicAlbumId = id
                 };
@@ -384,7 +383,7 @@
         [Route("api/songs/{id}/comments")]
         public IHttpActionResult AddSongComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var song = this.Data.Songs.Find(id);
 
@@ -406,7 +405,7 @@
             var newSongComment = new Comment
                 {
                     Content = comment.Content,
-                    AuthorId = loggedUserId,
+                    AuthorId = user.Id,
                     PostedOn = DateTime.Now,
                     MusicAlbumId = id
                 };
