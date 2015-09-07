@@ -1,3 +1,6 @@
+using System;
+using BlastOFF.Models.UserModel;
+
 namespace BlastOFF.Data.Migrations
 {
     using System.Data.Entity.Migrations;
@@ -18,9 +21,9 @@ namespace BlastOFF.Data.Migrations
         protected override void Seed(BlastOFFContext dbo)
         {
             //// Add songs
-            /* if (!dbo.Songs.Any())
+            if (!dbo.Songs.Any())
             {
-                string songsInputFile = "../../../database seed files/songs.txt";
+                string songsInputFile = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "database seed files/songs.txt");
 
                 using (var reader = new StreamReader(songsInputFile))
                 {
@@ -30,26 +33,32 @@ namespace BlastOFF.Data.Migrations
                     {
                         var songData = line.Split('|');
 
-                        var title = songData[0].Trim();
-                        var artist = songData[1].Trim();
-                        var filePath = songData[2].Trim();
-                        var viewsCount = int.Parse(songData[3].Trim());
+                        var id = songData[0].Trim();
+                        var title = songData[1].Trim();
+                        var artist = songData[2].Trim();
+                        var filePath = "http://docs.google.com/uc?export=open&id=" + id;
 
-                        dbo.Songs.Add(
-                            new Song
+                        var song = new Song
                             {
+                                Id = id,
                                 Title = title,
                                 Artist = artist,
                                 FilePath = filePath,
-                                ViewsCount = viewsCount
-                            });
+                                ViewsCount = 0,
+                                DateAdded = DateTime.Now,
+                                MusicAlbumId = dbo.MusicAlbums.OrderBy(a => Guid.NewGuid()).First().Id
+                            };
+
+                        song.UploaderId = dbo.MusicAlbums.First(a => a.Id == song.MusicAlbumId).AuthorId;
+
+                        dbo.Songs.Add(song);
 
                         line = reader.ReadLine();
                     }
                 }
 
                 dbo.SaveChanges();
-            } */
+            }
         }
     }
 }

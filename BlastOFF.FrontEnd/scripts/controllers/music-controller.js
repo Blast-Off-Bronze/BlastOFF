@@ -12,7 +12,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
                 $scope.musicAlbum = {
                     title: 'MusicAlbum_01',
-                    coverImageData: ''
+                    coverImageData: null
                 };
 
                 $scope.song = {
