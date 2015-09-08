@@ -28,7 +28,7 @@
 
         public int SongsCount { get; set; }
 
-        public IEnumerable<string> Songs { get; set; }
+        public IEnumerable<SongViewModel> Songs { get; set; }
 
         public static MusicAlbumViewModel Create(MusicAlbum a)
         {
@@ -44,7 +44,7 @@
                            CommentsCount = a.Comments.Count,
                            FollowersCount = a.Followers.Count,
                            SongsCount = a.Songs.Count,
-                           Songs = a.Songs.Select(s => s.Title).Take(3)
+                           Songs = a.Songs.Select(SongViewModel.Create).Take(3)
                        };
         }
     }

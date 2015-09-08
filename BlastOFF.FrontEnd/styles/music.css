@@ -4,7 +4,7 @@
 }
 
 .panel-white {
-   width: 416px;
+   width: 512px;
     border: 1px solid #dddddd;
 }
 
@@ -46,6 +46,10 @@
 .post .post-heading .meta .time {
     margin-top: 8px;
     color: #999;
+}
+
+.post-image {
+    margin-left: 15px;
 }
 
 .post .post-image .image {

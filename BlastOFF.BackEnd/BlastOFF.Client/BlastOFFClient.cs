@@ -1,9 +1,10 @@
-﻿using System;
-using System.Linq;
-using BlastOFF.Data;
-
-namespace BlastOFF.Client
+﻿namespace BlastOFF.Client
 {
+    using System;
+    using System.Linq;
+
+    using BlastOFF.Data;
+
     public class BlastOFFClient
     {
         public static void Main()
@@ -12,7 +13,7 @@ namespace BlastOFF.Client
 
             var songsCount = dbo.Songs.Count();
 
-            Console.WriteLine(songsCount);
+            Console.WriteLine("Total songs:" + songsCount);
         }
     }
 }

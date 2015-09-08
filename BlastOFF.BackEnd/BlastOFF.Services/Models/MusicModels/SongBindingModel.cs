@@ -4,7 +4,7 @@
 
     public class SongBindingModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string Title { get; set; }
 
@@ -14,6 +14,7 @@
 
         public string MusicAlbumId { get; set; }
 
+        // OPTIONAL
         public string TrackNumber { get; set; }
 
         public string OriginalAlbumTitle { get; set; }
