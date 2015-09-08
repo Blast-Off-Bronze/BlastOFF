@@ -9,6 +9,7 @@ requirejs.config({
         'angularAMD': '../libraries/angularAMD/angularAMD.min',
         'jQuery': '../libraries/jquery/jquery.min',
         'noty': '../libraries/noty/jquery.noty.packaged.min',
+        'bootstrap': '../libraries/bootstrap/bootstrap.min',
 
         // Controllers
         'home-controller': 'controllers/home-controller',
@@ -58,8 +59,9 @@ requirejs.config({
         'angular-messages': ['angular'],
         'angular-route': ['angular'],
         'angularAMD': ['angular'],
-        'noty': ['jquery']
+        'noty': ['jQuery'],
+        'bootstrap': ['jQuery']
     },
 
-    deps: ['app', 'jquery', 'header-controller']
+    deps: ['app', 'bootstrap', 'header-controller']
 });
