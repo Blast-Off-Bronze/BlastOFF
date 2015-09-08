@@ -1,18 +1,17 @@
-﻿using System.ComponentModel;
-
-namespace BlastOFF.Models.BlastModels
+﻿namespace BlastOFF.Models.BlastModels
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
-    using UserModel;
-    using Enumerations;
-    
+    using BlastOFF.Models.Enumerations;
+    using BlastOFF.Models.UserModel;
+
     public class Blast
     {
         private ICollection<Comment> comments;
+
         private ICollection<ApplicationUser> usersLikes;
 
         public Blast()
@@ -41,15 +40,28 @@ namespace BlastOFF.Models.BlastModels
 
         public virtual ICollection<Comment> Comments
         {
-            get { return this.comments; }
-            set { this.comments = value; }
+            get
+            {
+                return this.comments;
+            }
+
+            set
+            {
+                this.comments = value;
+            }
         }
 
         public virtual ICollection<ApplicationUser> UserLikes
         {
-            get { return this.usersLikes; }
+            get
+            {
+                return this.usersLikes;
+            }
 
-            set { this.usersLikes = value; }
+            set
+            {
+                this.usersLikes = value;
+            }
         }
     }
 }

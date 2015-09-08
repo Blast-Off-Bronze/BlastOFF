@@ -64,4 +64,5 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                         });
                 };
             });
-    });
+    })
+;

@@ -1,12 +1,13 @@
-﻿using System.Threading.Tasks;
-using System.Web.Cors;
-using System.Web.Http;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 
 [assembly: OwinStartup(typeof(BlastOFF.Services.Startup))]
 
 namespace BlastOFF.Services
 {
+    using System.Threading.Tasks;
+    using System.Web.Cors;
+    using System.Web.Http;
+
     using Microsoft.Owin.Cors;
 
     using Owin;
@@ -15,21 +16,23 @@ namespace BlastOFF.Services
     {
         public void Configuration(IAppBuilder app)
         {
-            app.UseCors(new CorsOptions()
-            {
-                PolicyProvider = new CorsPolicyProvider()
-                {
-                    PolicyResolver = request =>
-                    {
-                        if (request.Path.StartsWithSegments(new PathString(TokenEndpointPath)))
-                        {
-                            return Task.FromResult(new CorsPolicy { AllowAnyOrigin = true });
-                        }
 
-                        return Task.FromResult<CorsPolicy>(null);
-                    }
-                }
-            });
+            app.UseCors(
+                new CorsOptions()
+                    {
+                        PolicyProvider = new CorsPolicyProvider()
+                                             {
+                                                 PolicyResolver = request =>
+                                                     {
+                                                         if (request.Path.StartsWithSegments(new PathString(TokenEndpointPath)))
+                                                         {
+                                                             return Task.FromResult(new CorsPolicy { AllowAnyOrigin = true });
+                                                         }
+
+                                                         return Task.FromResult<CorsPolicy>(null);
+                                                     }
+                                             }
+                    });
 
             this.ConfigureAuth(app);
 

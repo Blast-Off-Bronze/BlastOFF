@@ -8,30 +8,9 @@
 
     public class MusicAlbumViewModel
     {
-        public static MusicAlbumViewModel Create(MusicAlbum a)
-        {
-            return new MusicAlbumViewModel
-                    {
-                        Id = a.Id,
-                        Title = a.Title,
-                        Author = a.Author.UserName,
-                        AuthorId = a.Author.Id,
-                        DateCreated = a.DateCreated,
-                        ViewsCount = a.ViewsCount,
-                        CoverImageData = a.CoverImageData,
-                        LikesCount = a.UserLikes.Count,
-                        CommentsCount = a.Comments.Count,
-                        FollowersCount = a.Followers.Count,
-                        SongsCount = a.Songs.Count,
-                        Songs = a.Songs.Select(s => s.Title).Take(3)
-                    };
-        }
-
         public int Id { get; set; }
 
         public string Title { get; set; }
-
-        public string AuthorId { get; set; }
 
         public string Author { get; set; }
 
@@ -50,5 +29,23 @@
         public int SongsCount { get; set; }
 
         public IEnumerable<string> Songs { get; set; }
+
+        public static MusicAlbumViewModel Create(MusicAlbum a)
+        {
+            return new MusicAlbumViewModel
+                       {
+                           Id = a.Id,
+                           Title = a.Title,
+                           Author = a.Author.UserName,
+                           DateCreated = a.DateCreated,
+                           CoverImageData = a.CoverImageData,
+                           ViewsCount = a.ViewsCount,
+                           LikesCount = a.UserLikes.Count,
+                           CommentsCount = a.Comments.Count,
+                           FollowersCount = a.Followers.Count,
+                           SongsCount = a.Songs.Count,
+                           Songs = a.Songs.Select(s => s.Title).Take(3)
+                       };
+        }
     }
 }

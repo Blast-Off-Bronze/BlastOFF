@@ -2,26 +2,27 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Web.Http;
+    using System.Web.Http.Cors;
 
-    using Data;
-    using Data.Interfaces;
+    using BlastOFF.Data;
+    using BlastOFF.Data.Interfaces;
     using BlastOFF.Models.MusicModels;
-    using Constants;
-    using Models;
-    using Models.MusicModels;
-    using Services;
+    using BlastOFF.Services.Constants;
+    using BlastOFF.Services.Models.CommentModels;
+    using BlastOFF.Services.Models.MusicModels;
+    using BlastOFF.Services.Services;
+    using BlastOFF.Services.UserSessionUtils;
 
     using Google.Apis.Drive.v2;
     using Google.Apis.Drive.v2.Data;
 
     using Microsoft.AspNet.Identity;
 
-    using BlastOFF.Services.Models.CommentModels;
-    using BlastOFF.Services.UserSessionUtils;
-
     using Comment = BlastOFF.Models.Comment;
+    using File = Google.Apis.Drive.v2.Data.File;
 
     [SessionAuthorize]
     public class MusicController : BaseApiController
@@ -46,12 +47,25 @@
         [AllowAnonymous]
         public IHttpActionResult AllMusicAlbums()
         {
-            var albums = this.Data.MusicAlbums.All().Select(a => MusicAlbumViewModel.Create(a));
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            this.Data.Dispose();
+            var albums = this.Data.MusicAlbums
+                .All()
+                .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
+                .OrderBy(a => a.DateCreated)
+                .ToList()
+                .Select(MusicAlbumViewModel.Create);
 
             return this.Ok(albums);
         }
+
+
+
+
+
+
+
+
 
         //// GET /api/music/albums/{id}/songs
         [HttpGet]
@@ -180,12 +194,12 @@
             }
 
             var newMusicAlbum = new MusicAlbum
-            {
-                Title = musicAlbum.Title,
-                AuthorId = user.Id,
-                DateCreated = DateTime.Now,
-                CoverImageData = musicAlbum.CoverImageData
-            };
+                                    {
+                                        Title = musicAlbum.Title, 
+                                        AuthorId = user.Id, 
+                                        DateCreated = DateTime.Now, 
+                                        CoverImageData = musicAlbum.CoverImageData
+                                    };
 
             if (
                 this.Data.MusicAlbums.All()
@@ -254,22 +268,23 @@
             song.FileDataUrl = this.UploadSongToGoogleDrive(song.FileDataUrl, googleDriveFileName);
 
             var newSong = new Song
-                {
-                    Title = song.Title,
-                    Artist = song.Artist,
-                    FilePath = song.FileDataUrl,
-                    MusicAlbumId = int.Parse(song.MusicAlbumId),
-                    UploaderId = album.AuthorId,
-                    DateAdded = DateTime.Now,
-                    TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber),
-                    OriginalAlbumTitle = song.OriginalAlbumTitle,
-                    OriginalAlbumArtist = song.OriginalAlbumArtist,
-                    OriginalDate = song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate),
-                    Genre = song.Genre,
-                    Composer = song.Composer,
-                    Publisher = song.Publisher,
-                    Bpm = song.Bpm == null ? (int?)null : int.Parse(song.Bpm)
-                };
+                              {
+                                  Title = song.Title, 
+                                  Artist = song.Artist, 
+                                  FilePath = song.FileDataUrl, 
+                                  MusicAlbumId = int.Parse(song.MusicAlbumId), 
+                                  UploaderId = album.AuthorId, 
+                                  DateAdded = DateTime.Now, 
+                                  TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber), 
+                                  OriginalAlbumTitle = song.OriginalAlbumTitle, 
+                                  OriginalAlbumArtist = song.OriginalAlbumArtist, 
+                                  OriginalDate =
+                                      song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate), 
+                                  Genre = song.Genre, 
+                                  Composer = song.Composer, 
+                                  Publisher = song.Publisher, 
+                                  Bpm = song.Bpm == null ? (int?)null : int.Parse(song.Bpm)
+                              };
 
             if (album.Songs.Contains(newSong))
             {
@@ -311,7 +326,7 @@
             const string AudioMimeType = "audio/mpeg";
 
             byte[] byteArray = Convert.FromBase64String(fileDataUrl);
-            System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
+            MemoryStream stream = new System.IO.MemoryStream(byteArray);
 
             var service = GoogleDriveService.Get();
 
@@ -319,9 +334,14 @@
             body.Title = fileName;
             body.MimeType = AudioMimeType;
             body.Parents = new List<ParentReference>
-                {
-                    new ParentReference { Id = MusicConstants.GoogleDriveBlastOFFMusicFolderId }
-                };
+                               {
+                                   new ParentReference
+                                       {
+                                           Id =
+                                               MusicConstants
+                                               .GoogleDriveBlastOFFMusicFolderId
+                                       }
+                               };
 
             try
             {
@@ -361,12 +381,12 @@
             }
 
             var newMusicAlbumComment = new Comment
-                {
-                    Content = comment.Content,
-                    AuthorId = user.Id,
-                    PostedOn = DateTime.Now,
-                    MusicAlbumId = id
-                };
+                                           {
+                                               Content = comment.Content, 
+                                               AuthorId = user.Id, 
+                                               PostedOn = DateTime.Now, 
+                                               MusicAlbumId = id
+                                           };
 
             this.Data.Comments.Add(newMusicAlbumComment);
             this.Data.SaveChanges();
@@ -403,12 +423,12 @@
             }
 
             var newSongComment = new Comment
-                {
-                    Content = comment.Content,
-                    AuthorId = user.Id,
-                    PostedOn = DateTime.Now,
-                    MusicAlbumId = id
-                };
+                                     {
+                                         Content = comment.Content, 
+                                         AuthorId = user.Id, 
+                                         PostedOn = DateTime.Now, 
+                                         MusicAlbumId = id
+                                     };
 
             this.Data.Comments.Add(newSongComment);
             this.Data.SaveChanges();
@@ -606,8 +626,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully liked.",
-                        album.Title,
+                        "Music Album {0}, created by {1}, successfully liked.", 
+                        album.Title, 
                         album.Author.UserName));
         }
 
@@ -647,8 +667,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully unliked.",
-                        album.Title,
+                        "Music Album {0}, created by {1}, successfully unliked.", 
+                        album.Title, 
                         album.Author.UserName));
         }
 
@@ -765,8 +785,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully followed.",
-                        album.Title,
+                        "Music Album {0}, created by {1}, successfully followed.", 
+                        album.Title, 
                         album.Author.UserName));
         }
 
@@ -806,8 +826,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully unfollowed.",
-                        album.Title,
+                        "Music Album {0}, created by {1}, successfully unfollowed.", 
+                        album.Title, 
                         album.Author.UserName));
         }
     }

@@ -25,8 +25,6 @@
 
             config.AddODataQueryFilter();
 
-            //config.EnableCors(new EnableCorsAttribute("http://localhost:63342", "*", "*"));
-
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
                 new CamelCasePropertyNamesContractResolver();
 

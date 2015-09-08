@@ -4,6 +4,14 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
     app.factory('musicDataService', function (constants, requestHeaders, requester) {
         var serviceUrl = constants.BASE_URL + 'music/albums';
 
+        function getAllMusicAlbums() {
+
+            var headers = new requestHeaders().get();
+
+            return requester.get(headers, serviceUrl);
+        }
+
+
         function addMusicAlbum(musicAlbum) {
 
             var headers = new requestHeaders().get();
@@ -20,6 +28,9 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         }
 
         return {
+            getAllMusicAlbums: getAllMusicAlbums,
+
+
             addMusicAlbum: addMusicAlbum,
             addSong: addSong
         }
