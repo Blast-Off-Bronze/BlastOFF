@@ -23,9 +23,9 @@
 
             <ul class="comments-list" ng-if="musicAlbum.songsCount > 0">
                 <li class="comment" ng-repeat="song in musicAlbum.songs" ng-bind-html="song.filePath">
-                    <a class="pull-left" href="#">
+                    <a class="pull-left">
                         <audio controls>
-                            <source ng-src="{{song.filePath}}"/>
+                            <source ng-src="{{song.filePath}}" type="audio/mp3"/>
                         </audio>
                     </a>
 

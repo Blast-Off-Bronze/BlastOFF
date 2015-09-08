@@ -119,5 +119,14 @@ define(['angularAMD', 'angular-messages', 'angular-route', 'infiniteScroll'], fu
         //$locationProvider.html5Mode(true);
     });
 
+    app.config(function($sceDelegateProvider) {
+        $sceDelegateProvider.resourceUrlWhitelist([
+            // Allow same origin resource loads.
+            'self',
+            // Allow loading from our assets domain.  Notice the difference between * and **.
+            'http://docs.google.com/**'
+        ]);
+    });
+
     return angularAMD.bootstrap(app);
 });
