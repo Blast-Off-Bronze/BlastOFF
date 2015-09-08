@@ -28,7 +28,7 @@ define(['app', 'blast-data-service', 'storage-service', 'notification-service'],
                     } else {
                         $scope.gettingBlasts = true;
 
-                        blastDataService.getPagedBlasts("username", startBlastId, pageSize).then(
+                        blastDataService.getPagedBlasts("blqblq", 3, pageSize).then(
                             function (response) {
                                 if (response.length < 1) {
                                     $scope.noBlastsAvailable = true;
@@ -40,6 +40,7 @@ define(['app', 'blast-data-service', 'storage-service', 'notification-service'],
                             },
                             function (error) {
                                 $scope.gettingBlasts = false;
+                                console.log(error);
                                 notificationService.alertError(error);
                             });
                     }

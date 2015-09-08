@@ -210,7 +210,7 @@
                 return this.Ok(ownProfile);
             }
 
-            var userProfile = UserViewModel.Create(searchedUser, currentUser);
+            var userProfile = UserProfileViewModel.Create(searchedUser, currentUser);
 
             return this.Ok(userProfile);
         }

@@ -1,41 +1,33 @@
-<!-- Second navbar for sign in -->
-<div ng-controller="headerController">
-    <nav class="navbar navbar-default" >
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Brand</a>
-            </div>
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="navbar-collapse-2">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#/registration" ng-show="!isLogged">Register</a></li>
-                    <li><a href="#/login" ng-show="!isLogged">Login</a></li>
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" rel="home" href="#/">Blast OFF</a>
+    </div>
 
-
-                    <li><a href="#/blast-feed" ng-show="isLogged">Blast section</a></li>
-                    <li><a href="#/image" ng-show="isLogged">Image Section</a></li>
-                    <li>
-                        <a class="btn btn-default btn-outline btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse3" aria-expanded="false" aria-controls="nav-collapse3">Search</a>
-                    </li>
-                    <li><button type="button" ng-click="logout()" ng-show="isLogged">Logout</button></li>
-                </ul>
-                <div class="collapse nav navbar-nav nav-collapse slide-down" id="nav-collapse3">
-                    <form class="navbar-form navbar-right" role="search">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search" />
-                        </div>
-                        <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                    </form>
+    <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav pull-right">
+            <li><a href="#/registration" ng-show="!isLogged">Register</a></li>
+            <li><a href="#/login" ng-show="!isLogged">Login</a></li>
+            <li><a href="#/blast-feed" ng-show="isLogged">Blast section</a></li>
+            <li><a href="#/image" ng-show="isLogged">Image Section</a></li>
+            <li><a href="" class="btn" ng-click="logout()" ng-show="isLogged">Logout</a></li>
+        </ul>
+        <div class="col-sm-3 col-md-3 pull-right">
+            <div class="navbar-text">Text</div>
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
                 </div>
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container -->
-    </nav><!-- /.navbar -->
+            </form>
+        </div>
+    </div>
 </div>

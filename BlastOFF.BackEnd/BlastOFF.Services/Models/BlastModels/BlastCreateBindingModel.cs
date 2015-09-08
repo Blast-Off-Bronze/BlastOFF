@@ -13,6 +13,7 @@
         public string Content { get; set; }
 
         [DisplayName("Blast Type")]
+        [DefaultValue(BlastOFF.Models.Enumerations.BlastType.Normal)]
         public BlastType BlastType { get; set; }
     }
 }

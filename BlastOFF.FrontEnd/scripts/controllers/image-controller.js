@@ -9,7 +9,7 @@ define(['app', 'coverImageUpload', 'storage-service', 'image-data-service', 'con
                 $scope.isLogged = storageService.isLogged();
 
                 $scope.imageAlbum = {
-                    title: 'test',
+                    title: '',
                 };
 
                 imageDataService.getMyAlbums()

@@ -57,6 +57,12 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.remove(headers, usersServiceUrl + username + '/unfollow');
         }
 
+        function makeABlast(blast) {
+            var headers = new requestHeaders().get();
+
+            return requester.post(headers, constants.BASE_URL + 'blasts', blast);
+        }
+
         /*function previewUser(username) {
             var headers = new requestHeaders().get();
 
@@ -83,7 +89,8 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             followUser: followUser,
             unfollowUser: unfollowUser,
             userProfile: userProfile,
-            userFollowers: userFollowers
+            userFollowers: userFollowers,
+            makeABlast: makeABlast
         }
     });
 });
