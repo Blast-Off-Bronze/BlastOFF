@@ -5,7 +5,7 @@
         <div class="panel panel-white post panel-shadow" ng-if="!requesterIsBusy" ng-repeat="musicAlbum in allMusicAlbums">
 
             <div class="post-image">
-                <img src="{{musicAlbum.coverImageData}}" class="image">
+                <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
             </div>
 
             <div class="post-description">
@@ -22,9 +22,11 @@
             </div>
 
             <ul class="comments-list" ng-if="musicAlbum.songsCount > 0">
-                <li class="comment" ng-repeat="song in musicAlbum.songs">
+                <li class="comment" ng-repeat="song in musicAlbum.songs" ng-bind-html="song.filePath">
                     <a class="pull-left" href="#">
-                        <!--player-->
+                        <audio controls>
+                            <source ng-src="{{song.filePath}}"/>
+                        </audio>
                     </a>
 
                     <div class="comment-body">

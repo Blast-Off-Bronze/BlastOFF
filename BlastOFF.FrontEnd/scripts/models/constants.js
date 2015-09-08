@@ -4,7 +4,7 @@ define(['app'], function (app) {
     return app.constant('constants', {
         // Urls
         'BASE_URL': 'http://localhost:1505/api/',
-        'DEFAULT_MUSIC_ALBUM_COVER_IMAGE_URL': 'images/default-music-album-cover-image.png',
+        'DEFAULT_MUSIC_ALBUM_COVER_IMAGE_URL': 'images/default-music-album-cover-image.jpg',
 
         // Request Headers
         'CACHE_CONTROL': 'no-cache',

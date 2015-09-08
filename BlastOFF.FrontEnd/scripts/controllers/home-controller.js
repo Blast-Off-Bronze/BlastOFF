@@ -11,20 +11,15 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 // MUSIC
                 $scope.requesterIsBusy = false;
                 $scope.allMusicAlbums = [];
+                $scope.defaultMusicAlbumCoverImage = constants.DEFAULT_MUSIC_ALBUM_COVER_IMAGE_URL;
 
                 $scope.getAllMusicAlbums = function () {
                     $scope.requesterIsBusy = true;
 
                     musicDataService.getAllMusicAlbums().then(
                         function (response) {
+                            console.log(response)
                             $scope.allMusicAlbums = response;
-
-                            $scope.allMusicAlbums.forEach(function (musicAlbum) {
-                                if (musicAlbum['coverImageData'] == null) {
-                                    musicAlbum['coverImageData'] = constants.DEFAULT_MUSIC_ALBUM_COVER_IMAGE_URL;
-                                }
-                            });
-
                             $scope.requesterIsBusy = false;
                         },
                         function (error) {
