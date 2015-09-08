@@ -1,7 +1,7 @@
-define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD) {
+define(['angularAMD', 'angular-messages', 'angular-route', 'infiniteScroll'], function (angularAMD) {
     'use strict';
 
-    var app = angular.module('app', ['ngMessages', 'ngRoute']);
+    var app = angular.module('app', ['ngMessages', 'ngRoute', 'infinite-scroll']);
 
     app.config(function ($routeProvider, $locationProvider) {
 
@@ -28,22 +28,6 @@ define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD
                 controllerUrl: 'controllers/login-controller'
             }));
 
-        // Add music album
-        $routeProvider
-            .when('/music/albums', angularAMD.route({
-                templateUrl: 'templates/music.html',
-                controller: 'musicController',
-                controllerUrl: 'controllers/music-controller'
-            }));
-
-        // Add song
-        $routeProvider
-            .when('/music/albums/:musicAlbumId/songs', angularAMD.route({
-                templateUrl: 'templates/music.html',
-                controller: 'musicController',
-                controllerUrl: 'controllers/music-controller'
-            }));
-
         $routeProvider
             .when('/image', angularAMD.route({
                 templateUrl: 'templates/image.html',
@@ -64,6 +48,22 @@ define(['angularAMD', 'angular-messages', 'angular-route'], function (angularAMD
                 controller: 'userProfileController',
                 controllerUrl: 'controllers/user-profile-controller'
             }));
+
+        //// Add music album
+        //$routeProvider
+        //    .when('/music/albums', angularAMD.route({
+        //        templateUrl: 'templates/music.html',
+        //        controller: 'musicController',
+        //        controllerUrl: 'controllers/music-controller'
+        //    }));
+        //
+        //// Add song
+        //$routeProvider
+        //    .when('/music/albums/:musicAlbumId/songs', angularAMD.route({
+        //        templateUrl: 'templates/music.html',
+        //        controller: 'musicController',
+        //        controllerUrl: 'controllers/music-controller'
+        //    }));
 
         //// Change password
         //$routeProvider

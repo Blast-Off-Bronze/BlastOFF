@@ -1,4 +1,3 @@
-
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <link href="../styles/blast-feed-style.css" rel="stylesheet">
 <div class="container">
@@ -60,24 +59,37 @@
                     </div>
                 </div>
                 <hr>
-                <!-- post 1 -->
-                <div class="row" ng-repeat="blast in allBlasts">
-                    <div class="col-md-2">
-                        <img src="http://bootdey.com/img/Content/user_3.jpg" class="img-responsive  img-circle">
-                    </div>
-                    <div class="col-md-10">
-                        <div class="row post">
-                            <div class="col-md-12">
-                                <!--<p>{{blast}}</p>-->
-                                <p>{{blast.content}}</p>
-                                <a data-placement="top" class="btn btn-success btn-xs glyphicon glyphicon-ok tip" href="#" title="View"></a>
-                                <a data-placement="top" class="btn btn-danger  btn-xs glyphicon glyphicon-trash tip" href="#" title="Delete"></a>
-                                <a data-placement="top" class="btn btn-info  btn-xs glyphicon glyphicon-share tip" href="#" title="Share"></a>
-                                <p>date = {{blast.postedOn}}</p>
+
+                <!-- SCROLLABLE BLASTS -->
+                <div infinite-scroll="getPagedBlasts(lastBlastId)"
+                     infinite-scroll-distance='1'
+                     infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
+
+                    <!-- Blast -->
+                    <div class="row" ng-repeat="blast in allBlasts">
+                        <div class="col-md-2">
+                            <img src="http://bootdey.com/img/Content/user_3.jpg" class="img-responsive  img-circle">
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row post">
+                                <div class="col-md-12">
+                                    <!--<p>{{blast}}</p>-->
+                                    <p>{{blast.content}}</p>
+                                    <a data-placement="top" class="btn btn-success btn-xs glyphicon glyphicon-ok tip"
+                                       href="#" title="View"></a>
+                                    <a data-placement="top" class="btn btn-danger  btn-xs glyphicon glyphicon-trash tip"
+                                       href="#" title="Delete"></a>
+                                    <a data-placement="top" class="btn btn-info  btn-xs glyphicon glyphicon-share tip"
+                                       href="#" title="Share"></a>
+
+                                    <p>date = {{blast.postedOn}}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                </div><!-- SCROLLABLE BLASTS - END -->
+
                 <hr>
             </div>
         </div>

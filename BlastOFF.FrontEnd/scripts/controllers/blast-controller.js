@@ -1,20 +1,49 @@
-define(['app', 'blast-data-service', 'storage-service'],
+define(['app', 'blast-data-service', 'storage-service', 'notification-service'],
 
     function (app) {
         'use strict';
 
         app.controller('blastController',
-            function ($scope, $routeParams, blastDataService, storageService) {
+            function ($scope, $routeParams, blastDataService, storageService, notificationService) {
 
                 $scope.isLogged = storageService.isLogged();
 
-                blastDataService.getAllBlasts()
-                .then(function(response) {
-                    $scope.allBlasts = response;
-                    console.log(response);
-                }, function(error) {
-                    console.log(error);
-                });
+                $scope.noBlastsAvailable = false;
+                $scope.gettingBlasts = false;
+                $scope.previousBlastsExist = false;
+                $scope.allBlasts = [];
+
+                //blastDataService.getAllBlasts()
+                //.then(function(response) {
+                //    $scope.allBlasts = response;
+                //    console.log(response);
+                //}, function(error) {
+                //    console.log(error);
+                //});
+
+                // PAGED BLASTS
+                $scope.getPagedBlasts = function (startBlastId, pageSize) {
+                    if ($scope.gettingBlasts) {
+                        return;
+                    } else {
+                        $scope.gettingBlasts = true;
+
+                        blastDataService.getPagedBlasts("username", startBlastId, pageSize).then(
+                            function (response) {
+                                if (response.length < 1) {
+                                    $scope.noBlastsAvailable = true;
+                                } else {
+                                    $scope.allBlasts = response;
+                                    $scope.previousBlasts = true;
+                                }
+                                $scope.gettingBlasts = false;
+                            },
+                            function (error) {
+                                $scope.gettingBlasts = false;
+                                notificationService.alertError(error);
+                            });
+                    }
+                };
 
 //                $scope.imageAlbum = {
 //                    title: '',

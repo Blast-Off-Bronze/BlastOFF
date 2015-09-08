@@ -33,6 +33,7 @@ requirejs.config({
         'imageUpload': 'directives/ImageUploadDirective',
         'coverImageUpload' : 'directives/CoverImageUploadDirective',
         'songUpload' : 'directives/SongUploadDirective',
+        'infiniteScroll': 'directives/ng-infinite-scroll.min',
 
         // Models
         'constants': 'models/constants',
@@ -60,8 +61,9 @@ requirejs.config({
         'angular-route': ['angular'],
         'angularAMD': ['angular'],
         'noty': ['jQuery'],
-        'bootstrap': ['jQuery']
+        'bootstrap': ['jQuery'],
+        'infiniteScroll': ['angular']
     },
 
-    deps: ['app', 'bootstrap', 'header-controller']
+    deps: ['app', 'bootstrap', 'header-controller', 'music-controller']
 });

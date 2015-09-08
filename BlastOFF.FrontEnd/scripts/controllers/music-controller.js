@@ -4,7 +4,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
         'use strict';
 
         app.controller('musicController',
-            function ($scope, $routeParams, $location, $http, storageService, musicDataService, constants) {
+            function ($scope, $rootScope, $routeParams, $location, $http, storageService, musicDataService, constants) {
 
                 $scope.isLogged = storageService.isLogged();
 

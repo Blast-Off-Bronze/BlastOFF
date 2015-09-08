@@ -14,6 +14,7 @@ define(['app'], function (app) {
         'SONG_SIZE_LIMIT': 20480, // 20 mB
         'BYTE_SIZE': 1024,
         'DEFAULT_REDIRECTION_TIMEOUT': 1000,
+        'DEFAULT_BLAST_FEED_PAGE_SIZE': 3,
 
         // Messages
         'SUCCESSFUL_REGISTRATION_MESSAGE': 'You were successfully registered as ',
