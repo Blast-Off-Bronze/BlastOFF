@@ -41,7 +41,7 @@
                         </a>
                         <div class="comment-body">
                             <div class="comment-heading">
-                                <h4 class="user">{{ comment.Author }}</h4>
+                                <h4 class="user">{{ comment.author }}</h4>
                                 <h5 class="time">5 minutes ago</h5>
                             </div>
                             <p>{{ comment.content }}</p>
@@ -50,6 +50,9 @@
                             </a>
                             <a href="" ng-click="unlikeComment(comment)" class="btn btn-default stat-item" ng-if="comment.isLiked">
                                 <i class="fa fa-thumbs-down icon"></i>{{ comment.likesCount }}
+                            </a>
+                            <a href="" ng-click="deleteComment(comment, blast)" class="btn btn-danger stat-item" ng-if="comment.amiTheAuthor">
+                                <i class="fa fa-trash-o icon"></i>
                             </a>
                         </div>
                     </li>

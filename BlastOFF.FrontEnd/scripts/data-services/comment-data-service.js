@@ -15,7 +15,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             var headers = new requestHeaders().get();
 
-            return requester.delete(headers, serviceUrl + comment.id);
+            return requester.remove(headers, serviceUrl + comment.id);
         }
 
         function likeComment(comment) {

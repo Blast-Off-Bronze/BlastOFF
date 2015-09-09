@@ -26,12 +26,13 @@ define(['app', 'comment-data-service', 'storage-service', 'notification-service'
                     });
                 };
 
-                $scope.deleteComment = function(comment) {
+                $scope.deleteComment = function(comment, commentedObject) {
                     commentDataService.deleteComment(comment)
                     .then(function (response) {
-
+                        commentedObject.comments.splice(commentedObject.comments.indexOf(comment), 1);
+                        console.log(response);
                     }, function (error) {
-
+                        console.log(error);
                     });
                 };
             });

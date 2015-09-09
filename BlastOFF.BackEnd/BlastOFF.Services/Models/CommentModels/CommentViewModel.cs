@@ -13,11 +13,18 @@ namespace BlastOFF.Services.Models.CommentModels
         {
             bool liked = false;
 
+            bool owner = false;
+
             if (currentUser != null)
             {
                 if (currentUser.LikedComments.Any(c => c.Id == model.Id))
                 {
                     liked = true;
+                }
+
+                if (currentUser.Id == model.AuthorId)
+                {
+                    owner = true;
                 }
             }
 
@@ -28,10 +35,10 @@ namespace BlastOFF.Services.Models.CommentModels
                 PostedOn = model.PostedOn,
                 AuthorId = model.AuthorId,
                 Author = model.Author.UserName,
-                LikesCount = model.LikedBy.Count
+                LikesCount = model.LikedBy.Count,
+                IsLiked = liked,
+                AmITheAuthor = owner
             };
-
-            result.IsLiked = liked;
 
             return result;
         }
@@ -49,5 +56,7 @@ namespace BlastOFF.Services.Models.CommentModels
         public int LikesCount { get; set; }
 
         public bool IsLiked { get; set; }
+
+        public bool AmITheAuthor { get; set; }
     }
 }
