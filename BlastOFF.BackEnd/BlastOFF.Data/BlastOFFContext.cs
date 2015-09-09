@@ -143,6 +143,11 @@ namespace BlastOFF.Data
                     m.ToTable("MusicAlbumsUserLikes");
                 });
 
+            modelBuilder.Entity<MusicAlbum>()
+                .HasMany(a => a.Songs)
+                .WithOptional(s => s.MusicAlbum)
+                .WillCascadeOnDelete(true);
+
             modelBuilder.Entity<Song>()
                 .HasMany(s => s.UserLikes)
                 .WithMany(u => u.LikedSongs)

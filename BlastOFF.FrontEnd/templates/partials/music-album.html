@@ -1,11 +1,21 @@
 <div class="post-image">
-    <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
+    <span>
+        <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
+    </span>
+
+        <h4 style="display: inline-block">{{musicAlbum.title}}
+
+            <a href="#" class="btn btn-default stat-item">Edit </a>
+            <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="deleteMusicAlbum(musicAlbum)">Delete</a>
+
+        </h4>
+
+    <br/>
+
+    <p style="display: inline-block">{{musicAlbum.author}} created this music album on {{musicAlbum.dateCreated | date: 'MMM dd, yyyy'}}</p>
 </div>
 
 <div class="post-description">
-    <h4>{{musicAlbum.title}}</h4>
-
-    <p>{{musicAlbum.author}} created this music album on {{musicAlbum.dateCreated | date: 'MMM dd, yyyy'}}</p>
 
     <hr/>
 
@@ -38,8 +48,8 @@
             <div class="comment-heading">
                 <h5 class="user"><b>{{song.title}} - {{song.artist}}</b>
 
-                    <a href="#" class="btn btn-default stat-item">Edit </a>
-                    <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="deleteSong(musicAlbum, song)">Delete </a>
+                    <a href="#" class="btn btn-default stat-item">Edit</a>
+                    <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="deleteSong(musicAlbum, song)">Delete</a>
 
                 </h5>
 

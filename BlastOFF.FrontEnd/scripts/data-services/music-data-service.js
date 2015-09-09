@@ -21,6 +21,14 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         }
 
         // DELETE
+        function deleteMusicAlbum(albumId) {
+
+            var headers = new requestHeaders().get();
+            var url = serviceUrl + '/' + albumId;
+
+            return requester.remove(headers, url);
+        }
+
         function deleteSong(songId) {
 
             var headers = new requestHeaders().get();
@@ -29,6 +37,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.remove(headers, url);
         }
 
+        // DELETE - End
 
         // LIKES
         function likeMusicAlbum(albumId) {
@@ -110,6 +119,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             getAllSongs: getAllSongs,
 
             // Delete
+            deleteMusicAlbum: deleteMusicAlbum,
             deleteSong: deleteSong,
 
             // Likes

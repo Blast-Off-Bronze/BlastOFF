@@ -60,6 +60,21 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 };
 
                 // DELETE
+                $scope.deleteMusicAlbum = function (musicAlbum) {
+
+                    var albumId = musicAlbum['id'];
+                    var albumPosition = $scope.allMusicAlbums.indexOf(musicAlbum);
+
+                    musicDataService.deleteMusicAlbum(albumId).then(
+                        function (response) {
+
+                            $scope.allMusicAlbums.splice(albumPosition, 1);
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
                 $scope.deleteSong = function (musicAlbum, song) {
 
                     var songId = song['id'];
