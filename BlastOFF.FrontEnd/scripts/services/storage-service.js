@@ -20,6 +20,23 @@ define(['app'], function (app) {
             }
         }
 
+        function setUserDetails(user, wantsToBeRemembered){
+            if (wantsToBeRemembered) {
+                localStorage.setItem('user', user);
+            }
+            else {
+                sessionStorage.setItem('user', user);
+            }
+        }
+
+        function getUserDetails() {
+            if (localStorage.getItem('user')) {
+                return localStorage.getItem('user');
+            }
+
+            return sessionStorage.getItem('user');
+        }
+
         function isLogged() {
             if (getSessionToken()) {
                 return true;
@@ -35,6 +52,9 @@ define(['app'], function (app) {
         return {
             getSessionToken: getSessionToken,
             setSessionToken: setSessionToken,
+
+            setUserDetails: setUserDetails,
+            getUserDetails: getUserDetails,
 
             isLogged: isLogged,
 

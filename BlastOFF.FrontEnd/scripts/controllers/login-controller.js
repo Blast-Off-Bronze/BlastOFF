@@ -24,10 +24,16 @@ define(['app', 'storage-service', 'redirection-service', 'escape-special-chars-s
                             var sessionToken = response['token_type'] + ' ' + response['access_token'];
                             var username = response['userName'];
 
+                            var userDetails = {
+                                username: username
+                            };
+
                             if (guestInfo.wantsToBeRemembered) {
                                 storageService.setSessionToken(sessionToken, true);
+                                storageService.setUserDetails(userDetails, true);
                             } else {
                                 storageService.setSessionToken(sessionToken, false);
+                                storageService.setUserDetails(userDetails, false);
                             }
 
                             notificationService.alertSuccess(constants.SUCCESSFUL_LOGIN_MESSAGE + username + '.');

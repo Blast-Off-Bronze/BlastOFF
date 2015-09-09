@@ -63,6 +63,18 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.post(headers, constants.BASE_URL + 'blasts', blast);
         }
 
+        function getBlasts(username, startBlastId, pageSize) {
+
+            var startBlastId = startBlastId || 0;
+            var pageSize = pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
+
+            var headers = new requestHeaders().get();
+
+            var url = usersServiceUrl + username + '/blasts/?StartPostId=' + startBlastId + '&PageSize=' + pageSize;
+
+            return requester.get(headers, url);
+        }
+
         /*function previewUser(username) {
             var headers = new requestHeaders().get();
 
@@ -90,7 +102,8 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             unfollowUser: unfollowUser,
             userProfile: userProfile,
             userFollowers: userFollowers,
-            makeABlast: makeABlast
+            makeABlast: makeABlast,
+            getBlasts: getBlasts
         }
     });
 });

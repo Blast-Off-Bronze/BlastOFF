@@ -178,15 +178,13 @@
 
         [HttpGet]
         [Route("api/users/{username}/blasts")]
-        public IHttpActionResult GetBlastsByAuthor([FromUri] string username)
+        public IHttpActionResult GetBlastsByAuthor([FromUri] string username, [FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
         {
-            var blasts = this.Data.Blasts.All().Where(b => b.Author.UserName == username)
+            var blasts = this.Data.Blasts.All()
+                .Where(b => b.Author.UserName == username && b.Id >= StartPostId)
+                .Take(PageSize)
+                .ToList()
                 .Select(b => BlastViewModel.Create(b));
-
-            if (blasts.Count() == 0)
-            {
-                return this.NotFound();
-            }
 
             return this.Ok(blasts);
         }

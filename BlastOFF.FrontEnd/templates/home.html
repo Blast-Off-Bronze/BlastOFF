@@ -18,7 +18,13 @@
         </div>
     </div>
 
-    <div ng-include="'templates/partials/blast-feed.html'"></div>
+    <div infinite-scroll="getPublicBlasts(lastBlastId)"
+         infinite-scroll-distance='1'
+         infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
+
+        <div ng-include="'templates/partials/blast-feed.html'"></div>
+
+    </div><!-- SCROLLABLE BLASTS - END -->
 
     <a href="" ng-show="isLogged" ng-click="showMusic = !showMusic">Music</a>
 

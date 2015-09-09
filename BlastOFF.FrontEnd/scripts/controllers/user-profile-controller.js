@@ -10,13 +10,30 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
 
                 $scope.currentUserProfile = {};
 
+                $scope.blasts = [];
+
                 userDataService.userProfile($routeParams.username)
                 .then(function (response){
                     console.log(response);
                     $scope.currentUserProfile = response;
+
+                    $scope.getBlasts();
                 }, function (error){
                     console.log(error);
                 });
+
+                $scope.getBlasts = function(startPostId, pageSize) {
+                    userDataService.getBlasts($routeParams.username, startPostId, pageSize)
+                    .then(function (response) {
+                        response.forEach(function (blast) {
+                            $scope.blasts.push(blast);
+                        });
+
+                        console.log(response);
+                    }, function (error) {
+                        console.log(error);
+                    });
+                };
 
                 $scope.follow = function() {
                     userDataService.followUser($scope.currentUserProfile.username)

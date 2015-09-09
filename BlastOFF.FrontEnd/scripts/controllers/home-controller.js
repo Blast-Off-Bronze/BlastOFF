@@ -11,35 +11,25 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
 
                 $scope.isLogged = storageService.isLogged();
 
-                 $scope.noBlastsAvailable = false;
-                 $scope.gettingBlasts = false;
-                 $scope.previousBlastsExist = false;
-                 $scope.allBlasts = [];
+                $scope.noBlastsAvailable = false;
+                $scope.gettingBlasts = false;
+                $scope.previousBlastsExist = false;
+                $scope.blasts = [];
 
                 $scope.blastToPost = {};
 
-                $scope.getPagedBlasts = function (startBlastId, pageSize) {
-                    if ($scope.gettingBlasts) {
-                        return;
-                    } else {
-                        $scope.gettingBlasts = true;
+                //$scope.getBlasts();
 
-                        blastDataService.getPublicBlasts(0, 3)
-                        .then(function (response) {
-                                if (response.length < 1) {
-                                    $scope.noBlastsAvailable = true;
-                                } else {
-                                    $scope.allBlasts = response;
-                                    $scope.previousBlasts = true;
-                                }
-                                $scope.gettingBlasts = false;
-                            },
-                            function (error) {
-                                $scope.gettingBlasts = false;
-                                console.log(error);
-                                notificationService.alertError(error);
-                            });
-                    }
+                $scope.getBlasts = function (startBlastId, pageSize) {
+                    blastDataService.getPublicBlasts(startBlastId, pageSize)
+                    .then(function (response) {
+                        response.forEach(function (blast) {
+                            $scope.blasts.push(blast);
+                        });
+                    }, function (error) {
+                        console.log(error);
+                        notificationService.alertError(error);
+                    });
                 };
 
                 $scope.makeABlast = function () {
