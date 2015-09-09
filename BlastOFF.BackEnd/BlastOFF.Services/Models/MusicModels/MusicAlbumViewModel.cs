@@ -55,7 +55,7 @@
                            CommentsCount = a.Comments.Count,
                            FollowersCount = a.Followers.Count,
                            SongsCount = a.Songs.Count,
-                           Songs = a.Songs.OrderBy(s => s.DateAdded).Select(SongViewModel.Create).Take(3),
+                           Songs = a.Songs.OrderBy(s => s.DateAdded).Select(s => SongViewModel.Create(s, user)).Take(3),
 
                            IsOwn = a.Author == user,
                            IsFollowed = a.Author != user && a.Followers.Contains(user),

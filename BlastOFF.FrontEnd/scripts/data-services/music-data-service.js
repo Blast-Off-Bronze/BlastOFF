@@ -3,6 +3,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
     app.factory('musicDataService', function (constants, requestHeaders, requester) {
         var serviceUrl = constants.BASE_URL + 'music/albums';
+        var songsUrl = constants.BASE_URL + 'songs';
 
         function getAllMusicAlbums() {
 
@@ -20,8 +21,6 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         }
 
 
-
-
         // LIKES
         function likeMusicAlbum(albumId) {
 
@@ -32,11 +31,54 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.post(headers, url, null);
         }
 
+        function unlikeMusicAlbum(albumId) {
 
+            var headers = new requestHeaders().get();
 
+            var url = serviceUrl + '/' + albumId + '/likes';
 
+            return requester.remove(headers, url, null);
+        }
 
+        function likeSong(songId) {
 
+            var headers = new requestHeaders().get();
+
+            var url = songsUrl + '/' + songId + '/likes';
+
+            return requester.post(headers, url, null);
+        }
+
+        function unlikeSong(songId) {
+
+            var headers = new requestHeaders().get();
+
+            var url = songsUrl + '/' + songId + '/likes';
+
+            return requester.remove(headers, url, null);
+        }
+        // LIKES - End
+
+        // FOLLOWERS
+        function followMusicAlbum(albumId) {
+
+            var headers = new requestHeaders().get();
+
+            var url = serviceUrl + '/' + albumId + '/follow';
+
+            return requester.post(headers, url, null);
+        }
+
+        function unfollowMusicAlbum(albumId) {
+
+            var headers = new requestHeaders().get();
+
+            var url = serviceUrl + '/' + albumId + '/follow';
+
+            return requester.remove(headers, url, null);
+        }
+
+        // FOLLOWERS - End
 
         function addMusicAlbum(musicAlbum) {
 
@@ -58,7 +100,14 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             getAllSongs: getAllSongs,
 
             // Likes
-            likeMusicAlbum:likeMusicAlbum,
+            likeMusicAlbum: likeMusicAlbum,
+            unlikeMusicAlbum: unlikeMusicAlbum,
+            likeSong: likeSong,
+            unlikeSong: unlikeSong,
+
+            // Followers
+            followMusicAlbum: followMusicAlbum,
+            unfollowMusicAlbum: unfollowMusicAlbum,
 
             addMusicAlbum: addMusicAlbum,
             addSong: addSong

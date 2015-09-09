@@ -14,14 +14,24 @@
 
         <!-- Likes -->
         <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item not-active">Likes ({{musicAlbum.likesCount}})</a>
-
         <a ng-if="!musicAlbum.isOwn && musicAlbum.isLiked" class="btn btn-default stat-item" ng-click="unlikeMusicAlbum(musicAlbum)">Unlike ({{musicAlbum.likesCount}})</a>
-
         <a ng-if="!musicAlbum.isOwn && !musicAlbum.isLiked" class="btn btn-default stat-item" ng-click="likeMusicAlbum(musicAlbum)">Like ({{musicAlbum.likesCount}})</a>
+        <!-- Likes - End -->
+
+        <!-- Followers -->
+        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item not-active">Followers ({{musicAlbum.followersCount}})</a>
+        <a ng-if="!musicAlbum.isOwn && musicAlbum.isFollowed" class="btn btn-default stat-item" ng-click="unfollowMusicAlbum(musicAlbum)">Unfollow ({{musicAlbum.followersCount}})</a>
+        <a ng-if="!musicAlbum.isOwn && !musicAlbum.isFollowed" class="btn btn-default stat-item" ng-click="followMusicAlbum(musicAlbum)">Follow ({{musicAlbum.followersCount}})</a>
+        <!-- Followers - End -->
 
 
 
-        <a href="#" class="btn btn-default stat-item">Follow ({{musicAlbum.followersCount}})</a>
+
+
+
+
+
+
         <a href="#" class="btn btn-default stat-item" style="margin-right:0">Comment ({{musicAlbum.commentsCount}})</a>
     </div>
 </div>
@@ -44,7 +54,13 @@
 
             <div class="stats">
                 <a href="#" class="btn btn-default stat-item not-active">Viewed ({{song.viewsCount}})</a>
-                <a href="#" class="btn btn-default stat-item">Like ({{song.likesCount}})</a>
+
+                <!-- Likes -->
+                <a ng-if="song.isOwn" class="btn btn-default stat-item not-active">Likes ({{song.likesCount}})</a>
+                <a ng-if="!song.isOwn && song.isLiked" class="btn btn-default stat-item" ng-click="unlikeSong(song)">Unlike ({{song.likesCount}})</a>
+                <a ng-if="!song.isOwn && !song.isLiked" class="btn btn-default stat-item" ng-click="likeSong(song)">Like ({{song.likesCount}})</a>
+                <!-- Likes - End -->
+
                 <a href="#" class="btn btn-default stat-item" style="margin-right:0">Comment ({{musicAlbum.commentsCount}})</a>
             </div>
         </div>
@@ -56,7 +72,7 @@
 
         <div class="comment-body">
             <div class="comment-heading">
-                <h5 class="user" style="text-align: center"><span ng-click="getAllSongs(musicAlbum)" >View entire playlist ({{musicAlbum.songsCount}})</span></h5>
+                <h5 class="user" style="text-align: center; cursor: pointer"><span ng-click="getAllSongs(musicAlbum)" >View entire playlist ({{musicAlbum.songsCount}})</span></h5>
             </div>
         </div>
     </li>

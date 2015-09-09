@@ -3,6 +3,7 @@
     using System;
 
     using BlastOFF.Models.MusicModels;
+    using BlastOFF.Models.UserModel;
 
     public class SongViewModel
     {
@@ -22,6 +23,11 @@
 
         public int CommentsCount { get; set; }
 
+        public bool IsOwn { get; set; }
+
+        public bool IsLiked { get; set; }
+
+
         //// OPTIONAL
         public int? TrackNumber { get; set; }
 
@@ -39,7 +45,7 @@
 
         public int? Bpm { get; set; }
 
-        public static SongViewModel Create(Song s)
+        public static SongViewModel Create(Song s, ApplicationUser user)
         {
             return new SongViewModel
                        {
@@ -60,7 +66,10 @@
                            Genre = s.Genre, 
                            Composer = s.Composer, 
                            Publisher = s.Publisher, 
-                           Bpm = s.Bpm
+                           Bpm = s.Bpm,
+
+                           IsOwn = s.Uploader == user,
+                           IsLiked = s.Uploader != user && s.UserLikes.Contains(user)
                        };
         }
     }
