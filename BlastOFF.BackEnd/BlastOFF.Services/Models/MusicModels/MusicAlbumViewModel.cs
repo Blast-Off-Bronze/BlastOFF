@@ -17,7 +17,14 @@
 
         public DateTime DateCreated { get; set; }
 
+
+
         public bool IsFollowed { get; set; }
+
+        public bool IsOwn { get; set; }
+
+
+
 
         public int ViewsCount { get; set; }
 
@@ -48,7 +55,8 @@
                            FollowersCount = a.Followers.Count,
                            SongsCount = a.Songs.Count,
                            Songs = a.Songs.Select(SongViewModel.Create).Take(3),
-                           IsFollowed = a.Followers != null && a.Followers.Contains(user)
+                           IsFollowed = a.Author != user && a.Followers.Contains(user),
+                           IsOwn = a.Author == user
                        };
         }
     }

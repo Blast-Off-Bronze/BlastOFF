@@ -20,6 +20,9 @@
             <!--DISPLAY ALL MUSIC ALBUMS-->
             <div role="tabpanel" class="tab-pane active" id="all">
 
+                <div class="panel panel-white post panel-shadow" ng-if="requesterIsBusy">Retrieving albums ...</div>
+
+
                 <div class="panel panel-white post panel-shadow" ng-if="!requesterIsBusy" ng-repeat="musicAlbum in allMusicAlbums">
 
                     <div ng-include="'templates/partials/music-album.html'"></div>
@@ -30,8 +33,9 @@
 
             <div role="tabpanel" class="tab-pane" id="followed">
 
+                <div class="panel panel-white post panel-shadow" ng-if="requesterIsBusy">Retrieving albums ...</div>
 
-                <div class="panel panel-white post panel-shadow" ng-if="!requesterIsBusy" ng-repeat="musicAlbum in followedMusicAlbums">
+                <div class="panel panel-white post panel-shadow" ng-if="!requesterIsBusy" ng-repeat="musicAlbum in allMusicAlbums | filter:showOwnAndFollowedAlbums">
 
                     <div ng-include="'templates/partials/music-album.html'"></div>
 
