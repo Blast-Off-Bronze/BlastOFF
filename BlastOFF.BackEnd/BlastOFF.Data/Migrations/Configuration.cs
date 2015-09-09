@@ -6,6 +6,10 @@ namespace BlastOFF.Data.Migrations
     using System.Linq;
 
     using BlastOFF.Models.MusicModels;
+    using BlastOFF.Models.UserModel;
+
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
 
     internal sealed class Configuration : DbMigrationsConfiguration<BlastOFFContext>
     {
@@ -18,45 +22,40 @@ namespace BlastOFF.Data.Migrations
 
         protected override void Seed(BlastOFFContext dbo)
         {
-            // Add songs
-            if (!dbo.Songs.Any())
-            {
-                string songsInputFile = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "database seed files/songs.txt");
+            //// Add songs
+            //if (!dbo.Songs.Any())
+            //{
+            //    string songsInputFile = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "database seed files/songs.txt");
 
-                using (var reader = new StreamReader(songsInputFile))
-                {
-                    var line = reader.ReadLine();
+            //    using (var reader = new StreamReader(songsInputFile))
+            //    {
+            //        var line = reader.ReadLine();
 
-                    while (line != null)
-                    {
-                        var songData = line.Split('|');
+            //        while (line != null)
+            //        {
+            //            var songData = line.Split('|');
 
-                        var id = songData[0].Trim();
-                        var title = songData[1].Trim();
-                        var artist = songData[2].Trim();
-                        var filePath = "http://docs.google.com/uc?export=open&id=" + id;
+            //            var id = songData[0].Trim();
+            //            var title = songData[1].Trim();
+            //            var artist = songData[2].Trim();
+            //            var filePath = "http://docs.google.com/uc?export=open&id=" + id;
 
-                        var song = new Song
-                        {
-                            Id = id,
-                            Title = title,
-                            Artist = artist,
-                            FilePath = filePath,
-                            ViewsCount = 0,
-                            DateAdded = DateTime.Now,
-                            MusicAlbumId = dbo.MusicAlbums.OrderBy(a => Guid.NewGuid()).First().Id
-                        };
+            //            var song = new Song
+            //            {
+            //                Title = title,
+            //                Artist = artist,
+            //                FilePath = filePath,
+            //                DateAdded = DateTime.Now,
+            //            };
 
-                        song.UploaderId = dbo.MusicAlbums.First(a => a.Id == song.MusicAlbumId).AuthorId;
+            //            dbo.Songs.Add(song);
 
-                        dbo.Songs.Add(song);
+            //            line = reader.ReadLine();
+            //        }
+            //    }
 
-                        line = reader.ReadLine();
-                    }
-                }
-
-                dbo.SaveChanges();
-            }
+            //    dbo.SaveChanges();
+            //}
         }
     }
 }

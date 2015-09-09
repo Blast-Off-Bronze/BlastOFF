@@ -19,7 +19,7 @@
         }
 
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -30,18 +30,18 @@
         [Required]
         public string FilePath { get; set; }
 
-        public int MusicAlbumId { get; set; }
+        public DateTime DateAdded { get; set; }
+
+        [DefaultValue(0)]
+        public int ViewsCount { get; set; }
+
+        public int? MusicAlbumId { get; set; }
 
         public virtual MusicAlbum MusicAlbum { get; set; }
 
         public string UploaderId { get; set; }
 
         public virtual ApplicationUser Uploader { get; set; }
-
-        public DateTime DateAdded { get; set; }
-
-        [DefaultValue(0)]
-        public int ViewsCount { get; set; }
 
         public virtual ICollection<Comment> Comments
         {

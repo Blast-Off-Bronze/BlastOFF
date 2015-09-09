@@ -13,7 +13,7 @@
 
             var songsCount = dbo.Songs.Count();
 
-            Console.WriteLine("Total songs:" + songsCount);
+            Console.WriteLine("Total songs: " + songsCount);
         }
     }
 }
