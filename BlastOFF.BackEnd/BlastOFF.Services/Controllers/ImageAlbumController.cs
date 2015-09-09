@@ -73,8 +73,6 @@
         [Route("api/imageAlbums")]
         public IHttpActionResult CreateNewImageAlbum([FromBody] ImageAlbumCreateBindingModel model)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             if (model == null)
             {
                 return this.BadRequest("No data.");
@@ -84,6 +82,8 @@
             {
                 return this.BadRequest(this.ModelState);
             }
+
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var imageAlbum = new ImageAlbum()
             {
@@ -109,8 +109,6 @@
         [Route("api/imageAlbums/{id}")]
         public IHttpActionResult EditImageAlbum([FromUri]int id, [FromBody] ImageAlbumModifyBindingModel model)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
-
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest("Wrong or missing input parameters");
@@ -123,6 +121,8 @@
                 return this.NotFound();
             }
 
+            var loggedUserId = this.User.Identity.GetUserId();
+            
             if (imageAlbum.CreatedById != loggedUserId)
             {
                 return this.Unauthorized();
@@ -142,8 +142,6 @@
         [Route("api/imageAlbums/{id}")]
         public IHttpActionResult DeleteImageAlbum([FromUri] int id)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
-
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
             if (imageAlbum == null)
@@ -151,6 +149,8 @@
                 return this.NotFound();
             }
 
+            var loggedUserId = this.User.Identity.GetUserId();
+            
             if (imageAlbum.CreatedById != loggedUserId)
             {
                 return this.Unauthorized();
@@ -186,8 +186,6 @@
         [Route("api/images")]
         public IHttpActionResult CreateNewImage([FromBody] ImageCreateBindingModel model)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest("Wrong or missing input parameters");
@@ -199,6 +197,7 @@
             }
 
             var imageAlbum = this.Data.ImageAlbums.Find(model.ImageAlbumId);
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var image = new Image()
             {
@@ -221,8 +220,6 @@
         [Route("api/images/{id}")]
         public IHttpActionResult EditImage([FromUri] int id, [FromBody] ImageModifyBindingModel model)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
-
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest("Wrong or missing input parameters");
@@ -235,6 +232,8 @@
                 return this.NotFound();
             }
 
+            var loggedUserId = this.User.Identity.GetUserId();
+            
             if (image.ImageAlbum.CreatedById != loggedUserId)
             {
                 return this.Unauthorized();
@@ -242,7 +241,6 @@
 
             image.Title = model.Title;
             
-
             this.Data.Images.Update(image);
             this.Data.SaveChanges();
 
@@ -255,14 +253,14 @@
         [Route("api/imageAlbums/{id}")]
         public IHttpActionResult DeleteImage([FromUri] int id)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
-
             var image = this.Data.Images.Find(id);
 
             if (image == null)
             {
                 return this.NotFound();
             }
+
+            var loggedUserId = this.User.Identity.GetUserId();
 
             if (image.ImageAlbum.CreatedById != loggedUserId)
             {
@@ -280,10 +278,6 @@
         [Route("api/imageAlbums/{id}/like")]
         public IHttpActionResult LikeImagecAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
-
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
             if (imageAlbum == null)
@@ -291,14 +285,16 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = imageAlbum.UserLikes.Any(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var isAlreadyLiked = imageAlbum.UserLikes.Any(u => u.Id == currentUser.Id);
 
             if (isAlreadyLiked)
             {
                 return this.BadRequest("You have already liked this image album.");
             }
 
-            if (imageAlbum.CreatedById == loggedUserId)
+            if (imageAlbum.CreatedById == currentUser.Id)
             {
                 return this.BadRequest("Cannot like your own image album.");
             }
@@ -306,7 +302,6 @@
             imageAlbum.UserLikes.Add(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return this.Ok(string.Format("Image Album {0}, created by {1} successfully liked.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
         }
@@ -316,10 +311,6 @@
         [Route("api/imageAlbums/{id}/unlike")]
         public IHttpActionResult UnlikeImageAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
-
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
             if (imageAlbum == null)
@@ -327,14 +318,16 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = imageAlbum.UserLikes.Any(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var isAlreadyLiked = imageAlbum.UserLikes.Any(u => u.Id == currentUser.Id);
 
             if (!isAlreadyLiked)
             {
                 return this.BadRequest("You have already unliked this image album.");
             }
 
-            if (imageAlbum.CreatedById == loggedUserId)
+            if (imageAlbum.CreatedById == currentUser.Id)
             {
                 return this.BadRequest("Cannot unlike your own image album.");
             }
@@ -342,7 +335,6 @@
             imageAlbum.UserLikes.Remove(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return this.Ok(string.Format("Image Album {0}, created by {1} successfully unliked.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
         }
@@ -352,10 +344,6 @@
         [Route("api/imageAlbums/{id}/follow")]
         public IHttpActionResult FollowImageAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
-
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
             if (imageAlbum == null)
@@ -363,14 +351,16 @@
                 return this.NotFound();
             }
 
-            var isAlreadyFollowed = imageAlbum.Followers.Any(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var isAlreadyFollowed = imageAlbum.Followers.Any(u => u.Id == currentUser.Id);
 
             if (isAlreadyFollowed)
             {
                 return this.BadRequest("You are currently following this image album.");
             }
 
-            if (imageAlbum.CreatedById == loggedUserId)
+            if (imageAlbum.CreatedById == currentUser.Id)
             {
                 return this.BadRequest("Cannot follow your own image album.");
             }
@@ -378,7 +368,6 @@
             imageAlbum.Followers.Add(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return this.Ok(string.Format("Image Album {0}, created by {1} successfully followed.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
         }
@@ -388,10 +377,6 @@
         [Route("api/imageAlbums/{id}/unfollow")]
         public IHttpActionResult UnfollowImageAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
-
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
             if (imageAlbum == null)
@@ -399,14 +384,16 @@
                 return this.NotFound();
             }
 
-            var isAlreadyFollowed = imageAlbum.Followers.Any(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var isAlreadyFollowed = imageAlbum.Followers.Any(u => u.Id == currentUser.Id);
 
             if (!isAlreadyFollowed)
             {
                 return this.BadRequest("You are currently not following this image album.");
             }
 
-            if (imageAlbum.CreatedById == loggedUserId)
+            if (imageAlbum.CreatedById == currentUser.Id)
             {
                 return this.BadRequest("Cannot unfollow your own image album.");
             }
@@ -414,7 +401,6 @@
             imageAlbum.Followers.Remove(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return this.Ok(string.Format("Music Album {0}, created by {1} successfully unfollowed.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
         }
@@ -426,16 +412,15 @@
         public IHttpActionResult AllImageAlbumComments([FromUri] int id)
         {
             var imageAlbum = this.Data.ImageAlbums.Find(id);
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (imageAlbum == null)
             {
                 return this.NotFound();
             }
 
-            var comments = imageAlbum.Comments.Select(c => CommentViewModel.Create(c, currentUser));
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            this.Data.Dispose();
+            var comments = imageAlbum.Comments.Select(c => CommentViewModel.Create(c, currentUser));
 
             return this.Ok(comments);
         }
@@ -448,16 +433,14 @@
         {
             var image = this.Data.Images.Find(id);
 
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             if (image == null)
             {
                 return this.NotFound();
             }
 
-            var comments = image.Comments.Select(c => CommentViewModel.Create(c, currentUser));
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            this.Data.Dispose();
+            var comments = image.Comments.Select(c => CommentViewModel.Create(c, currentUser));
 
             return this.Ok(comments);
         }
@@ -467,8 +450,6 @@
         [Route("api/imageAlbums/{id}/comments")]
         public IHttpActionResult AddImageAlbumComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
             if (imageAlbum == null)
@@ -481,6 +462,8 @@
                 return this.BadRequest(this.ModelState);
             }
 
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             var newComment = new Comment
             {
                 Content = model.Content,
@@ -490,9 +473,7 @@
             };
 
             this.Data.Comments.Add(newComment);
-
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             var commentToReturn = CommentViewModel.Create(newComment, user);
 
@@ -503,8 +484,6 @@
         [Route("api/images/{id}/comments")]
         public IHttpActionResult AddImagesComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var image = this.Data.Images.Find(id);
 
             if (image == null)
@@ -516,6 +495,8 @@
             {
                 return this.BadRequest(this.ModelState);
             }
+
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var newComment = new Comment
             {
@@ -530,8 +511,6 @@
 
             var commentToReturn = CommentViewModel.Create(newComment, user);
 
-            this.Data.Dispose();
-
             return this.Ok(commentToReturn);
         }
 
@@ -540,10 +519,6 @@
         [Route("api/images/{id}/like")]
         public IHttpActionResult LikeImage([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
-
             var image = this.Data.Images.Find(id);
 
             if (image == null)
@@ -551,14 +526,16 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = image.UserLikes.Any(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var isAlreadyLiked = image.UserLikes.Any(u => u.Id == currentUser.Id);
 
             if (isAlreadyLiked)
             {
                 return this.BadRequest("You have already liked this image.");
             }
 
-            if (image.UploadedById == loggedUserId)
+            if (image.UploadedById == currentUser.Id)
             {
                 return this.BadRequest("Cannot like your own images.");
             }
@@ -566,7 +543,6 @@
             image.UserLikes.Add(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return this.Ok(string.Format("{0}, uploaded by {1} successfully liked.", image.Title, image.UploadedBy.UserName));
         }
@@ -576,10 +552,6 @@
         [Route("api/images/{id}/unlike")]
         public IHttpActionResult UnlikeImage([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(id);
-
             var image = this.Data.Images.Find(id);
 
             if (image == null)
@@ -587,14 +559,16 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = image.UserLikes.Any(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var isAlreadyLiked = image.UserLikes.Any(u => u.Id == currentUser.Id);
 
             if (!isAlreadyLiked)
             {
                 return this.BadRequest("You have already unliked this image.");
             }
 
-            if (image.UploadedById == loggedUserId)
+            if (image.UploadedById == currentUser.Id)
             {
                 return this.BadRequest("Cannot unlike your own images.");
             }
@@ -602,7 +576,6 @@
             image.UserLikes.Remove(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return this.Ok(string.Format("{0}, uploaded by {1} successfully unliked.", image.Title, image.UploadedBy.UserName));
         }
@@ -611,14 +584,14 @@
         [Route("api/images/{id}")]
         public IHttpActionResult DeleteSong([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
             var image = this.Data.Images.Find(id);
 
             if (image == null)
             {
                 return this.NotFound();
             }
+
+            string loggedUserId = this.User.Identity.GetUserId();
 
             if (loggedUserId != image.UploadedById)
             {
@@ -628,8 +601,6 @@
             this.Data.Images.Delete(image);
 
             this.Data.SaveChanges();
-
-            this.Data.Dispose();
 
             return this.Ok(image);
         }

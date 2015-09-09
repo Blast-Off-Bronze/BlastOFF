@@ -82,14 +82,14 @@
         [Route("api/message")]
         public IHttpActionResult Delete([FromBody] int id)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var message = this.Data.Messages.Find(id);
 
             if (message == null)
             {
                 return this.NotFound();
             }
+
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (message.SenderId != user.Id)
             {

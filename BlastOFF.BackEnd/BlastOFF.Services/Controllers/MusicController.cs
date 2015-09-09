@@ -64,14 +64,14 @@
         [AllowAnonymous]
         public IHttpActionResult AllSongs([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var songs = album.Songs.OrderBy(s => s.DateAdded).Select(s => SongViewModel.Create(s, currentUser));
 
@@ -86,12 +86,12 @@
         {
             var album = this.Data.MusicAlbums.Find(id);
 
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             if (album == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var comments = album.Comments.Select(a => CommentViewModel.Create(a, currentUser));
 
@@ -105,12 +105,13 @@
         public IHttpActionResult AllSongComments([FromUri] int id)
         {
             var song = this.Data.Songs.Find(id);
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (song == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var comments = song.Comments.Select(a => CommentViewModel.Create(a, currentUser));
 
@@ -125,14 +126,14 @@
         [AllowAnonymous]
         public IHttpActionResult FindMusicAlbumById([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var albumToReturn = MusicAlbumViewModel.Create(album, currentUser);
 
@@ -145,14 +146,14 @@
         [AllowAnonymous]
         public IHttpActionResult FindSongById([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var song = this.Data.Songs.Find(id);
 
             if (song == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var songToReturn = SongViewModel.Create(song, currentUser);
 
@@ -166,8 +167,6 @@
         [Route("api/music/albums")]
         public IHttpActionResult AddMusicAlbum([FromBody] MusicAlbumBindingModel musicAlbum)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             if (musicAlbum == null)
             {
                 return this.BadRequest("Cannot create an empty music album model.");
@@ -182,6 +181,8 @@
             {
                 musicAlbum.CoverImageData = string.Format("{0}{1}", "data:image/jpg;base64,", musicAlbum.CoverImageData);
             }
+
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var newMusicAlbum = new MusicAlbum
                                     {
@@ -212,8 +213,6 @@
         [Route("api/music/albums/{id}/songs")]
         public IHttpActionResult AddSong([FromUri] int id, [FromBody] SongBindingModel song)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
@@ -230,6 +229,8 @@
             {
                 return this.BadRequest(this.ModelState);
             }
+
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (user.Id != album.AuthorId)
             {
@@ -293,8 +294,6 @@
         [Route("api/music/albums/{id}/comments")]
         public IHttpActionResult AddMusicAlbumComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
@@ -311,6 +310,8 @@
             {
                 return this.BadRequest(this.ModelState);
             }
+
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var newMusicAlbumComment = new Comment
                                            {
@@ -333,8 +334,6 @@
         [Route("api/songs/{id}/comments")]
         public IHttpActionResult AddSongComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var song = this.Data.Songs.Find(id);
 
             if (song == null)
@@ -351,6 +350,8 @@
             {
                 return this.BadRequest(this.ModelState);
             }
+
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var newSongComment = new Comment
                                      {
@@ -375,8 +376,6 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult UpdateMusicAlbum([FromUri] int id, [FromBody] MusicAlbumBindingModel musicAlbum)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
 
             if (existingMusicAlbum == null)
@@ -384,9 +383,9 @@
                 return this.NotFound();
             }
 
-            string loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            if (loggedUserId != existingMusicAlbum.AuthorId)
+            if (currentUser.Id != existingMusicAlbum.AuthorId)
             {
                 return this.Unauthorized();
             }
@@ -415,14 +414,14 @@
         [Route("api/songs/{id}")]
         public IHttpActionResult UpdateSong([FromUri] int id, [FromBody] SongBindingModel song)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var existingSong = this.Data.Songs.Find(id);
 
             if (existingSong == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (currentUser.Id != existingSong.UploaderId)
             {
@@ -465,14 +464,14 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult DeleteMusicAlbum([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
 
             if (existingMusicAlbum == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (currentUser.Id != existingMusicAlbum.AuthorId)
             {
@@ -490,14 +489,14 @@
         [Route("api/songs/{id}")]
         public IHttpActionResult DeleteSong([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var existingSong = this.Data.Songs.Find(id);
 
             if (existingSong == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (currentUser.Id != existingSong.UploaderId)
             {
@@ -517,14 +516,14 @@
         [Route("api/music/albums/{id}/likes")]
         public IHttpActionResult LikeMusicAlbum([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var isAlreadyLiked = album.UserLikes.Any(u => u.Id == currentUser.Id);
 
@@ -555,14 +554,14 @@
         [Route("api/music/albums/{id}/likes")]
         public IHttpActionResult UnlikeMusicAlbum([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var isAlreadyLiked = album.UserLikes.Any(u => u.Id == currentUser.Id);
 
@@ -593,14 +592,14 @@
         [Route("api/songs/{id}/likes")]
         public IHttpActionResult LikeSong([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var song = this.Data.Songs.Find(id);
 
             if (song == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var isAlreadyLiked = song.UserLikes.Any(u => u.Id == currentUser.Id);
 
@@ -627,14 +626,14 @@
         [Route("api/songs/{id}/likes")]
         public IHttpActionResult UnlikeSong([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var song = this.Data.Songs.Find(id);
 
             if (song == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var isAlreadyLiked = song.UserLikes.Any(u => u.Id == currentUser.Id);
 
@@ -664,14 +663,14 @@
         [Route("api/music/albums/{id}/follow")]
         public IHttpActionResult FollowMusicAlbum([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var isAlreadyFollowed = album.Followers.Any(u => u.Id == currentUser.Id);
 
@@ -702,14 +701,14 @@
         [Route("api/music/albums/{id}/follow")]
         public IHttpActionResult UnfollowMusicAlbum([FromUri] int id)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var isAlreadyFollowed = album.Followers.Any(u => u.Id == currentUser.Id);
 

@@ -32,14 +32,13 @@
         public IHttpActionResult FindCommentById([FromUri] int id)
         {
             var comment = this.Data.Comments.Find(id);
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (comment == null)
             {
                 return this.NotFound();
             }
 
-            this.Data.Dispose();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var returnItem = CommentViewModel.Create(comment, currentUser);
 
@@ -51,14 +50,14 @@
         [Route("api/comments/{id}")]
         public IHttpActionResult UpdateComment([FromUri] int id, [FromBody] CommentEditBindingModel model)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var existingComment = this.Data.Comments.Find(id);
 
             if (existingComment == null)
             {
                 return this.NotFound();
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (currentUser.Id != existingComment.AuthorId)
             {
@@ -82,8 +81,6 @@
 
             var returnItem = CommentViewModel.Create(existingComment, currentUser);
 
-            this.Data.Dispose();
-
             return this.Ok(returnItem);
         }
 
@@ -92,8 +89,6 @@
         [Route("api/comments/{id}")]
         public IHttpActionResult DeleteComment([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
             var existingComment = this.Data.Comments.Find(id);
 
             if (existingComment == null)
@@ -101,6 +96,8 @@
                 return this.NotFound();
             }
 
+            string loggedUserId = this.User.Identity.GetUserId();
+            
             if (loggedUserId != existingComment.AuthorId)
             {
                 return this.Unauthorized();
@@ -110,8 +107,6 @@
 
             this.Data.SaveChanges();
 
-            this.Data.Dispose();
-
             return this.Ok();
         }
 
@@ -120,10 +115,6 @@
         [Route("api/comments/{id}/like")]
         public IHttpActionResult LikeComment([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
-
             var comment = this.Data.Comments.Find(id);
 
             if (comment == null)
@@ -131,14 +122,16 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = comment.LikedBy.Any(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+            
+            var isAlreadyLiked = comment.LikedBy.Any(u => u.Id == currentUser.Id);
 
             if (isAlreadyLiked)
             {
                 return this.BadRequest("You have already liked this comment.");
             }
 
-            if (comment.AuthorId == loggedUserId)
+            if (comment.AuthorId == currentUser.Id)
             {
                 return this.BadRequest("Cannot like your own comment.");
             }
@@ -146,7 +139,6 @@
             comment.LikedBy.Add(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return this.Ok("Comment successfully liked.");
         }
@@ -156,10 +148,6 @@
         [Route("api/comments/{id}/unlike")]
         public IHttpActionResult UnlikeComment([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
-
             var comment = this.Data.Comments.Find(id);
 
             if (comment == null)
@@ -167,14 +155,16 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = comment.LikedBy.Any(u => u.Id == loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var isAlreadyLiked = comment.LikedBy.Any(u => u.Id == currentUser.Id);
 
             if (!isAlreadyLiked)
             {
                 return this.BadRequest("You have already unliked this comment.");
             }
 
-            if (comment.AuthorId == loggedUserId)
+            if (comment.AuthorId == currentUser.Id)
             {
                 return this.BadRequest("Cannot unlike your own comment.");
             }
@@ -182,7 +172,6 @@
             comment.LikedBy.Remove(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return this.Ok("Comment successfully unliked.");
         }
