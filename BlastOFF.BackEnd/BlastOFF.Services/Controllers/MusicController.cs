@@ -48,7 +48,8 @@
         {
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var albums = this.Data.MusicAlbums.All()
+            var albums =
+                this.Data.MusicAlbums.All()
                     .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
                     .OrderBy(a => a.DateCreated)
                     .ToList()
@@ -63,6 +64,8 @@
         [AllowAnonymous]
         public IHttpActionResult AllSongs([FromUri] int id)
         {
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
@@ -70,18 +73,10 @@
                 return this.NotFound();
             }
 
-            var songs = album.Songs.OrderBy(s => s.DateAdded).Select(SongViewModel.Create);
+            var songs = album.Songs.OrderBy(s => s.DateAdded).Select(s => SongViewModel.Create(s, currentUser));
 
             return this.Ok(songs);
         }
-
-
-
-
-
-
-
-
 
         //// GET /api/music/albums/{id}/comments
         [HttpGet]
@@ -96,7 +91,7 @@
                 return this.NotFound();
             }
 
-            var comments = album.Comments.Select(c => CommentViewModel.Create(c));
+            var comments = album.Comments.Select(CommentViewModel.Create);
 
             return this.Ok(comments);
         }
@@ -114,7 +109,7 @@
                 return this.NotFound();
             }
 
-            var comments = song.Comments.Select(c => CommentViewModel.Create(c));
+            var comments = song.Comments.Select(CommentViewModel.Create);
 
             return this.Ok(comments);
         }
@@ -147,6 +142,8 @@
         [AllowAnonymous]
         public IHttpActionResult FindSongById([FromUri] int id)
         {
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             var song = this.Data.Songs.Find(id);
 
             if (song == null)
@@ -154,7 +151,7 @@
                 return this.NotFound();
             }
 
-            var songToReturn = SongViewModel.Create(song);
+            var songToReturn = SongViewModel.Create(song, currentUser);
 
             return this.Ok(songToReturn);
         }
@@ -196,7 +193,7 @@
                 this.Data.MusicAlbums.All()
                     .Any(a => a.Title == newMusicAlbum.Title && a.AuthorId == newMusicAlbum.AuthorId))
             {
-                return this.BadRequest(string.Format("This music album already exists."));
+                return this.BadRequest("This music album already exists.");
             }
 
             this.Data.MusicAlbums.Add(newMusicAlbum);
@@ -246,7 +243,7 @@
                 return this.BadRequest(string.Format("Song size should be less than {0} kB.", SongKilobyteLimit));
             }
 
-            var metadataStart = song.FileDataUrl.IndexOf("data:audio/mp3;base64,");
+            var metadataStart = song.FileDataUrl.IndexOf("data:audio/mp3;base64,", StringComparison.Ordinal);
 
             if (metadataStart != -1)
             {
@@ -277,70 +274,15 @@
 
             if (album.Songs.Contains(newSong))
             {
-                return this.BadRequest(string.Format("This song already exists in album."));
+                return this.BadRequest("This song already exists in album.");
             }
 
             this.Data.Songs.Add(newSong);
             this.Data.SaveChanges();
 
-            var songToReturn = SongViewModel.Create(newSong);
+            var songToReturn = SongViewModel.Create(newSong, user);
 
             return this.Ok(songToReturn);
-        }
-
-        private bool ValidateAudioFileType(string fileDataUrl)
-        {
-            if (fileDataUrl.IndexOf("data:audio/mp3;base64,") == -1)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool ValidateFileSize(string fileDataUrl, int kilobyteLimit)
-        {
-            if ((fileDataUrl.Length / 4) * 3 >= kilobyteLimit * 1024)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private string UploadSongToGoogleDrive(string fileDataUrl, string fileName)
-        {
-            const string AudioMimeType = "audio/mpeg";
-
-            byte[] byteArray = Convert.FromBase64String(fileDataUrl);
-            MemoryStream stream = new MemoryStream(byteArray);
-
-            var service = GoogleDriveService.Get();
-
-            File body = new File();
-            body.Title = fileName;
-            body.MimeType = AudioMimeType;
-            body.Parents = new List<ParentReference>
-                               {
-                                   new ParentReference
-                                       {
-                                           Id =
-                                               MusicConstants
-                                               .GoogleDriveBlastOFFMusicFolderId
-                                       }
-                               };
-
-            try
-            {
-                FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, AudioMimeType);
-                request.Upload();
-
-                return "https://drive.google.com/open?id=" + request.ResponseBody.Id;
-            }
-            catch (Exception exception)
-            {
-                return string.Format("An error occurred: " + exception.Message);
-            }
         }
 
         //// POST /api/music/albums/{id}/comments
@@ -470,7 +412,7 @@
         [Route("api/songs/{id}")]
         public IHttpActionResult UpdateSong([FromUri] int id, [FromBody] SongBindingModel song)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var existingSong = this.Data.Songs.Find(id);
 
@@ -479,7 +421,7 @@
                 return this.NotFound();
             }
 
-            if (loggedUserId != existingSong.UploaderId)
+            if (currentUser.Id != existingSong.UploaderId)
             {
                 return this.Unauthorized();
             }
@@ -508,7 +450,7 @@
 
             this.Data.SaveChanges();
 
-            var songToReturn = SongViewModel.Create(existingSong);
+            var songToReturn = SongViewModel.Create(existingSong, currentUser);
 
             return this.Ok(songToReturn);
         }
@@ -520,7 +462,7 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult DeleteMusicAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
 
@@ -529,7 +471,7 @@
                 return this.NotFound();
             }
 
-            if (loggedUserId != existingMusicAlbum.AuthorId)
+            if (currentUser.Id != existingMusicAlbum.AuthorId)
             {
                 return this.Unauthorized();
             }
@@ -545,7 +487,7 @@
         [Route("api/songs/{id}")]
         public IHttpActionResult DeleteSong([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var existingSong = this.Data.Songs.Find(id);
 
@@ -554,7 +496,7 @@
                 return this.NotFound();
             }
 
-            if (loggedUserId != existingSong.UploaderId)
+            if (currentUser.Id != existingSong.UploaderId)
             {
                 return this.Unauthorized();
             }
@@ -572,9 +514,7 @@
         [Route("api/music/albums/{id}/likes")]
         public IHttpActionResult LikeMusicAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -583,14 +523,14 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = album.UserLikes.Any(u => u.Id == loggedUserId);
+            var isAlreadyLiked = album.UserLikes.Any(u => u.Id == currentUser.Id);
 
             if (isAlreadyLiked)
             {
                 return this.BadRequest("You have already liked this music album.");
             }
 
-            if (album.AuthorId == loggedUserId)
+            if (album.AuthorId == currentUser.Id)
             {
                 return this.BadRequest("Cannot like your own music album.");
             }
@@ -612,9 +552,7 @@
         [Route("api/music/albums/{id}/likes")]
         public IHttpActionResult UnlikeMusicAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -623,14 +561,14 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = album.UserLikes.Any(u => u.Id == loggedUserId);
+            var isAlreadyLiked = album.UserLikes.Any(u => u.Id == currentUser.Id);
 
             if (!isAlreadyLiked)
             {
                 return this.BadRequest("You have already unliked this music album.");
             }
 
-            if (album.AuthorId == loggedUserId)
+            if (album.AuthorId == currentUser.Id)
             {
                 return this.BadRequest("Cannot unlike your own music album.");
             }
@@ -652,9 +590,7 @@
         [Route("api/songs/{id}/likes")]
         public IHttpActionResult LikeSong([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var song = this.Data.Songs.Find(id);
 
@@ -663,14 +599,14 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = song.UserLikes.Any(u => u.Id == loggedUserId);
+            var isAlreadyLiked = song.UserLikes.Any(u => u.Id == currentUser.Id);
 
             if (isAlreadyLiked)
             {
                 return this.BadRequest("You have already liked this song.");
             }
 
-            if (song.UploaderId == loggedUserId)
+            if (song.UploaderId == currentUser.Id)
             {
                 return this.BadRequest("Cannot like your own songs.");
             }
@@ -688,9 +624,7 @@
         [Route("api/songs/{id}/likes")]
         public IHttpActionResult UnlikeSong([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(id);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var song = this.Data.Songs.Find(id);
 
@@ -699,14 +633,14 @@
                 return this.NotFound();
             }
 
-            var isAlreadyLiked = song.UserLikes.Any(u => u.Id == loggedUserId);
+            var isAlreadyLiked = song.UserLikes.Any(u => u.Id == currentUser.Id);
 
             if (!isAlreadyLiked)
             {
                 return this.BadRequest("You have already unliked this song.");
             }
 
-            if (song.UploaderId == loggedUserId)
+            if (song.UploaderId == currentUser.Id)
             {
                 return this.BadRequest("Cannot unlike your own songs.");
             }
@@ -727,9 +661,7 @@
         [Route("api/music/albums/{id}/follow")]
         public IHttpActionResult FollowMusicAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -738,14 +670,14 @@
                 return this.NotFound();
             }
 
-            var isAlreadyFollowed = album.Followers.Any(u => u.Id == loggedUserId);
+            var isAlreadyFollowed = album.Followers.Any(u => u.Id == currentUser.Id);
 
             if (isAlreadyFollowed)
             {
                 return this.BadRequest("You are currently following this music album.");
             }
 
-            if (album.AuthorId == loggedUserId)
+            if (album.AuthorId == currentUser.Id)
             {
                 return this.BadRequest("Cannot follow your own music album.");
             }
@@ -767,9 +699,7 @@
         [Route("api/music/albums/{id}/follow")]
         public IHttpActionResult UnfollowMusicAlbum([FromUri] int id)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -778,14 +708,14 @@
                 return this.NotFound();
             }
 
-            var isAlreadyFollowed = album.Followers.Any(u => u.Id == loggedUserId);
+            var isAlreadyFollowed = album.Followers.Any(u => u.Id == currentUser.Id);
 
             if (!isAlreadyFollowed)
             {
                 return this.BadRequest("You are currently not following this music album.");
             }
 
-            if (album.AuthorId == loggedUserId)
+            if (album.AuthorId == currentUser.Id)
             {
                 return this.BadRequest("Cannot unfollow your own music album.");
             }
@@ -800,6 +730,64 @@
                         "Music Album {0}, created by {1}, successfully unfollowed.", 
                         album.Title, 
                         album.Author.UserName));
+        }
+
+        private bool ValidateAudioFileType(string fileDataUrl)
+        {
+            if (fileDataUrl.IndexOf("data:audio/mp3;base64,", StringComparison.Ordinal) == -1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateFileSize(string fileDataUrl, int kilobyteLimit)
+        {
+            if ((fileDataUrl.Length / 4) * 3 >= kilobyteLimit * 1024)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private string UploadSongToGoogleDrive(string fileDataUrl, string fileName)
+        {
+            const string AudioMimeType = "audio/mpeg";
+
+            byte[] byteArray = Convert.FromBase64String(fileDataUrl);
+            MemoryStream stream = new MemoryStream(byteArray);
+
+            var service = GoogleDriveService.Get();
+
+            File body = new File
+                            {
+                                Title = fileName, 
+                                MimeType = AudioMimeType, 
+                                Parents =
+                                    new List<ParentReference>
+                                        {
+                                            new ParentReference
+                                                {
+                                                    Id =
+                                                        MusicConstants
+                                                        .GoogleDriveBlastOFFMusicFolderId
+                                                }
+                                        }
+                            };
+
+            try
+            {
+                FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, AudioMimeType);
+                request.Upload();
+
+                return "https://drive.google.com/open?id=" + request.ResponseBody.Id;
+            }
+            catch (Exception exception)
+            {
+                return string.Format("An error occurred: " + exception.Message);
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
     app.factory('musicDataService', function (constants, requestHeaders, requester) {
         var serviceUrl = constants.BASE_URL + 'music/albums';
+        var songsUrl = constants.BASE_URL + 'songs';
 
         function getAllMusicAlbums() {
 
@@ -39,6 +40,23 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.remove(headers, url, null);
         }
 
+        function likeSong(songId) {
+
+            var headers = new requestHeaders().get();
+
+            var url = songsUrl + '/' + songId + '/likes';
+
+            return requester.post(headers, url, null);
+        }
+
+        function unlikeSong(songId) {
+
+            var headers = new requestHeaders().get();
+
+            var url = songsUrl + '/' + songId + '/likes';
+
+            return requester.remove(headers, url, null);
+        }
         // LIKES - End
 
         // FOLLOWERS
@@ -84,6 +102,8 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             // Likes
             likeMusicAlbum: likeMusicAlbum,
             unlikeMusicAlbum: unlikeMusicAlbum,
+            likeSong: likeSong,
+            unlikeSong: unlikeSong,
 
             // Followers
             followMusicAlbum: followMusicAlbum,

@@ -95,6 +95,40 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                             notificationService.alertError(error);
                         });
                 };
+
+                $scope.likeSong = function (song) {
+
+                    var songId = song['id'];
+
+                    musicDataService.likeSong(songId).then(
+                        function (response) {
+
+                            song['isLiked'] = true;
+                            song['likesCount']++;
+
+                            notificationService.alertSuccess(response);
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
+                $scope.unlikeSong = function (song) {
+
+                    var songId = song['id'];
+
+                    musicDataService.unlikeSong(songId).then(
+                        function (response) {
+
+                            song['isLiked'] = false;
+                            song['likesCount']--;
+
+                            notificationService.alertSuccess(response);
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
                 // LIKES - End
 
                 // FOLLOWERS
