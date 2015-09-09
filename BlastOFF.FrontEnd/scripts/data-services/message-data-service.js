@@ -8,11 +8,18 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             var headers = new requestHeaders().get();
 
-            return requester.delete(headers, serviceUrl + message.Id);
+            return requester.remove(headers, serviceUrl + message.Id);
+        }
+
+        function composeMessage(message){
+            var headers = new requestHeaders().get();
+
+            return requester.post(headers, serviceUrl, message);
         }
 
         return {
-            deleteMessage: deleteMessage
+            deleteMessage: deleteMessage,
+            composeMessage: composeMessage
         }
     });
 });

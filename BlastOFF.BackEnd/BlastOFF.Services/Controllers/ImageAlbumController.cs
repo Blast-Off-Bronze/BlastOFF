@@ -34,8 +34,10 @@
         [Route("api/imageAlbums")]
         public IHttpActionResult GetAllImageAlbums()
         {
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             var imageAlbums = this.Data.ImageAlbums.All().ToList()
-                .Select(a => ImageAlbumViewModel.Create(a));
+                .Select(a => ImageAlbumViewModel.Create(a, currentUser));
 
             return this.Ok(imageAlbums);
         }
@@ -47,7 +49,7 @@
             var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var imageAlbums = this.Data.ImageAlbums.All().Where(a => a.CreatedById == user.Id).ToList()
-                .Select(a => ImageAlbumViewModel.Create(a));
+                .Select(a => ImageAlbumViewModel.Create(a, user));
 
             return this.Ok(imageAlbums);
         }
@@ -64,7 +66,9 @@
                 return this.NotFound();
             }
 
-            var returnItem = ImageAlbumViewModel.Create(imageAlbum);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var returnItem = ImageAlbumViewModel.Create(imageAlbum, currentUser);
 
             return this.Ok(returnItem);
         }
@@ -100,7 +104,7 @@
             this.Data.ImageAlbums.Add(imageAlbum); 
             this.Data.SaveChanges();
                         
-            var returnItem = ImageAlbumViewModel.Create(imageAlbum);
+            var returnItem = ImageAlbumViewModel.Create(imageAlbum, user);
 
             return this.Ok(returnItem);
         }
@@ -121,9 +125,9 @@
                 return this.NotFound();
             }
 
-            var loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
             
-            if (imageAlbum.CreatedById != loggedUserId)
+            if (imageAlbum.CreatedById != currentUser.Id)
             {
                 return this.Unauthorized();
             }
@@ -133,7 +137,7 @@
             this.Data.ImageAlbums.Update(imageAlbum);
             this.Data.SaveChanges();
 
-            var returnItem = ImageAlbumViewModel.Create(imageAlbum);
+            var returnItem = ImageAlbumViewModel.Create(imageAlbum, currentUser);
 
             return Ok(returnItem);
         }
@@ -177,7 +181,9 @@
                 return this.NotFound();
             }
 
-            var returnItem = ImageViewModel.Create(imagе);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var returnItem = ImageViewModel.Create(imagе, currentUser);
 
             return this.Ok(returnItem);
         }
@@ -211,7 +217,7 @@
             this.Data.Images.Add(image);
             this.Data.SaveChanges();
 
-            var returnItem = ImageViewModel.Create(image);
+            var returnItem = ImageViewModel.Create(image, user);
 
             return Ok(returnItem);
         }
@@ -232,9 +238,9 @@
                 return this.NotFound();
             }
 
-            var loggedUserId = this.User.Identity.GetUserId();
-            
-            if (image.ImageAlbum.CreatedById != loggedUserId)
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            if (image.ImageAlbum.CreatedById != currentUser.Id)
             {
                 return this.Unauthorized();
             }
@@ -244,7 +250,7 @@
             this.Data.Images.Update(image);
             this.Data.SaveChanges();
 
-            var returnItem = ImageViewModel.Create(image);
+            var returnItem = ImageViewModel.Create(image, currentUser);
 
             return Ok(returnItem);
         }

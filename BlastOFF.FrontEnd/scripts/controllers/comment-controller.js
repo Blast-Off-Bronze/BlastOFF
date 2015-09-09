@@ -6,7 +6,6 @@ define(['app', 'comment-data-service', 'storage-service', 'notification-service'
         app.controller('commentController',
             function ($scope, $routeParams, commentDataService, storageService, notificationService) {
                 $scope.likeComment = function(comment) {
-                console.log(comment);
                     commentDataService.likeComment(comment)
                     .then(function (response) {
                         comment.isLiked = true;
@@ -30,6 +29,16 @@ define(['app', 'comment-data-service', 'storage-service', 'notification-service'
                     commentDataService.deleteComment(comment)
                     .then(function (response) {
                         commentedObject.comments.splice(commentedObject.comments.indexOf(comment), 1);
+                        console.log(response);
+                    }, function (error) {
+                        console.log(error);
+                    });
+                };
+
+                $scope.modifyComment = function(comment, commentedObject) {
+                    commentDataService.modifyComment(comment)
+                    .then(function (response) {
+                        commentedObject.comments[commentedObject.comments.indexOf(comment)] = response;
                         console.log(response);
                     }, function (error) {
                         console.log(error);

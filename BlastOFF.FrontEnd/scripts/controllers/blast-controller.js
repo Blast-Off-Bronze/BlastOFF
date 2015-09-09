@@ -76,61 +76,25 @@ define(['app', 'blast-data-service', 'storage-service', 'notification-service'],
                         console.log(error);
                     });
                 };
-//                $scope.imageAlbum = {
-//                    title: '',
-//                };
-//
-//                imageDataService.getMyAlbums()
-//                .then(function(response){
-//                    $scope.myImageAlbums = response;
-//                    console.log(response);
-//                }, function(error){
-//                    console.log(error);
-//                });
-//
-//                $scope.image = {
-//                    title: '',
-//                    base64ImageString: '',
-//                    imageAlbumId: ''
-//                };
-//
-//                $scope.addImageAlbum = function (imageAlbum) {
-//
-//                    console.log(imageAlbum);
-//
-//                    imageDataService.addImageAlbum(imageAlbum).then(
-//                        function (response) {
-//
-//                            console.log(response);
-//                            $scope.myImageAlbums.push(response);
-//                        },
-//                        function (error) {
-//
-//                            console.log(error);
-//
-//                        });
-//                };
-//
-//                $scope.chooseAlbum = function (imageAlbumId) {
-//                    $scope.image.imageAlbumId = imageAlbumId;
-//                    console.log(imageAlbumId);
-//                };
-//
-//                $scope.addImage = function (image) {
-//
-//                    console.log(image);
-//
-//                    imageDataService.addImage(image).then(
-//                        function (response) {
-//
-//                            console.log(response);
-//
-//                        },
-//                        function (error) {
-//
-//                            console.log(error);
-//
-//                        });
-//                };
+
+                $scope.deleteBlast = function(blast, collection) {
+                    blastDataService.deleteBlast(blast)
+                    .then(function (response) {
+                        collection.splice(collection.indexOf(blast), 1);
+                        console.log(response);
+                    }, function (error) {
+                        console.log(error);
+                    });
+                };
+
+                $scope.modifyBlast = function(blast, collection) {
+                    blastDataService.modifyBlast(blast)
+                    .then(function (response) {
+                        collection[collection.indexOf(blast)] = response;
+                        console.log(response);
+                    }, function (error) {
+                        console.log(error);
+                    });
+                };
             });
     });

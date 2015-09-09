@@ -1,4 +1,7 @@
-﻿namespace BlastOFF.Services.Models.ImageModels
+﻿using BlastOFF.Models.UserModel;
+using BlastOFF.Services.Models.CommentModels;
+
+namespace BlastOFF.Services.Models.ImageModels
 {
     using System;
     using System.Collections.Generic;
@@ -7,21 +10,41 @@
 
     public class ImageAlbumViewModel
     {
-        public static ImageAlbumViewModel Create(ImageAlbum a)
+        public static ImageAlbumViewModel Create(ImageAlbum model, ApplicationUser currentUser)
         {
-            return new ImageAlbumViewModel()
+            bool liked = false;
+            bool owner = false;
+
+            if (currentUser != null)
             {
-                Id = a.Id,
-                Title = a.Title,
-                CreatedBy = a.CreatedBy.UserName,
-                CreatedById = a.CreatedBy.Id,
-                DateCreated = a.DateCreated,
-                LikesCount = a.UserLikes.Count,
-                CommentsCount = a.Comments.Count,
-                FollowersCount = a.Followers.Count,
-                ImagesCount = a.Images.Count,
-                Images = a.Images.Select(i => i.Title).Take(3)
+                if (currentUser.LikedImageAlbums.Any(b => b.Id == model.Id))
+                {
+                    liked = true;
+                }
+
+                if (currentUser.Id == model.CreatedById)
+                {
+                    owner = true;
+                }
+            }
+
+            var result = new ImageAlbumViewModel()
+            {
+                Id = model.Id,
+                Title = model.Title,
+                CreatedBy = model.CreatedBy.UserName,
+                CreatedById = model.CreatedBy.Id,
+                DateCreated = model.DateCreated,
+                LikesCount = model.UserLikes.Count,
+                CommentsCount = model.Comments.Count,
+                FollowersCount = model.Followers.Count,
+                ImagesCount = model.Images.Count,
+                Comments = model.Comments.ToList().Take(3).Select(c => CommentViewModel.Create(c, currentUser)),
+                IsLiked = liked,
+                AmITheAuthor = owner
             };
+
+            return result;
         }
 
         public int Id { get; set; }
@@ -42,6 +65,12 @@
 
         public int ImagesCount { get; set; }
 
+        public bool IsLiked { get; set; }
+
+        public bool AmITheAuthor { get; set; }
+
         public IEnumerable<string> Images { get; set; }
+
+        public IEnumerable<CommentViewModel> Comments { get; set; }
     }
 }

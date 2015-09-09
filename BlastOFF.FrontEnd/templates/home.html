@@ -20,16 +20,40 @@
 
     </div>
 
-    <div class="col-md-9">
-        <div infinite-scroll="getPublicBlasts(lastBlastId)"
-             infinite-scroll-distance='1'
-             infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Nav tabs --><div class="card">
+                <ul class="nav nav-tabs">
+                    <li role="presentation" class="active"><a href="#blasts" data-toggle="tab">Blasts</a></li>
+                    <li role="presentation"><a href="#musicAlbums" data-toggle="tab">Music Albums</a></li>
+                    <li role="presentation"><a href="#imageAlbums" data-toggle="tab">Image Albums</a></li>
+                </ul>
 
-            <div ng-include="'templates/blast-feed.html'"></div>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="blasts">
+                        <div class="col-md-9">
+                            <div infinite-scroll="getPublicBlasts(lastBlastId)"
+                                 infinite-scroll-distance='1'
+                                 infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
 
+                                <div ng-include="'templates/blast-feed.html'"></div>
+
+                            </div>
+                            <!-- SCROLLABLE BLASTS - END -->
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="musicAlbums">
+
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="imageAlbums">
+
+                    </div>
+                </div>
+            </div>
+            </div>
         </div>
-        <!-- SCROLLABLE BLASTS - END -->
     </div>
-
 
 </div>

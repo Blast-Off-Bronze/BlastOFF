@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using BlastOFF.Services.Models.ImageModels;
+
+namespace BlastOFF.Services.Controllers
 {
     using System.Linq;
     using Microsoft.AspNet.Identity;
@@ -180,15 +182,44 @@
         [Route("api/users/{username}/blasts")]
         public IHttpActionResult GetBlastsByAuthor([FromUri] string username, [FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
         {
+            var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
+
+            if (searchedUser == null)
+            {
+                return NotFound();
+            }
+
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blasts = this.Data.Blasts.All()
-                .Where(b => b.Author.UserName == username && b.Id >= StartPostId)
+                .Where(b => b.Author.UserName == searchedUser.UserName && b.Id >= StartPostId)
                 .Take(PageSize)
                 .ToList()
                 .Select(b => BlastViewModel.Create(b, currentUser));
 
             return this.Ok(blasts);
+        }
+
+        [HttpGet]
+        [Route("api/users/{username}/imageAlbums")]
+        public IHttpActionResult GetImageAlbumsByUsername([FromUri] string username, [FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
+        {
+            var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
+
+            if (searchedUser == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var imageAlbums = this.Data.ImageAlbums.All()
+                .Where(b => b.CreatedBy.UserName == searchedUser.UserName && b.Id >= StartPostId)
+                .Take(PageSize)
+                .ToList()
+                .Select(b => ImageAlbumViewModel.Create(b, currentUser));
+
+            return this.Ok(imageAlbums);
         }
 
         [HttpGet]

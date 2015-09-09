@@ -8,9 +8,10 @@ define(['app', 'coverImageUpload', 'storage-service', 'image-data-service', 'con
 
                 $scope.isLogged = storageService.isLogged();
 
-                $scope.imageAlbum = {
-                    title: '',
-                };
+                $scope.imageAlbumModel = {};
+                $scope.imageModel = {};
+
+                $scope.imageAlbums = [];
 
                 imageDataService.getMyAlbums()
                 .then(function(response){
@@ -20,19 +21,9 @@ define(['app', 'coverImageUpload', 'storage-service', 'image-data-service', 'con
                     console.log(error);
                 });
 
-                $scope.image = {
-                    title: '',
-                    base64ImageString: '',
-                    imageAlbumId: ''
-                };
-
                 $scope.addImageAlbum = function (imageAlbum) {
-
-                    console.log(imageAlbum);
-
                     imageDataService.addImageAlbum(imageAlbum).then(
                         function (response) {
-
                             console.log(response);
                             $scope.myImageAlbums.push(response);
                         },
@@ -48,20 +39,24 @@ define(['app', 'coverImageUpload', 'storage-service', 'image-data-service', 'con
                     console.log(imageAlbumId);
                 };
 
+                $scope.commentImageAlbum = function(imageAlbum) {
+                    imageDataService.commentImageAlbum(imageAlbum)
+                    .then(function (response) {
+                        blast.comments.unshift(response);
+                        blast.commentModel.content = '';
+                    }, function (error) {
+                        console.log(error);
+                    });
+                };
+
                 $scope.addImage = function (image) {
-
                     console.log(image);
-
                     imageDataService.addImage(image).then(
                         function (response) {
-
                             console.log(response);
-
                         },
                         function (error) {
-
                             console.log(error);
-
                         });
                 };
             });
