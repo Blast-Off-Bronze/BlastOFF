@@ -18,18 +18,23 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
 
                 $scope.blastToPost = {};
 
-                //$scope.getBlasts();
+                getPublicBlasts();
 
-                $scope.getBlasts = function (startBlastId, pageSize) {
+                function getPublicBlasts(startBlastId, pageSize) {
                     blastDataService.getPublicBlasts(startBlastId, pageSize)
                     .then(function (response) {
                         response.forEach(function (blast) {
                             $scope.blasts.push(blast);
                         });
+                        console.log(response);
                     }, function (error) {
                         console.log(error);
                         notificationService.alertError(error);
                     });
+                }
+
+                $scope.getBlasts = function (startBlastId, pageSize) {
+                    getPublicBlasts(startBlastId, pageSize);
                 };
 
                 $scope.makeABlast = function () {

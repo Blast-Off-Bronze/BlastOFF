@@ -18,12 +18,13 @@
         {
             this.comments = new HashSet<Comment>();
             this.usersLikes = new HashSet<ApplicationUser>();
+            this.IsPublic = true;
+            this.BlastType = BlastType.Normal;
         }
 
         [Key]
         public int Id { get; set; }
 
-        [DefaultValue(true)]
         public bool IsPublic { get; set; }
 
         [Required]

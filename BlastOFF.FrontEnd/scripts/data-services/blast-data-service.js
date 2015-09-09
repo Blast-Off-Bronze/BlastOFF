@@ -10,34 +10,19 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.get(headers, serviceUrl);
         }
 
-        // PAGED BLASTS
-        function getPagedBlasts(username, startBlastId, pageSize) {
-
-            var startBlastId = startBlastId || '';
-            var pageSize = pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
-
-            var headers = new requestHeaders().get();
-
-            var url = serviceUrl + username + '/wall/?StartPostId=' + startBlastId + '&PageSize=' + pageSize;
-
-            return requester.get(headers, url);
-        }
-
         function getPublicBlasts(startBlastId, pageSize) {
-            var startBlastId = startBlastId || '';
+            var startBlastId = startBlastId || 0;
             var pageSize = pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
 
             var headers = new requestHeaders().get();
 
-            var url = serviceUrl + '/public/?StartPostId=' + 0 + '&PageSize=' + pageSize;
+            var url = serviceUrl + '/public/?StartPostId=' + startBlastId + '&PageSize=' + pageSize;
 
             return requester.get(headers, url);
         }
 
         return {
             getAllBlasts: getAllBlasts,
-
-            getPagedBlasts: getPagedBlasts,
             getPublicBlasts: getPublicBlasts
         }
     });
