@@ -18,12 +18,11 @@
         public DateTime DateCreated { get; set; }
 
 
+        public bool IsOwn { get; set; }
 
         public bool IsFollowed { get; set; }
 
-        public bool IsOwn { get; set; }
-
-
+        public bool IsLiked { get; set; }
 
 
         public int ViewsCount { get; set; }
@@ -40,6 +39,8 @@
 
         public IEnumerable<SongViewModel> Songs { get; set; }
 
+        public bool AllSongsDisplayed { get; set; }
+
         public static MusicAlbumViewModel Create(MusicAlbum a, ApplicationUser user)
         {
             return new MusicAlbumViewModel
@@ -54,9 +55,13 @@
                            CommentsCount = a.Comments.Count,
                            FollowersCount = a.Followers.Count,
                            SongsCount = a.Songs.Count,
-                           Songs = a.Songs.Select(SongViewModel.Create).Take(3),
+                           Songs = a.Songs.OrderBy(s => s.DateAdded).Select(SongViewModel.Create).Take(3),
+
+                           IsOwn = a.Author == user,
                            IsFollowed = a.Author != user && a.Followers.Contains(user),
-                           IsOwn = a.Author == user
+                           IsLiked = a.Author != user && a.UserLikes.Contains(user),
+
+                           AllSongsDisplayed = false
                        };
         }
     }

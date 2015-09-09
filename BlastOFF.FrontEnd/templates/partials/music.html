@@ -1,5 +1,5 @@
 <div ng-controller="musicController">
-    <div ng-class="{'music-pannel': showMusic, 'music-pannel-disabled': !showMusic}">
+    <div ng-class="{'music-panel': showMusic, 'music-panel-disabled': !showMusic}">
 
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist" id="music-navigation">
@@ -21,7 +21,6 @@
             <div role="tabpanel" class="tab-pane active" id="all">
 
                 <div class="panel panel-white post panel-shadow" ng-if="requesterIsBusy">Retrieving albums ...</div>
-
 
                 <div class="panel panel-white post panel-shadow" ng-if="!requesterIsBusy" ng-repeat="musicAlbum in allMusicAlbums">
 

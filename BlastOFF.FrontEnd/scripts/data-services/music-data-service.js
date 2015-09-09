@@ -11,6 +11,15 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.get(headers, serviceUrl);
         }
 
+        function getAllSongs(albumId) {
+
+            var headers = new requestHeaders().get();
+            var url = serviceUrl + '/' + albumId + '/songs';
+
+            return requester.get(headers, serviceUrl);
+        }
+
+
         function addMusicAlbum(musicAlbum) {
 
             var headers = new requestHeaders().get();
@@ -28,6 +37,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
         return {
             getAllMusicAlbums: getAllMusicAlbums,
+            getAllSongs: getAllSongs,
 
             addMusicAlbum: addMusicAlbum,
             addSong: addSong

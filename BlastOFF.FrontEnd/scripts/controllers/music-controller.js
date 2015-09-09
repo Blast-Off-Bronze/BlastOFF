@@ -36,7 +36,6 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
                 musicDataService.getAllMusicAlbums().then(
                     function (response) {
-                        console.log(response);
                         $scope.allMusicAlbums = response;
                         $scope.requesterIsBusy = false;
                     },
@@ -44,6 +43,39 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                         notificationService.alertError(error);
                         $scope.requesterIsBusy = false;
                     });
+
+                $scope.getAllSongs = function (albumId) {
+
+                    musicDataService.getAllSongs(albumId).then(
+                        function (response) {
+                            $scope.allMusicAlbums.forEach(function (musicAlbum) {
+                                if (musicAlbum['id'] === albumId) {
+
+                                    musicAlbum['songs'] = response;
+                                    musicAlbum['allSongsDisplayed'] = true;
+                                }
+                            });
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 $scope.addMusicAlbum = function (musicAlbum) {
 

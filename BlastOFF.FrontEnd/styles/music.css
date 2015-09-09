@@ -1,8 +1,22 @@
-.music-pannel {
+a {
+    cursor: pointer;
+}
+
+hr {
+    margin: 5px 0 15px 0;
+}
+
+ul {
+    padding-left: 15px;
+    padding-right: 15px;
+    list-style: none;
+}
+
+.music-panel {
     display: inline-block;
 }
 
-.music-pannel-disabled {
+.music-panel-disabled {
     display: none;
 }
 
@@ -11,7 +25,6 @@
 }
 
 .panel-white {
-   width: 512px;
     border: 1px solid #dddddd;
 }
 

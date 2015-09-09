@@ -57,16 +57,6 @@
             return this.Ok(albums);
         }
 
-
-
-
-
-
-
-
-
-
-
         //// GET /api/music/albums/{id}/songs
         [HttpGet]
         [Route("api/music/albums/{id}/songs")]
@@ -80,12 +70,18 @@
                 return this.NotFound();
             }
 
-            var songs = album.Songs.Select(s => SongViewModel.Create(s));
-
-            this.Data.Dispose();
+            var songs = album.Songs.OrderBy(s => s.DateAdded).Select(SongViewModel.Create);
 
             return this.Ok(songs);
         }
+
+
+
+
+
+
+
+
 
         //// GET /api/music/albums/{id}/comments
         [HttpGet]
