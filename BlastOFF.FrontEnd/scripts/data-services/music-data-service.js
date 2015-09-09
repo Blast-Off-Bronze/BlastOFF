@@ -20,6 +20,8 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         }
 
 
+
+
         // LIKES
         function likeMusicAlbum(albumId) {
 
@@ -27,9 +29,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             var url = serviceUrl + '/' + albumId + '/likes';
 
-            console.log(url);
-
-            return requester.post(headers, serviceUrl, null);
+            return requester.post(headers, url, null);
         }
 
 

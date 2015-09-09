@@ -44,17 +44,16 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                         $scope.requesterIsBusy = false;
                     });
 
-                $scope.getAllSongs = function (albumId) {
+                $scope.getAllSongs = function (musicAlbum) {
+
+                    var albumId = musicAlbum['id'];
 
                     musicDataService.getAllSongs(albumId).then(
                         function (response) {
-                            $scope.allMusicAlbums.forEach(function (musicAlbum) {
-                                if (musicAlbum['id'] === albumId) {
 
-                                    musicAlbum['songs'] = response;
-                                    musicAlbum['allSongsDisplayed'] = true;
-                                }
-                            });
+                            musicAlbum['songs'] = response;
+                            musicAlbum['allSongsDisplayed'] = true;
+
                         },
                         function (error) {
                             notificationService.alertError(error);
@@ -63,25 +62,19 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
 
                 // LIKES
-                $scope.likeMusicAlbum = function (albumId) {
+                $scope.likeMusicAlbum = function (musicAlbum) {
 
-                    console.log(albumId);
+                    var albumId = musicAlbum['id'];
 
                     musicDataService.likeMusicAlbum(albumId).then(
                         function (response) {
-                            $scope.allMusicAlbums.forEach(function (musicAlbum) {
-                                if (musicAlbum['id'] === albumId) {
 
-                                    musicAlbum['isLiked'] = true;
-                                }
-                            });
+                            musicAlbum['isLiked'] = true;
 
                             notificationService.alertSuccess(response);
                         },
                         function (error) {
-
-                            console.log(error);
-
+                            notificationService.alertError(error);
                         });
                 };
 

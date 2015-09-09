@@ -15,9 +15,9 @@
         <!-- Likes -->
         <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item not-active">Likes ({{musicAlbum.likesCount}})</a>
 
-        <a ng-if="!musicAlbum.isOwn && musicAlbum.isLiked" class="btn btn-default stat-item" ng-click="unlikeMusicAlbum(musicAlbum.id)">Unlike ({{musicAlbum.likesCount}})</a>
+        <a ng-if="!musicAlbum.isOwn && musicAlbum.isLiked" class="btn btn-default stat-item" ng-click="unlikeMusicAlbum(musicAlbum)">Unlike ({{musicAlbum.likesCount}})</a>
 
-        <a ng-if="!musicAlbum.isOwn && !musicAlbum.isLiked" class="btn btn-default stat-item" ng-click="likeMusicAlbum(musicAlbum.id)">Like ({{musicAlbum.likesCount}})</a>
+        <a ng-if="!musicAlbum.isOwn && !musicAlbum.isLiked" class="btn btn-default stat-item" ng-click="likeMusicAlbum(musicAlbum)">Like ({{musicAlbum.likesCount}})</a>
 
 
 
@@ -56,7 +56,7 @@
 
         <div class="comment-body">
             <div class="comment-heading">
-                <h5 class="user" style="text-align: center"><span ng-click="getAllSongs(musicAlbum.id)" >View entire playlist ({{musicAlbum.songsCount}})</span></h5>
+                <h5 class="user" style="text-align: center"><span ng-click="getAllSongs(musicAlbum)" >View entire playlist ({{musicAlbum.songsCount}})</span></h5>
             </div>
         </div>
     </li>
