@@ -9,22 +9,22 @@ define(['app', 'storage-service', 'redirection-service', 'escape-special-chars-s
                 $scope.isLogged = storageService.isLogged();
 
                 $scope.guest = {
-                    username: "",
-                    password: "",
+                    username: 'user1',
+                    password: 123456,
                     wantsToBeRemembered: false
                 };
 
                 $scope.login = function (guestInfo) {
 
-                    var guest = escapeSpecialCharsService.escapeSpecialCharacters(guestInfo, false);
+                   // var guest = escapeSpecialCharsService.escapeSpecialCharacters(guestInfo, false);
 
-                    userDataService.login(guest).then(
+                    userDataService.login(guestInfo).then(
                         function (response) {
 
                             var sessionToken = response['token_type'] + ' ' + response['access_token'];
                             var username = response['userName'];
 
-                            if (guest.wantsToBeRemembered) {
+                            if (guestInfo.wantsToBeRemembered) {
                                 storageService.setSessionToken(sessionToken, true);
                             } else {
                                 storageService.setSessionToken(sessionToken, false);

@@ -211,8 +211,6 @@
             this.Data.MusicAlbums.Add(newMusicAlbum);
             this.Data.SaveChanges();
 
-            this.Data.Dispose();
-
             var musicAlbumToReturn = MusicAlbumViewModel.Create(newMusicAlbum);
 
             return this.Ok(musicAlbumToReturn);

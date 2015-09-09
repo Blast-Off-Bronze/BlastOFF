@@ -32,7 +32,7 @@
 
         public virtual ApplicationUser Author { get; set; }
 
-        [DefaultValue(true)]
+        [DefaultValue(1)]
         public bool IsPublic { get; set; }
 
         [Required]
