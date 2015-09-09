@@ -20,6 +20,24 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         }
 
 
+        // LIKES
+        function likeMusicAlbum(albumId) {
+
+            var headers = new requestHeaders().get();
+
+            var url = serviceUrl + '/' + albumId + '/likes';
+
+            console.log(url);
+
+            return requester.post(headers, serviceUrl, null);
+        }
+
+
+
+
+
+
+
         function addMusicAlbum(musicAlbum) {
 
             var headers = new requestHeaders().get();
@@ -38,6 +56,9 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         return {
             getAllMusicAlbums: getAllMusicAlbums,
             getAllSongs: getAllSongs,
+
+            // Likes
+            likeMusicAlbum:likeMusicAlbum,
 
             addMusicAlbum: addMusicAlbum,
             addSong: addSong

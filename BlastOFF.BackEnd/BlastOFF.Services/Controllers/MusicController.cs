@@ -98,8 +98,6 @@
 
             var comments = album.Comments.Select(c => CommentViewModel.Create(c));
 
-            this.Data.Dispose();
-
             return this.Ok(comments);
         }
 
@@ -117,8 +115,6 @@
             }
 
             var comments = song.Comments.Select(c => CommentViewModel.Create(c));
-
-            this.Data.Dispose();
 
             return this.Ok(comments);
         }
@@ -157,8 +153,6 @@
             {
                 return this.NotFound();
             }
-
-            this.Data.Dispose();
 
             var songToReturn = SongViewModel.Create(song);
 
@@ -291,8 +285,6 @@
 
             var songToReturn = SongViewModel.Create(newSong);
 
-            this.Data.Dispose();
-
             return this.Ok(songToReturn);
         }
 
@@ -388,8 +380,6 @@
 
             var commentToReturn = CommentViewModel.Create(newMusicAlbumComment);
 
-            this.Data.Dispose();
-
             return this.Ok(commentToReturn);
         }
 
@@ -472,8 +462,6 @@
 
             var musicAlbumToReturn = MusicAlbumViewModel.Create(existingMusicAlbum, currentUser);
 
-            this.Data.Dispose();
-
             return this.Ok(musicAlbumToReturn);
         }
 
@@ -522,8 +510,6 @@
 
             var songToReturn = SongViewModel.Create(existingSong);
 
-            this.Data.Dispose();
-
             return this.Ok(songToReturn);
         }
 
@@ -551,8 +537,6 @@
             this.Data.MusicAlbums.Delete(existingMusicAlbum);
             this.Data.SaveChanges();
 
-            this.Data.Dispose();
-
             return this.Ok();
         }
 
@@ -577,8 +561,6 @@
 
             this.Data.Songs.Delete(existingSong);
             this.Data.SaveChanges();
-
-            this.Data.Dispose();
 
             return this.Ok();
         }
@@ -616,7 +598,6 @@
             album.UserLikes.Add(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return
                 this.Ok(
@@ -657,7 +638,6 @@
             album.UserLikes.Remove(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return
                 this.Ok(
@@ -698,7 +678,6 @@
             song.UserLikes.Add(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return
                 this.Ok(string.Format("{0}, uploaded by {1}, successfully liked.", song.Title, song.Uploader.UserName));
@@ -735,7 +714,6 @@
             song.UserLikes.Remove(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return
                 this.Ok(
@@ -775,7 +753,6 @@
             album.Followers.Add(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return
                 this.Ok(
@@ -816,7 +793,6 @@
             album.Followers.Remove(currentUser);
 
             this.Data.SaveChanges();
-            this.Data.Dispose();
 
             return
                 this.Ok(
