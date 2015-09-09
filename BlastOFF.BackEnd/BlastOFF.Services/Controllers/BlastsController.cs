@@ -50,13 +50,13 @@
         {
             var user = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             if (user == null)
             {
                 return this.BadRequest("No user with that username.");
             }
 
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+            
             var blasts = user.Blasts
                 .Where(b => b.Id >= StartPostId)
                 .OrderByDescending(b => b.PostedOn)
@@ -160,13 +160,13 @@
         [Route("api/blasts")]
         public IHttpActionResult CreateNewBlast([FromBody] BlastCreateBindingModel model)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest("Wrong or missing input parameters");
             }
 
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
+            
             var newBlast = new Blast
             {
                 AuthorId = user.Id,
@@ -187,7 +187,6 @@
         [Route("api/blasts/{id}")]
         public IHttpActionResult UpdateBlast([FromUri] int id, [FromBody] BlastEditBindingModel model)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
             var oldBlast = this.Data.Blasts.Find(id);
 
             if (oldBlast == null)
@@ -199,6 +198,8 @@
             {
                 return this.BadRequest("Wrong or missing input parameters");
             }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (oldBlast.AuthorId != currentUser.Id)
             {
@@ -218,8 +219,6 @@
         [Route("api/blasts/{id}/comments")]
         public IHttpActionResult AddBlastComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var blast = this.Data.Blasts.Find(id);
 
             if (blast == null)
@@ -237,6 +236,8 @@
                 return this.BadRequest(this.ModelState);
             }
 
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+            
             var newComment = new Comment
             {
                 Content = comment.Content,
@@ -249,8 +250,6 @@
             this.Data.SaveChanges();
 
             var returnItem = CommentViewModel.Create(newComment, currentUser);
-
-            this.Data.Dispose();
 
             return this.Ok(returnItem);
         }

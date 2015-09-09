@@ -195,7 +195,6 @@
         [Route("api/users/{username}/profile")]
         public IHttpActionResult ViewProfile([FromUri] string username)
         {
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
             if (searchedUser == null)
@@ -203,6 +202,8 @@
                 return this.NotFound();
             }
 
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+            
             //if (searchedUser.Id == currentUser.Id)
             //{
             //    var ownProfile = UserViewOwnModel.Create(currentUser);
@@ -237,7 +238,6 @@
         [Route("api/users/{username}/follow")]
         public IHttpActionResult FollowUser([FromUri] string username)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
             if (searchedUser == null)
@@ -245,19 +245,20 @@
                 return this.NotFound();
             }
 
-            if (loggedUserId == searchedUser.Id)
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+            
+            if (currentUser.Id == searchedUser.Id)
             {
                 //cant follow yourself
                 return this.BadRequest();
             }
 
-            if (searchedUser.FollowedBy.Any(f => f.Id == loggedUserId))
+            if (searchedUser.FollowedBy.Any(f => f.Id == currentUser.Id))
             {
                 //already follow by you
                 return this.BadRequest();
             }
 
-            var currentUser = this.Data.Users.All().First(u => u.Id == loggedUserId);
 
             currentUser.FollowedUsers.Add(searchedUser);
             searchedUser.FollowedBy.Add(currentUser);
@@ -270,7 +271,6 @@
         [Route("api/users/{username}/unfollow")]
         public IHttpActionResult UnfollowUser([FromUri] string username)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
             if (searchedUser == null)
@@ -278,13 +278,13 @@
                 return this.NotFound();
             }
 
-            if (!searchedUser.FollowedBy.Any(f => f.Id == loggedUserId))
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+            
+            if (!searchedUser.FollowedBy.Any(f => f.Id == currentUser.Id))
             {
                 //you are not following this user anyway
                 return this.BadRequest();
             }
-
-            var currentUser = this.Data.Users.All().First(u => u.Id == loggedUserId);
 
             currentUser.FollowedUsers.Remove(searchedUser);
             searchedUser.FollowedBy.Remove(currentUser);
