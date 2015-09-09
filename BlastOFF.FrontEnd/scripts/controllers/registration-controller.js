@@ -9,17 +9,17 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 $scope.isLogged = storageService.isLogged();
 
                 $scope.guest = {
-                    username: "",
-                    password: "",
-                    confirmPassword: "",
-                    email: ""
+                    username: 'user1',
+                    password: 123456,
+                    confirmPassword: 123456,
+                    email: 'user1@abv.bg'
                 };
 
                 $scope.register = function (guestInfo) {
 
-                    var guest = escapeSpecialCharsService.escapeSpecialCharacters(guestInfo, false);
+                    //var guest = escapeSpecialCharsService.escapeSpecialCharacters(guestInfo, false);
 
-                    userDataService.register(guest).then(
+                    userDataService.register(guestInfo).then(
                         function (response) {
 
                             var sessionToken = response['token_type'] + ' ' + response['access_token'];
