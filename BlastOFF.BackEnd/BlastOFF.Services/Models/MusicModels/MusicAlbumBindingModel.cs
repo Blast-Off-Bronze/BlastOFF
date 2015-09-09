@@ -1,6 +1,6 @@
 ﻿namespace BlastOFF.Services.Models.MusicModels
 {
-    using System;
+    using System.ComponentModel;
 
     public class MusicAlbumBindingModel
     {
@@ -9,5 +9,8 @@
         public string Title { get; set; }
 
         public string CoverImageData { get; set; }
+
+        [DefaultValue(1)]
+        public bool IsPublic { get; set; }
     }
 }

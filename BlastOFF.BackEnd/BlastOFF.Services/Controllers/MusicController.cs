@@ -5,7 +5,6 @@
     using System.IO;
     using System.Linq;
     using System.Web.Http;
-    using System.Web.Http.Cors;
 
     using BlastOFF.Data;
     using BlastOFF.Data.Interfaces;
@@ -49,23 +48,14 @@
         {
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var albums = this.Data.MusicAlbums
-                .All()
-                .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
-                .OrderBy(a => a.DateCreated)
-                .ToList()
-                .Select(MusicAlbumViewModel.Create);
+            var albums = this.Data.MusicAlbums.All()
+                    .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
+                    .OrderBy(a => a.DateCreated)
+                    .ToList()
+                    .Select(a => MusicAlbumViewModel.Create(a, currentUser));
 
             return this.Ok(albums);
         }
-
-
-
-
-
-
-
-
 
         //// GET /api/music/albums/{id}/songs
         [HttpGet]
@@ -135,6 +125,8 @@
         [AllowAnonymous]
         public IHttpActionResult FindMusicAlbumById([FromUri] int id)
         {
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             var album = this.Data.MusicAlbums.Find(id);
 
             if (album == null)
@@ -142,9 +134,7 @@
                 return this.NotFound();
             }
 
-            this.Data.Dispose();
-
-            var albumToReturn = MusicAlbumViewModel.Create(album);
+            var albumToReturn = MusicAlbumViewModel.Create(album, currentUser);
 
             return this.Ok(albumToReturn);
         }
@@ -197,6 +187,7 @@
                                     {
                                         Title = musicAlbum.Title, 
                                         AuthorId = user.Id, 
+                                        IsPublic = musicAlbum.IsPublic, 
                                         DateCreated = DateTime.Now, 
                                         CoverImageData = musicAlbum.CoverImageData
                                     };
@@ -211,7 +202,7 @@
             this.Data.MusicAlbums.Add(newMusicAlbum);
             this.Data.SaveChanges();
 
-            var musicAlbumToReturn = MusicAlbumViewModel.Create(newMusicAlbum);
+            var musicAlbumToReturn = MusicAlbumViewModel.Create(newMusicAlbum, user);
 
             return this.Ok(musicAlbumToReturn);
         }
@@ -324,7 +315,7 @@
             const string AudioMimeType = "audio/mpeg";
 
             byte[] byteArray = Convert.FromBase64String(fileDataUrl);
-            MemoryStream stream = new System.IO.MemoryStream(byteArray);
+            MemoryStream stream = new MemoryStream(byteArray);
 
             var service = GoogleDriveService.Get();
 
@@ -433,8 +424,6 @@
 
             var commentToReturn = CommentViewModel.Create(newSongComment);
 
-            this.Data.Dispose();
-
             return this.Ok(commentToReturn);
         }
 
@@ -445,6 +434,8 @@
         [Route("api/music/albums/{id}")]
         public IHttpActionResult UpdateMusicAlbum([FromUri] int id, [FromBody] MusicAlbumBindingModel musicAlbum)
         {
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             var existingMusicAlbum = this.Data.MusicAlbums.Find(id);
 
             if (existingMusicAlbum == null)
@@ -473,7 +464,7 @@
 
             this.Data.SaveChanges();
 
-            var musicAlbumToReturn = MusicAlbumViewModel.Create(existingMusicAlbum);
+            var musicAlbumToReturn = MusicAlbumViewModel.Create(existingMusicAlbum, currentUser);
 
             this.Data.Dispose();
 

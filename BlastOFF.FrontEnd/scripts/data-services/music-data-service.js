@@ -11,7 +11,6 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.get(headers, serviceUrl);
         }
 
-
         function addMusicAlbum(musicAlbum) {
 
             var headers = new requestHeaders().get();
@@ -29,7 +28,6 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
         return {
             getAllMusicAlbums: getAllMusicAlbums,
-
 
             addMusicAlbum: addMusicAlbum,
             addSong: addSong

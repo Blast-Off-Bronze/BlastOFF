@@ -14,6 +14,13 @@
             var songsCount = dbo.Songs.Count();
 
             Console.WriteLine("Total songs: " + songsCount);
+
+            var albums = dbo.MusicAlbums.ToList();
+
+            foreach (var musicAlbum in albums)
+            {
+                Console.WriteLine(musicAlbum.Followers.Count);
+            }
         }
     }
 }

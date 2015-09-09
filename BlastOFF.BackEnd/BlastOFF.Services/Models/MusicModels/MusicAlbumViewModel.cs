@@ -5,6 +5,7 @@
     using System.Linq;
 
     using BlastOFF.Models.MusicModels;
+    using BlastOFF.Models.UserModel;
 
     public class MusicAlbumViewModel
     {
@@ -15,6 +16,8 @@
         public string Author { get; set; }
 
         public DateTime DateCreated { get; set; }
+
+        public bool IsFollowed { get; set; }
 
         public int ViewsCount { get; set; }
 
@@ -30,7 +33,7 @@
 
         public IEnumerable<SongViewModel> Songs { get; set; }
 
-        public static MusicAlbumViewModel Create(MusicAlbum a)
+        public static MusicAlbumViewModel Create(MusicAlbum a, ApplicationUser user)
         {
             return new MusicAlbumViewModel
                        {
@@ -44,7 +47,8 @@
                            CommentsCount = a.Comments.Count,
                            FollowersCount = a.Followers.Count,
                            SongsCount = a.Songs.Count,
-                           Songs = a.Songs.Select(SongViewModel.Create).Take(3)
+                           Songs = a.Songs.Select(SongViewModel.Create).Take(3),
+                           IsFollowed = a.Followers != null && a.Followers.Contains(user)
                        };
         }
     }
