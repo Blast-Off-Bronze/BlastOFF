@@ -12,26 +12,34 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 $scope.followedMusicAlbums = [];
                 $scope.defaultMusicAlbumCoverImage = constants.DEFAULT_MUSIC_ALBUM_COVER_IMAGE_URL;
 
-                var musicAlbumId = $routeParams.musicAlbumId;
+                //$scope.musicAlbum = {
+                //    title: 'MusicAlbum_01',
+                //    coverImageData: null
+                //};
+                //
+                //$scope.song = {
+                //    title: 'Song_01',
+                //    artist: 'Artist_01',
+                //    fileDataUrl: '',
+                //    musicAlbumId: musicAlbumId
+                //    trackNumber: null,
+                //    originalAlbumTitle: null,
+                //    originalAlbumArtist: null,
+                //    originalDate: null,
+                //    genre: null,
+                //    composer: null,
+                //    publisher: null,
+                //    bpm: null
+                //};
 
-                $scope.musicAlbum = {
-                    title: 'MusicAlbum_01',
-                    coverImageData: null
+                $scope.musicAlbumComment = {
+                    content: '',
+                    musicAlbumId: ''
                 };
 
-                $scope.song = {
-                    title: 'Song_01',
-                    artist: 'Artist_01',
-                    fileDataUrl: '',
-                    musicAlbumId: musicAlbumId
-                    //trackNumber: null,
-                    //originalAlbumTitle: null,
-                    //originalAlbumArtist: null,
-                    //originalDate: null,
-                    //genre: null,
-                    //composer: null,
-                    //publisher: null,
-                    //bpm: null
+                $scope.songComment = {
+                    content: '',
+                    songId: ''
                 };
 
                 musicDataService.getAllMusicAlbums().then(
@@ -198,20 +206,66 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 };
                 // FOLLOWERS - End
 
-                $scope.addMusicAlbum = function (musicAlbum) {
+                // MUSIC ALBUM COMMENTS
+                $scope.addMusicAlbumComment = function (musicAlbum) {
 
-                    console.log(musicAlbum);
+                    var albumId = musicAlbum['id'];
+
+                    $scope.musicAlbumComment['musicAlbumId'] = albumId;
+
+                    musicDataService.addMusicAlbumComment(albumId, $scope.musicAlbumComment).then(
+                        function (response) {
+                            musicAlbum['comments'].push(response);
+                            musicAlbum['commentsCount']++;
+                            $scope.resetMusicAlbumComment();
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
+                $scope.resetMusicAlbumComment = function () {
+                    $scope.musicAlbumComment = {
+                        content: '',
+                        musicAlbumId: ''
+                    };
+                };
+
+                // SONG COMMENTS
+                $scope.addSongComment = function (song) {
+
+                    var songId = song['id'];
+
+                    $scope.songComment['songId'] = songId;
+
+                    musicDataService.addSongComment(songId, $scope.songComment).then(
+                        function (response) {
+                            song['comments'].push(response);
+                            song['commentsCount']++;
+                            $scope.resetSongComment();
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
+                $scope.resetSongComment = function () {
+                    $scope.songComment = {
+                        content: '',
+                        songId: ''
+                    };
+                };
+
+
+                $scope.addMusicAlbum = function (musicAlbum) {
 
                     musicDataService.addMusicAlbum(musicAlbum).then(
                         function (response) {
-
-                            console.log(response);
-
+                            $scope.allMusicAlbums.push(response);
+                            notificationService.alertSuccess("Music album successfully created.")
                         },
                         function (error) {
-
-                            console.log(error);
-
+                            notificationService.alertError(error);
                         });
                 };
 

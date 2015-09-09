@@ -9,10 +9,6 @@
         [DisplayName("Content")]
         public string Content { get; set; }
 
-        //[Required]
-        //[DisplayName("Author Id")]
-        //public string AuthorId { get; set; }
-
         public int? BlastId { get; set; }
 
         public int? ImageAlbumId { get; set; }

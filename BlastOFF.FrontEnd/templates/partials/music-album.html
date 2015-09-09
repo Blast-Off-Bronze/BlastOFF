@@ -3,12 +3,12 @@
         <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
     </span>
 
-        <h4 style="display: inline-block">{{musicAlbum.title}}
+    <h4 style="display: inline-block">{{musicAlbum.title}}
 
-            <a href="#" class="btn btn-default stat-item">Edit </a>
-            <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="deleteMusicAlbum(musicAlbum)">Delete</a>
+        <a href="#" class="btn btn-default stat-item">Edit </a>
+        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="deleteMusicAlbum(musicAlbum)">Delete</a>
 
-        </h4>
+    </h4>
 
     <br/>
 
@@ -35,10 +35,43 @@
         <!-- Followers - End -->
 
 
-        <a href="#" class="btn btn-default stat-item" style="margin-right:0">Comment ({{musicAlbum.commentsCount}})</a>
+        <a ng-click="showMusicAlbumComments = !showMusicAlbumComments; !showMusicAlbumComments && resetMusicAlbumComment()" class="btn btn-default stat-item" style="margin-right:0">Comment ({{musicAlbum.commentsCount}})</a>
     </div>
 </div>
 
+<!-- MUSIC ALBUM COMMENTS -->
+<div ng-if="showMusicAlbumComments">
+    <div class="post-footer">
+        <!-- Add comment -->
+        <div class="input-group">
+            <input class="form-control" placeholder="Add a comment" type="text" ng-model="musicAlbumComment.content">
+                        <span class="input-group-addon">
+                            <a ng-click="addMusicAlbumComment(musicAlbum)"><i class="fa fa-edit"></i></a>
+                        </span>
+        </div>
+
+        <!-- Existing comments -->
+        <ul class="comments-list">
+
+            <li class="comment" ng-repeat="comment in musicAlbum.comments">
+                <a class="pull-left" href="#">
+                    <img class="avatar" src="http://bootdey.com/img/Content/user_3.jpg" alt="avatar">
+                </a>
+
+                <div class="comment-body">
+                    <div class="comment-heading">
+                        <h4 class="user">{{comment.author}}</h4>
+                        <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
+                    </div>
+                    <p>{{comment.content}}</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- MUSIC ALBUM COMMENTS - End -->
+
+<!-- SONGS -->
 <ul class="comments-list" ng-if="musicAlbum.songsCount > 0">
     <li class="comment" ng-repeat="song in musicAlbum.songs" ng-bind-unsafe="song.filePath">
 
@@ -70,9 +103,41 @@
                 <a ng-if="!song.isOwn && !song.isLiked" class="btn btn-default stat-item" ng-click="likeSong(song)">Like ({{song.likesCount}})</a>
                 <!-- Likes - End -->
 
-                <a href="#" class="btn btn-default stat-item" style="margin-right:0">Comment ({{musicAlbum.commentsCount}})</a>
+                <a ng-click="showSongComments = !showSongComments; !showSongComments && resetSongComment()" class="btn btn-default stat-item" style="margin-right:0">Comment ({{song.commentsCount}})</a>
             </div>
         </div>
+
+        <!-- SONG COMMENTS -->
+        <div ng-if="showSongComments">
+            <div class="post-footer">
+                <!-- Add comment -->
+                <div class="input-group">
+                    <input class="form-control" placeholder="Add a comment" type="text" ng-model="songComment.content">
+                        <span class="input-group-addon">
+                            <a ng-click="addSongComment(song)"><i class="fa fa-edit"></i></a>
+                        </span>
+                </div>
+
+                <!-- Existing comments -->
+                <ul class="comments-list">
+
+                    <li class="comment" ng-repeat="comment in song.comments">
+                        <a class="pull-left" href="#">
+                            <img class="avatar" src="http://bootdey.com/img/Content/user_3.jpg" alt="avatar">
+                        </a>
+
+                        <div class="comment-body">
+                            <div class="comment-heading">
+                                <h4 class="user">{{comment.author}}</h4>
+                                <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
+                            </div>
+                            <p>{{comment.content}}</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- SONG COMMENTS - End -->
     </li>
 
     <li class="comment" ng-if="musicAlbum.songsCount > 3 && musicAlbum.allSongsDisplayed == false">
@@ -88,3 +153,4 @@
         </div>
     </li>
 </ul>
+<!-- SONGS - End -->

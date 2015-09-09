@@ -99,6 +99,26 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
         // FOLLOWERS - End
 
+        // COMMENTS
+        function addMusicAlbumComment(albumId, musicAlbumComment) {
+
+            var headers = new requestHeaders().get();
+
+            var url = serviceUrl + '/' + albumId + '/comments';
+
+            return requester.post(headers, url, musicAlbumComment);
+        }
+
+        function addSongComment(songId, songComment) {
+
+            var headers = new requestHeaders().get();
+
+            var url = songsUrl + '/' + songId + '/comments';
+
+            return requester.post(headers, url, songComment);
+        }
+
+
         function addMusicAlbum(musicAlbum) {
 
             var headers = new requestHeaders().get();
@@ -131,6 +151,10 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             // Followers
             followMusicAlbum: followMusicAlbum,
             unfollowMusicAlbum: unfollowMusicAlbum,
+
+            // Comments
+            addMusicAlbumComment: addMusicAlbumComment,
+            addSongComment: addSongComment,
 
             addMusicAlbum: addMusicAlbum,
             addSong: addSong

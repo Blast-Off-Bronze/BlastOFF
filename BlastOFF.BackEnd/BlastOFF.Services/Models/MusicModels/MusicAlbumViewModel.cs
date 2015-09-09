@@ -6,6 +6,7 @@
 
     using BlastOFF.Models.MusicModels;
     using BlastOFF.Models.UserModel;
+    using BlastOFF.Services.Models.CommentModels;
 
     public class MusicAlbumViewModel
     {
@@ -37,7 +38,12 @@
 
         public int SongsCount { get; set; }
 
+        // Songs
         public IEnumerable<SongViewModel> Songs { get; set; }
+
+        // Comments
+        public IEnumerable<CommentViewModel> Comments { get; set; }
+
 
         public bool AllSongsDisplayed { get; set; }
 
@@ -55,7 +61,9 @@
                            CommentsCount = a.Comments.Count,
                            FollowersCount = a.Followers.Count,
                            SongsCount = a.Songs.Count,
+
                            Songs = a.Songs.OrderBy(s => s.DateAdded).Select(s => SongViewModel.Create(s, user)).Take(3),
+                           Comments = a.Comments.OrderBy(c => c.PostedOn).Select(c => CommentViewModel.Create(c, user)).Take(3),
 
                            IsOwn = a.Author == user,
                            IsFollowed = a.Author != user && a.Followers.Contains(user),
