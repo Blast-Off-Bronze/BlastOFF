@@ -25,13 +25,6 @@
         <!-- Followers - End -->
 
 
-
-
-
-
-
-
-
         <a href="#" class="btn btn-default stat-item" style="margin-right:0">Comment ({{musicAlbum.commentsCount}})</a>
     </div>
 </div>
@@ -43,7 +36,13 @@
 
         <div class="comment-body">
             <div class="comment-heading">
-                <h5 class="user"><b>{{song.title}} - {{song.artist}}</b></h5>
+                <h5 class="user"><b>{{song.title}} - {{song.artist}}</b>
+
+                    <a href="#" class="btn btn-default stat-item">Edit </a>
+                    <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="deleteSong(musicAlbum, song)">Delete </a>
+
+                </h5>
+
             </div>
 
             <p>{{musicAlbum.author}} added this song on {{song.dateAdded | date: 'MMM dd, yyyy'}}</p>
@@ -72,7 +71,9 @@
 
         <div class="comment-body">
             <div class="comment-heading">
-                <h5 class="user" style="text-align: center; cursor: pointer"><span ng-click="getAllSongs(musicAlbum)" >View entire playlist ({{musicAlbum.songsCount}})</span></h5>
+                <h5 class="user" style="text-align: center; cursor: pointer">
+                    <span ng-click="getAllSongs(musicAlbum)">View entire playlist ({{musicAlbum.songsCount}})</span>
+                </h5>
             </div>
         </div>
     </li>

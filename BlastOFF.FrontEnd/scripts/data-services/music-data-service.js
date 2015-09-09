@@ -17,7 +17,16 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             var headers = new requestHeaders().get();
             var url = serviceUrl + '/' + albumId + '/songs';
 
-            return requester.get(headers, serviceUrl);
+            return requester.get(headers, url);
+        }
+
+        // DELETE
+        function deleteSong(songId) {
+
+            var headers = new requestHeaders().get();
+            var url = songsUrl + '/' + songId;
+
+            return requester.remove(headers, url);
         }
 
 
@@ -57,6 +66,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             return requester.remove(headers, url, null);
         }
+
         // LIKES - End
 
         // FOLLOWERS
@@ -98,6 +108,9 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         return {
             getAllMusicAlbums: getAllMusicAlbums,
             getAllSongs: getAllSongs,
+
+            // Delete
+            deleteSong: deleteSong,
 
             // Likes
             likeMusicAlbum: likeMusicAlbum,

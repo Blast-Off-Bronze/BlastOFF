@@ -53,7 +53,23 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
                             musicAlbum['songs'] = response;
                             musicAlbum['allSongsDisplayed'] = true;
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
 
+                // DELETE
+                $scope.deleteSong = function (musicAlbum, song) {
+
+                    var songId = song['id'];
+                    var songPosition = musicAlbum['songs'].indexOf(song);
+
+                    musicDataService.deleteSong(songId).then(
+                        function (response) {
+
+                            musicAlbum['songs'].splice(songPosition, 1);
+                            musicAlbum['songsCount']--;
                         },
                         function (error) {
                             notificationService.alertError(error);

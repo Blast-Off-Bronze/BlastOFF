@@ -78,7 +78,7 @@ ul {
 }
 
 .post .post-image .image {
-    width: 128px;
+    width: 128px !important;
     height: auto;
 }
 

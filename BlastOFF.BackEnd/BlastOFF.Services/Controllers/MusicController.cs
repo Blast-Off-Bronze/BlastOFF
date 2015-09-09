@@ -185,10 +185,10 @@
 
             var newMusicAlbum = new MusicAlbum
                                     {
-                                        Title = musicAlbum.Title, 
-                                        AuthorId = user.Id, 
-                                        IsPublic = musicAlbum.IsPublic, 
-                                        DateCreated = DateTime.Now, 
+                                        Title = musicAlbum.Title,
+                                        AuthorId = user.Id,
+                                        IsPublic = musicAlbum.IsPublic,
+                                        DateCreated = DateTime.Now,
                                         CoverImageData = musicAlbum.CoverImageData
                                     };
 
@@ -258,20 +258,20 @@
 
             var newSong = new Song
                               {
-                                  Title = song.Title, 
-                                  Artist = song.Artist, 
-                                  FilePath = song.FileDataUrl, 
-                                  MusicAlbumId = int.Parse(song.MusicAlbumId), 
-                                  UploaderId = album.AuthorId, 
-                                  DateAdded = DateTime.Now, 
-                                  TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber), 
-                                  OriginalAlbumTitle = song.OriginalAlbumTitle, 
-                                  OriginalAlbumArtist = song.OriginalAlbumArtist, 
+                                  Title = song.Title,
+                                  Artist = song.Artist,
+                                  FilePath = song.FileDataUrl,
+                                  MusicAlbumId = int.Parse(song.MusicAlbumId),
+                                  UploaderId = album.AuthorId,
+                                  DateAdded = DateTime.Now,
+                                  TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber),
+                                  OriginalAlbumTitle = song.OriginalAlbumTitle,
+                                  OriginalAlbumArtist = song.OriginalAlbumArtist,
                                   OriginalDate =
-                                      song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate), 
-                                  Genre = song.Genre, 
-                                  Composer = song.Composer, 
-                                  Publisher = song.Publisher, 
+                                      song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate),
+                                  Genre = song.Genre,
+                                  Composer = song.Composer,
+                                  Publisher = song.Publisher,
                                   Bpm = song.Bpm == null ? (int?)null : int.Parse(song.Bpm)
                               };
 
@@ -314,9 +314,9 @@
 
             var newMusicAlbumComment = new Comment
                                            {
-                                               Content = comment.Content, 
-                                               AuthorId = user.Id, 
-                                               PostedOn = DateTime.Now, 
+                                               Content = comment.Content,
+                                               AuthorId = user.Id,
+                                               PostedOn = DateTime.Now,
                                                MusicAlbumId = id
                                            };
 
@@ -354,9 +354,9 @@
 
             var newSongComment = new Comment
                                      {
-                                         Content = comment.Content, 
-                                         AuthorId = user.Id, 
-                                         PostedOn = DateTime.Now, 
+                                         Content = comment.Content,
+                                         AuthorId = user.Id,
+                                         PostedOn = DateTime.Now,
                                          MusicAlbumId = id
                                      };
 
@@ -545,8 +545,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully liked.", 
-                        album.Title, 
+                        "Music Album {0}, created by {1}, successfully liked.",
+                        album.Title,
                         album.Author.UserName));
         }
 
@@ -583,8 +583,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully unliked.", 
-                        album.Title, 
+                        "Music Album {0}, created by {1}, successfully unliked.",
+                        album.Title,
                         album.Author.UserName));
         }
 
@@ -692,8 +692,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully followed.", 
-                        album.Title, 
+                        "Music Album {0}, created by {1}, successfully followed.",
+                        album.Title,
                         album.Author.UserName));
         }
 
@@ -730,8 +730,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully unfollowed.", 
-                        album.Title, 
+                        "Music Album {0}, created by {1}, successfully unfollowed.",
+                        album.Title,
                         album.Author.UserName));
         }
 
@@ -766,8 +766,8 @@
 
             File body = new File
                             {
-                                Title = fileName, 
-                                MimeType = AudioMimeType, 
+                                Title = fileName,
+                                MimeType = AudioMimeType,
                                 Parents =
                                     new List<ParentReference>
                                         {
