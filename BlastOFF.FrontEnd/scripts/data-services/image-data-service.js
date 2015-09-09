@@ -23,14 +23,14 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             var headers = new requestHeaders().get();
 
-            return requester.delete(headers, imageAlbumServiceUrllb + imageAlbum);
+            return requester.remove(headers, imageAlbumServiceUrllb + imageAlbum);
         }
 
         function deleteImage(image) {
 
             var headers = new requestHeaders().get();
 
-            return requester.delete(headers, imageServiceUrl + image);
+            return requester.remove(headers, imageServiceUrl + image);
         }
 
         function getMyAlbums() {
@@ -65,7 +65,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             var headers = new requestHeaders.get();
 
-            return requester.delete(headers, imageAlbumServiceUrl + imageAlbum.Id + '/unfollow', null);
+            return requester.remove(headers, imageAlbumServiceUrl + imageAlbum.Id + '/unfollow', null);
         }
 
         function likeImageAlbum(imageAlbum){
@@ -79,7 +79,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             var headers = new requestHeaders.get();
 
-            return requester.delete(headers, imageAlbumServiceUrl + imageAlbum.Id + '/unlike', null);
+            return requester.remove(headers, imageAlbumServiceUrl + imageAlbum.Id + '/unlike', null);
         }
 
         function likeImage(image){
@@ -93,21 +93,21 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             var headers = new requestHeaders.get();
 
-            return requester.delete(headers, imageServiceUrl + image.Id + '/unlike');
+            return requester.remove(headers, imageServiceUrl + image.Id + '/unlike');
         }
 
         function commentImage(comment){
 
             var headers = new requestHeaders.get();
 
-            return requester.post(headers, imageServiceUrl + comment.ImageId + "/comments", comment);
+            return requester.post(headers, imageServiceUrl + image.id + "/comments", image.commentModel);
         }
 
-        function commentImageAlbum(comment){
+        function commentImageAlbum(imageAlbum){
 
             var headers = new requestHeaders.get();
 
-            return requester.post(headers, imageAlbumServiceUrl + comment.ImageAlbumId + "/comments", comment);
+            return requester.post(headers, imageAlbumServiceUrl + imageAlbum.id + "/comments", imageAlbum.commentModel);
         }
 
         return {
