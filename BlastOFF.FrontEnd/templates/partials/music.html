@@ -1,5 +1,5 @@
 <div ng-controller="musicController">
-    <div ng-if="showMusic">
+    <div ng-class="{'music-pannel': showMusic, 'music-pannel-disabled': !showMusic}">
 
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist" id="music-navigation">
