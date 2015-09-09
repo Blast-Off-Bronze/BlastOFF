@@ -299,12 +299,14 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Constants\MainConstants.cs" />
     <Compile Include="Constants\MusicConstants.cs" />
     <Compile Include="Models\BlastModels\BlastEditBindingModel.cs" />
     <Compile Include="Models\ImageModels\ImageAlbumViewModel.cs" />
     <Compile Include="Models\ImageModels\ImageViewModel.cs" />
     <Compile Include="Models\UserModels\LoginUserBindingModel.cs" />
     <Compile Include="Models\UserModels\RegisterUserBindingModel.cs" />
+    <Compile Include="Models\UserModels\UserPreviewViewModel.cs" />
     <Compile Include="Models\UserModels\UserProfileViewModel.cs" />
     <Compile Include="UserSessionUtils\SessionAuthorizeAttribute.cs" />
     <Compile Include="UserSessionUtils\UserSessionManager.cs" />
