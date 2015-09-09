@@ -66,7 +66,7 @@
         [HttpGet]
         [Route("api/blasts/public")]
         [AllowAnonymous]
-        public IHttpActionResult GetPublicBlasts([FromUri] int StartPostId, [FromUri] int PageSize)
+        public IHttpActionResult GetPublicBlasts([FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
         {
             var blasts = this.Data.Blasts.All()
                 .Where(b => b.IsPublic && b.Id >= StartPostId)
