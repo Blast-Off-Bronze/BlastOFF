@@ -9,14 +9,16 @@
                 </div>
                 <div class="col-md-8 col-sm-12 profile-info">
                     <div class="header-fullname">{{ currentUserProfile.username }}</div>
-                    <a href="" class="btn btn-palegreen btn-sm  btn-follow" ng-if="currentUserProfile.followedByMe" ng-click="unfollow()">
-                        <i class="fa fa-check"></i>
-                        Unfollow
-                    </a>
-                    <a href="" class="btn btn-palegreen btn-sm  btn-follow" ng-if="!currentUserProfile.followedByMe" ng-click="follow()">
-                        <i class="fa fa-check"></i>
-                        Follow
-                    </a>
+                    <div ng-if="!currentUserProfile.isMe">
+                        <a href="" class="btn btn-palegreen btn-sm  btn-follow" ng-if="currentUserProfile.followedByMe" ng-click="unfollow()">
+                            <i class="fa fa-check"></i>
+                            Unfollow
+                        </a>
+                        <a href="" class="btn btn-palegreen btn-sm  btn-follow" ng-if="!currentUserProfile.followedByMe" ng-click="follow()">
+                            <i class="fa fa-check"></i>
+                            Follow
+                        </a>
+                    </div>
                     <div class="header-information">
                         Kim is a software developer in Microsoft. She works in ASP.NET MVC Team and collaborates with other teams.
                     </div>
@@ -48,7 +50,7 @@
                      infinite-scroll-distance='1'
                      infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
 
-                    <div ng-include="'templates/partials/blast-feed.html'"></div>
+                    <div ng-include="'templates/blast-feed.html'"></div>
 
                 </div><!-- SCROLLABLE BLASTS - END -->
 

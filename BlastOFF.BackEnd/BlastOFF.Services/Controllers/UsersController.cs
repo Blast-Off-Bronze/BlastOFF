@@ -180,11 +180,13 @@
         [Route("api/users/{username}/blasts")]
         public IHttpActionResult GetBlastsByAuthor([FromUri] string username, [FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
         {
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             var blasts = this.Data.Blasts.All()
                 .Where(b => b.Author.UserName == username && b.Id >= StartPostId)
                 .Take(PageSize)
                 .ToList()
-                .Select(b => BlastViewModel.Create(b));
+                .Select(b => BlastViewModel.Create(b, currentUser));
 
             return this.Ok(blasts);
         }
@@ -201,12 +203,12 @@
                 return this.NotFound();
             }
 
-            if (searchedUser.Id == currentUser.Id)
-            {
-                var ownProfile = UserViewOwnModel.Create(currentUser);
+            //if (searchedUser.Id == currentUser.Id)
+            //{
+            //    var ownProfile = UserViewOwnModel.Create(currentUser);
 
-                return this.Ok(ownProfile);
-            }
+            //    return this.Ok(ownProfile);
+            //}
 
             var userProfile = UserProfileViewModel.Create(searchedUser, currentUser);
 

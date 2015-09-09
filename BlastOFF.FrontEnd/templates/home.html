@@ -1,6 +1,6 @@
 <div ng-include="'templates/partials/header.html'"></div>
 
-<div ng-if="isLogged">
+<div ng-if="isLogged" class="container">
 
     <div class="row">
         <div class="col-md-4 col-sm-6">
@@ -18,13 +18,15 @@
         </div>
     </div>
 
-    <div infinite-scroll="getPublicBlasts(lastBlastId)"
-         infinite-scroll-distance='1'
-         infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
+    <div class="col-md-9">
+        <div infinite-scroll="getPublicBlasts(lastBlastId)"
+             infinite-scroll-distance='1'
+             infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
 
-        <div ng-include="'templates/partials/blast-feed.html'"></div>
+            <div ng-include="'templates/blast-feed.html'"></div>
 
-    </div><!-- SCROLLABLE BLASTS - END -->
+        </div><!-- SCROLLABLE BLASTS - END -->
+    </div>
 
     <a href="" ng-show="isLogged" ng-click="showMusic = !showMusic">Music</a>
 

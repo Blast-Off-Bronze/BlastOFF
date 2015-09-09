@@ -1,67 +1,60 @@
-<div class="container">
-    <div class="row profile">
-        <div class="col-md-3" id="profileCol">
-            <div class="profile-sidebar">
-                <div class="profile-userpic">
-                    <img src="http://bootdey.com/img/Content/User_for_snippets.png" class="img-responsive" alt="">
+<div class="container" ng-controller="blastController">
+    <div class="col-sm-8">
+        <div class="panel panel-white post panel-shadow" ng-repeat="blast in blasts">
+            <div class="post-heading">
+                <div class="pull-left image">
+                    <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
                 </div>
-                <div class="profile-usertitle">
-                    <div class="profile-usertitle-name">
-                        Clark rodriguez
+                <div class="pull-left meta">
+                    <div class="title h5">
+                        <a href="#"><b>{{ blast.author }}</b></a>
+                        made a blast.
                     </div>
-                </div>
-                <div class="profile-userbuttons">
-                    <button type="button" class="btn btn-info btn-sm">
-                        <i class="fa fa-user-plus"></i>
-                        Follow
-                    </button>
-                </div>
-                <div class="profile-usermenu">
-                    <ul class="nav">
-                        <li class="active">
-                            <a href="#">
-                                <i class="glyphicon glyphicon-home"></i>
-                                Overview </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="glyphicon glyphicon-user"></i>
-                                Account Settings </a>
-                        </li>
-                        <li>
-                            <a href="#" target="_blank">
-                                <i class="glyphicon glyphicon-ok"></i>
-                                Tasks </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="glyphicon glyphicon-flag"></i>
-                                Help </a>
-                        </li>
-                    </ul>
+                    <h6 class="text-muted time">1 minute ago</h6>
                 </div>
             </div>
-        </div>
-        <div class="col-md-9" id="contentCol">
-            <div class="profile-content">
-                <div class="row hidden-xs hidden-sm">
-                    <a href="#" class="btn btn-info" id="toggle-link">
-                        <i class="fa fa-arrow-left"></i>
-                        Hide menu
+            <div class="post-description">
+                <p>{{ blast.content }}</p>
+                <div class="stats">
+                    <a href="" ng-click="likeBlast(blast)" class="btn btn-default stat-item" ng-if="!blast.isLiked">
+                        <i class="fa fa-thumbs-up icon"></i>{{ blast.likesCount }}
                     </a>
-                    <hr class="hr-sep">
+                    <a href="" ng-click="unlikeBlast(blast)" class="btn btn-default stat-item" ng-if="blast.isLiked">
+                        <i class="fa fa-thumbs-down icon"></i>{{ blast.likesCount }}
+                    </a>
+                    <a href="#" class="btn btn-default stat-item">
+                        <i class="fa fa-share icon"></i>12
+                    </a>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <textarea class="form-control" rows="3" placeholder="Write an idea..."></textarea>
-                    </div>
+            </div>
+            <div class="post-footer">
+                <div class="input-group">
+                    <input class="form-control" placeholder="Add a comment" ng-model="blast.commentModel.content" type="text">
+                    <span class="input-group-addon">
+                        <a href="" ng-click="commentBlast(blast)"><i class="fa fa-edit"></i></a>
+                    </span>
                 </div>
-                <hr>
-
-                <div ng-include="'templates/partials/blast-feed.html'"></div>
-
-                <hr>
+                <ul class="comments-list" ng-controller="commentController">
+                    <li class="comment" ng-repeat="comment in blast.comments">
+                        <a class="pull-left" href="#">
+                            <img class="avatar" src="http://bootdey.com/img/Content/user_1.jpg" alt="avatar">
+                        </a>
+                        <div class="comment-body">
+                            <div class="comment-heading">
+                                <h4 class="user">{{ comment.Author }}</h4>
+                                <h5 class="time">5 minutes ago</h5>
+                            </div>
+                            <p>{{ comment.content }}</p>
+                            <a href="" ng-click="likeComment(comment)" class="btn btn-default stat-item" ng-if="!comment.isLiked">
+                                <i class="fa fa-thumbs-up icon"></i>{{ comment.likesCount }}
+                            </a>
+                            <a href="" ng-click="unlikeComment(comment)" class="btn btn-default stat-item" ng-if="comment.isLiked">
+                                <i class="fa fa-thumbs-down icon"></i>{{ comment.likesCount }}
+                            </a>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
-</div>                                
+</div>

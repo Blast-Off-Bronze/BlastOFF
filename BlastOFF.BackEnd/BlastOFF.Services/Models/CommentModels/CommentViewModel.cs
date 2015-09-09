@@ -1,4 +1,7 @@
-﻿namespace BlastOFF.Services.Models.CommentModels
+﻿using System.Linq;
+using BlastOFF.Models.UserModel;
+
+namespace BlastOFF.Services.Models.CommentModels
 {
     using System;
 
@@ -6,17 +9,31 @@
 
     public class CommentViewModel
     {
-        public static CommentViewModel Create(Comment c)
+        public static CommentViewModel Create(Comment model, ApplicationUser currentUser)
         {
-            return new CommentViewModel()
+            bool liked = false;
+
+            if (currentUser != null)
             {
-                Id = c.Id,
-                Content = c.Content,
-                PostedOn = c.PostedOn,
-                AuthorId = c.AuthorId,
-                Author = c.Author.UserName,
-                LikesCount = c.LikedBy.Count
+                if (currentUser.LikedComments.Any(c => c.Id == model.Id))
+                {
+                    liked = true;
+                }
+            }
+
+            var result = new CommentViewModel()
+            {
+                Id = model.Id,
+                Content = model.Content,
+                PostedOn = model.PostedOn,
+                AuthorId = model.AuthorId,
+                Author = model.Author.UserName,
+                LikesCount = model.LikedBy.Count
             };
+
+            result.IsLiked = liked;
+
+            return result;
         }
 
         public int Id { get; set; }
@@ -30,5 +47,7 @@
         public string Author { get; set; }
 
         public int LikesCount { get; set; }
+
+        public bool IsLiked { get; set; }
     }
 }

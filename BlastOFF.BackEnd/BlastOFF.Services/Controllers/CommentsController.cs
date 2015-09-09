@@ -32,6 +32,7 @@
         public IHttpActionResult FindCommentById([FromUri] int id)
         {
             var comment = this.Data.Comments.Find(id);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (comment == null)
             {
@@ -40,7 +41,7 @@
 
             this.Data.Dispose();
 
-            var returnItem = CommentViewModel.Create(comment);
+            var returnItem = CommentViewModel.Create(comment, currentUser);
 
             return this.Ok(returnItem);
         }
@@ -50,7 +51,7 @@
         [Route("api/comments/{id}")]
         public IHttpActionResult UpdateComment([FromUri] int id, [FromBody] CommentEditBindingModel model)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var existingComment = this.Data.Comments.Find(id);
 
@@ -59,7 +60,7 @@
                 return this.NotFound();
             }
 
-            if (loggedUserId != existingComment.AuthorId)
+            if (currentUser.Id != existingComment.AuthorId)
             {
                 return this.Unauthorized();
             }
@@ -79,7 +80,7 @@
 
             this.Data.SaveChanges();
 
-            var returnItem = CommentViewModel.Create(existingComment);
+            var returnItem = CommentViewModel.Create(existingComment, currentUser);
 
             this.Data.Dispose();
 

@@ -8,28 +8,28 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             var headers = new requestHeaders().get();
 
-            return requester.put(headers, serviceUrl + comment.Id, comment);
+            return requester.put(headers, serviceUrl + comment.id, comment);
         }
 
         function deleteComment(comment) {
 
             var headers = new requestHeaders().get();
 
-            return requester.delete(headers, serviceUrl + comment.Id);
+            return requester.delete(headers, serviceUrl + comment.id);
         }
 
         function likeComment(comment) {
 
             var headers = new requestHeaders().get();
 
-            return requester.post(headers, serviceUrl + comment.Id + '/like', null);
+            return requester.post(headers, serviceUrl + comment.id + '/like', null);
         }
 
         function unlikeComment(comment) {
 
             var headers = new requestHeaders().get();
 
-            return requester.delete(headers, serviceUrl + comment.Id + '/unlike');
+            return requester.remove(headers, serviceUrl + comment.id + '/unlike');
         }
 
         return {

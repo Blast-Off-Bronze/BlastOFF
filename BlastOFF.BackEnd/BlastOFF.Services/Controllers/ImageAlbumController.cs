@@ -426,13 +426,14 @@
         public IHttpActionResult AllImageAlbumComments([FromUri] int id)
         {
             var imageAlbum = this.Data.ImageAlbums.Find(id);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (imageAlbum == null)
             {
                 return this.NotFound();
             }
 
-            var comments = imageAlbum.Comments.Select(c => CommentViewModel.Create(c));
+            var comments = imageAlbum.Comments.Select(c => CommentViewModel.Create(c, currentUser));
 
             this.Data.Dispose();
 
@@ -447,12 +448,14 @@
         {
             var image = this.Data.Images.Find(id);
 
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             if (image == null)
             {
                 return this.NotFound();
             }
 
-            var comments = image.Comments.Select(c => CommentViewModel.Create(c));
+            var comments = image.Comments.Select(c => CommentViewModel.Create(c, currentUser));
 
             this.Data.Dispose();
 
@@ -491,7 +494,7 @@
             this.Data.SaveChanges();
             this.Data.Dispose();
 
-            var commentToReturn = CommentViewModel.Create(newComment);
+            var commentToReturn = CommentViewModel.Create(newComment, user);
 
             return this.Ok(commentToReturn);
         }
@@ -525,7 +528,7 @@
             this.Data.Comments.Add(newComment);
             this.Data.SaveChanges();
 
-            var commentToReturn = CommentViewModel.Create(newComment);
+            var commentToReturn = CommentViewModel.Create(newComment, user);
 
             this.Data.Dispose();
 

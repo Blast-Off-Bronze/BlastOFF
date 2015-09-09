@@ -20,7 +20,7 @@ requirejs.config({
         'image-controller': 'controllers/image-controller',
         'blast-controller': 'controllers/blast-controller',
         'user-profile-controller': 'controllers/user-profile-controller',
-
+        'comment-controller': 'controllers/comment-controller',
         // Data Services
         'user-data-service': 'data-services/user-data-service',
         'music-data-service': 'data-services/music-data-service',
@@ -65,5 +65,5 @@ requirejs.config({
         'infiniteScroll': ['angular']
     },
 
-    deps: ['app', 'bootstrap', 'header-controller', 'music-controller']
+    deps: ['app', 'bootstrap', 'header-controller', 'music-controller', 'blast-controller', 'comment-controller']
 });

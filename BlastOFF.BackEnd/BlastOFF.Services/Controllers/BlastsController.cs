@@ -36,7 +36,9 @@
         [AllowAnonymous]
         public IHttpActionResult GetAll()
         {
-            var blasts = this.Data.Blasts.All().ToList().Select(b => BlastViewModel.Create(b));
+            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var blasts = this.Data.Blasts.All().ToList().Select(b => BlastViewModel.Create(b, user));
 
             return this.Ok(blasts);
         }
@@ -48,6 +50,8 @@
         {
             var user = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             if (user == null)
             {
                 return this.BadRequest("No user with that username.");
@@ -58,7 +62,7 @@
                 .OrderByDescending(b => b.PostedOn)
                 .Take(PageSize)
                 .ToList()
-                .Select(b => BlastViewModel.Create(b));
+                .Select(b => BlastViewModel.Create(b, currentUser));
 
             return this.Ok(blasts);
         }
@@ -68,12 +72,14 @@
         [AllowAnonymous]
         public IHttpActionResult GetPublicBlasts([FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
         {
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             var blasts = this.Data.Blasts.All()
                 .Where(b => b.IsPublic && b.Id >= StartPostId)
                 .OrderByDescending(b => b.PostedOn)
                 .Take(PageSize)
                 .ToList()
-                .Select(b => BlastViewModel.Create(b));
+                .Select(b => BlastViewModel.Create(b, currentUser));
 
             return this.Ok(blasts);
         }
@@ -90,13 +96,15 @@
                 return this.NotFound();
             }
 
-            var blastToReturn = BlastViewModel.Create(blast);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var blastToReturn = BlastViewModel.Create(blast, currentUser);
 
             return this.Ok(blastToReturn);
         }
 
         [HttpPost]
-        [Route("api/blast/{id}/like")]
+        [Route("api/blasts/{id}/like")]
         public IHttpActionResult LikeBlast([FromUri] int id)
         {
             var blast = this.Data.Blasts.Find(id);
@@ -106,10 +114,9 @@
                 return this.NotFound();
             }
 
-            var loggedUserId = this.User.Identity.GetUserId();
-            var currentUser = this.Data.Users.Find(loggedUserId);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            if (blast.AuthorId == loggedUserId || blast.UserLikes.Any(ul => ul.Id == loggedUserId))
+            if (blast.AuthorId == currentUser.Id || blast.UserLikes.Any(ul => ul.Id == currentUser.Id))
             {
                 //already liked or trying to like own blast
                 return this.BadRequest();
@@ -123,7 +130,7 @@
         }
 
         [HttpDelete]
-        [Route("api/blast/{id}/like")]
+        [Route("api/blasts/{id}/unlike")]
         public IHttpActionResult RemoveLike([FromUri] int id)
         {
             var blast = this.Data.Blasts.Find(id);
@@ -133,15 +140,13 @@
                 return this.NotFound();
             }
 
-            var loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            if (!blast.UserLikes.Any(ul => ul.Id == loggedUserId))
+            if (!blast.UserLikes.Any(ul => ul.Id == currentUser.Id))
             {
                 //cannot remove other users' likes
                 return this.BadRequest();
-            }
-
-            var currentUser = this.Data.Users.Find(loggedUserId);
+            }    
 
             blast.UserLikes.Remove(currentUser);
             currentUser.LikedBlasts.Remove(blast);
@@ -173,7 +178,7 @@
             this.Data.Blasts.Add(newBlast);
             this.Data.SaveChanges();
          
-            var blastToReturn = BlastViewModel.Create(newBlast);
+            var blastToReturn = BlastViewModel.Create(newBlast, user);
 
             return Ok(blastToReturn);
         }
@@ -182,7 +187,7 @@
         [Route("api/blasts/{id}")]
         public IHttpActionResult UpdateBlast([FromUri] int id, [FromBody] BlastEditBindingModel model)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
             var oldBlast = this.Data.Blasts.Find(id);
 
             if (oldBlast == null)
@@ -195,7 +200,7 @@
                 return this.BadRequest("Wrong or missing input parameters");
             }
 
-            if (oldBlast.AuthorId != loggedUserId)
+            if (oldBlast.AuthorId != currentUser.Id)
             {
                 return this.Unauthorized();
             }
@@ -204,7 +209,7 @@
 
             this.Data.SaveChanges();
 
-            var blastToReturn = BlastViewModel.Create(oldBlast);
+            var blastToReturn = BlastViewModel.Create(oldBlast, currentUser);
 
             return Ok(blastToReturn);
         }
@@ -213,7 +218,7 @@
         [Route("api/blasts/{id}/comments")]
         public IHttpActionResult AddBlastComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
-            string loggedUserId = this.User.Identity.GetUserId();
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blast = this.Data.Blasts.Find(id);
 
@@ -235,7 +240,7 @@
             var newComment = new Comment
             {
                 Content = comment.Content,
-                AuthorId = loggedUserId,
+                AuthorId = currentUser.Id,
                 PostedOn = DateTime.Now,
                 BlastId = id
             };
@@ -243,7 +248,7 @@
             this.Data.Comments.Add(newComment);
             this.Data.SaveChanges();
 
-            var returnItem = CommentViewModel.Create(newComment);
+            var returnItem = CommentViewModel.Create(newComment, currentUser);
 
             this.Data.Dispose();
 

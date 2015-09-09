@@ -21,9 +21,34 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.get(headers, url);
         }
 
+        function likeBlast(blast) {
+
+            var headers = new requestHeaders().get();
+
+            return requester.post(headers, serviceUrl + blast.id + '/like', null);
+        }
+
+        function unlikeBlast(blast) {
+
+            var headers = new requestHeaders().get();
+
+            return requester.remove(headers, serviceUrl + blast.id + '/unlike');
+        }
+
+        function commentBlast(blast) {
+            var headers = new requestHeaders().get();
+
+            return requester.post(headers, serviceUrl + blast.id + '/comments', blast.commentModel);
+        }
+
         return {
             getAllBlasts: getAllBlasts,
-            getPublicBlasts: getPublicBlasts
+            getPublicBlasts: getPublicBlasts,
+
+            likeBlast: likeBlast,
+            unlikeBlast: unlikeBlast,
+
+            commentBlast: commentBlast
         }
     });
 });

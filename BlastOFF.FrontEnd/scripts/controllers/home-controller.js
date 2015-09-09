@@ -38,9 +38,9 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 };
 
                 $scope.makeABlast = function () {
-                console.log($scope.blastToPost);
                     userDataService.makeABlast($scope.blastToPost)
                     .then(function(response) {
+                        $scope.blasts.unshift(response);
                         console.log(response);
                     }, function(error) {
                         console.log(error);

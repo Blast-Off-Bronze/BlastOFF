@@ -9,9 +9,9 @@
         [DisplayName("Content")]
         public string Content { get; set; }
 
-        [Required]
-        [DisplayName("Author Id")]
-        public string AuthorId { get; set; }
+        //[Required]
+        //[DisplayName("Author Id")]
+        //public string AuthorId { get; set; }
 
         public int? BlastId { get; set; }
 

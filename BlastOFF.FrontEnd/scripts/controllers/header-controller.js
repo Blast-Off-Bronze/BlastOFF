@@ -8,6 +8,8 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
 
                 $scope.isLogged = storageService.isLogged();
 
+                $scope.currentUserDetails = storageService.getUserDetails();
+
                 $scope.logout = function () {
                     userDataService.logout()
                         .then(function (response) {

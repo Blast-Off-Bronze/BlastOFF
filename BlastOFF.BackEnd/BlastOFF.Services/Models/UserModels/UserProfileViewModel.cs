@@ -18,10 +18,13 @@
                 ProfileImage = model.ProfileImage,
                 FollowedByMe = model.FollowedBy.Any(u => u.Id == currentUser.Id),
                 BlastsCount = model.Blasts.Count,
+                IsMe = model.Id == currentUser.Id
             };
         }
 
         public bool FollowedByMe { get; set; }
+
+        public bool IsMe { get; set; }
 
         public string Username { get; set; }
 

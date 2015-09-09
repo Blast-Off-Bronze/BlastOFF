@@ -14,6 +14,7 @@
         <ul class="nav navbar-nav pull-right">
             <li><a href="#/registration" ng-show="!isLogged">Register</a></li>
             <li><a href="#/login" ng-show="!isLogged">Login</a></li>
+            <li><a href="#/users/{{currentUserDetails.username}}" ng-show="isLogged">My Profile</a></li>
             <li><a href="#/blast-feed" ng-show="isLogged">Blast section</a></li>
             <li><a href="#/image" ng-show="isLogged">Image Section</a></li>
             <li><a href="" class="btn" ng-click="logout()" ng-show="isLogged">Logout</a></li>

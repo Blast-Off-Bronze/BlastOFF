@@ -86,12 +86,14 @@
         {
             var album = this.Data.MusicAlbums.Find(id);
 
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             if (album == null)
             {
                 return this.NotFound();
             }
 
-            var comments = album.Comments.Select(CommentViewModel.Create);
+            var comments = album.Comments.Select(a => CommentViewModel.Create(a, currentUser));
 
             return this.Ok(comments);
         }
@@ -103,13 +105,14 @@
         public IHttpActionResult AllSongComments([FromUri] int id)
         {
             var song = this.Data.Songs.Find(id);
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (song == null)
             {
                 return this.NotFound();
             }
 
-            var comments = song.Comments.Select(CommentViewModel.Create);
+            var comments = song.Comments.Select(a => CommentViewModel.Create(a, currentUser));
 
             return this.Ok(comments);
         }
@@ -320,7 +323,7 @@
             this.Data.Comments.Add(newMusicAlbumComment);
             this.Data.SaveChanges();
 
-            var commentToReturn = CommentViewModel.Create(newMusicAlbumComment);
+            var commentToReturn = CommentViewModel.Create(newMusicAlbumComment, user);
 
             return this.Ok(commentToReturn);
         }
@@ -360,7 +363,7 @@
             this.Data.Comments.Add(newSongComment);
             this.Data.SaveChanges();
 
-            var commentToReturn = CommentViewModel.Create(newSongComment);
+            var commentToReturn = CommentViewModel.Create(newSongComment, user);
 
             return this.Ok(commentToReturn);
         }

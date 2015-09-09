@@ -22,19 +22,19 @@ define(['app'], function (app) {
 
         function setUserDetails(user, wantsToBeRemembered){
             if (wantsToBeRemembered) {
-                localStorage.setItem('user', user);
+                localStorage.setItem('user', JSON.stringify(user));
             }
             else {
-                sessionStorage.setItem('user', user);
+                sessionStorage.setItem('user', JSON.stringify(user));
             }
         }
 
         function getUserDetails() {
             if (localStorage.getItem('user')) {
-                return localStorage.getItem('user');
+                return JSON.parse(localStorage.getItem('user'));
             }
 
-            return sessionStorage.getItem('user');
+            return JSON.parse(sessionStorage.getItem('user'));
         }
 
         function isLogged() {
