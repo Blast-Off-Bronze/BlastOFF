@@ -10,6 +10,7 @@
         {
             return new UserProfileViewModel
             {
+                Id = model.Id,
                 Username = model.UserName,
                 FollowedUsers = model.FollowedUsers.Select(u => u.UserName),
                 FollowedBy = model.FollowedBy.Select(u => u.UserName),
@@ -21,6 +22,8 @@
                 IsMe = model.Id == currentUser.Id
             };
         }
+
+        public string Id { get; set; }
 
         public bool FollowedByMe { get; set; }
 

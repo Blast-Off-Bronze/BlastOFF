@@ -14,6 +14,7 @@
     using BlastOFF.Services.Models.MusicModels;
     using BlastOFF.Services.Services;
     using BlastOFF.Services.UserSessionUtils;
+    using BlastOFF.Services.Models.UserModels;
 
     using Google.Apis.Drive.v2;
     using Google.Apis.Drive.v2.Data;
@@ -44,14 +45,16 @@
         [HttpGet]
         [Route("api/music/albums")]
         [AllowAnonymous]
-        public IHttpActionResult AllMusicAlbums()
+        public IHttpActionResult AllMusicAlbums([FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var albums =
-                this.Data.MusicAlbums.All()
+            var albums = this.Data.MusicAlbums.All()
                     .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
                     .OrderBy(a => a.DateCreated)
+                    .Skip(CurrentPage * PageSize)
+                    .Take(PageSize)
                     .ToList()
                     .Select(a => MusicAlbumViewModel.Create(a, currentUser));
 
@@ -62,7 +65,8 @@
         [HttpGet]
         [Route("api/music/albums/{id}/songs")]
         [AllowAnonymous]
-        public IHttpActionResult AllSongs([FromUri] int id)
+        public IHttpActionResult AllSongs([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -73,7 +77,12 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var songs = album.Songs.OrderBy(s => s.DateAdded).Select(s => SongViewModel.Create(s, currentUser));
+            var songs = album.Songs
+                .OrderBy(s => s.DateAdded)
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(s => SongViewModel.Create(s, currentUser));
 
             return this.Ok(songs);
         }
@@ -82,7 +91,8 @@
         [HttpGet]
         [Route("api/music/albums/{id}/comments")]
         [AllowAnonymous]
-        public IHttpActionResult AllMusicAlbumComments([FromUri] int id)
+        public IHttpActionResult AllMusicAlbumComments([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -93,7 +103,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var comments = album.Comments.Select(a => CommentViewModel.Create(a, currentUser));
+            var comments = album.Comments
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(a => CommentViewModel.Create(a, currentUser));
 
             return this.Ok(comments);
         }
@@ -102,7 +116,8 @@
         [HttpGet]
         [Route("api/songs/{id}/comments")]
         [AllowAnonymous]
-        public IHttpActionResult AllSongComments([FromUri] int id)
+        public IHttpActionResult AllSongComments([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var song = this.Data.Songs.Find(id);
 
@@ -113,7 +128,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var comments = song.Comments.Select(a => CommentViewModel.Create(a, currentUser));
+            var comments = song.Comments
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(a => CommentViewModel.Create(a, currentUser));
 
             return this.Ok(comments);
         }
@@ -140,6 +159,54 @@
             return this.Ok(albumToReturn);
         }
 
+        [HttpGet]
+        [Route("api/music/albums/{id}/likes")]
+        [AllowAnonymous]
+        public IHttpActionResult MusicAlbumLikes([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var userLikes = album.UserLikes
+                            .Skip(CurrentPage * PageSize)
+                            .Take(PageSize)
+                            .ToList()
+                            .Select(u => UserPreviewViewModel.Create(u, currentUser));
+
+            return this.Ok(userLikes);
+        }
+
+        [HttpGet]
+        [Route("api/music/albums/{id}/followers")]
+        [AllowAnonymous]
+        public IHttpActionResult MusicAlbumFollowers([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var album = this.Data.MusicAlbums.Find(id);
+
+            if (album == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var followers = album.Followers
+                            .Skip(CurrentPage * PageSize)
+                            .Take(PageSize)
+                            .ToList()
+                            .Select(u => UserPreviewViewModel.Create(u, currentUser));
+
+            return this.Ok(followers);
+        }
+
         //// GET /api/songs/{id}
         [HttpGet]
         [Route("api/songs/{id}")]
@@ -158,6 +225,30 @@
             var songToReturn = SongViewModel.Create(song, currentUser);
 
             return this.Ok(songToReturn);
+        }
+
+        [HttpGet]
+        [Route("api/songs/{id}/likes")]
+        [AllowAnonymous]
+        public IHttpActionResult SongLikes([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var song = this.Data.Songs.Find(id);
+
+            if (song == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var userLikes = song.UserLikes
+                .Skip(CurrentPage*PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+
+            return this.Ok(userLikes);
         }
 
         //// ADD

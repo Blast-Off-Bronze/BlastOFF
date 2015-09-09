@@ -1,6 +1,4 @@
-﻿using BlastOFF.Services.Models.ImageModels;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System.Linq;
     using Microsoft.AspNet.Identity;
@@ -21,6 +19,9 @@ namespace BlastOFF.Services.Controllers
     using Microsoft.AspNet.Identity.EntityFramework;
     using Microsoft.Owin.Security;
     using Microsoft.Owin.Testing;
+
+    using BlastOFF.Services.Constants;
+    using BlastOFF.Services.Models.ImageModels;
 
     [SessionAuthorize]
     public class UsersController : BaseApiController
@@ -180,7 +181,8 @@ namespace BlastOFF.Services.Controllers
 
         [HttpGet]
         [Route("api/users/{username}/blasts")]
-        public IHttpActionResult GetBlastsByAuthor([FromUri] string username, [FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
+        public IHttpActionResult GetBlastsByAuthor([FromUri] string username, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
@@ -192,7 +194,7 @@ namespace BlastOFF.Services.Controllers
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blasts = this.Data.Blasts.All()
-                .Where(b => b.Author.UserName == searchedUser.UserName && b.Id >= StartPostId)
+                .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
                 .Select(b => BlastViewModel.Create(b, currentUser));
@@ -202,7 +204,8 @@ namespace BlastOFF.Services.Controllers
 
         [HttpGet]
         [Route("api/users/{username}/imageAlbums")]
-        public IHttpActionResult GetImageAlbumsByUsername([FromUri] string username, [FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
+        public IHttpActionResult GetImageAlbumsByUsername([FromUri] string username, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
@@ -214,7 +217,7 @@ namespace BlastOFF.Services.Controllers
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var imageAlbums = this.Data.ImageAlbums.All()
-                .Where(b => b.CreatedBy.UserName == searchedUser.UserName && b.Id >= StartPostId)
+                .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
                 .Select(b => ImageAlbumViewModel.Create(b, currentUser));
@@ -249,7 +252,8 @@ namespace BlastOFF.Services.Controllers
 
         [HttpGet]
         [Route("api/users/{username}/followers")]
-        public IHttpActionResult GetFollowers([FromUri] string username)
+        public IHttpActionResult GetFollowers([FromUri] string username, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
@@ -260,7 +264,10 @@ namespace BlastOFF.Services.Controllers
 
             // needs view model
 
-            var followers = searchedUser.FollowedBy.ToList();
+            var followers = searchedUser.FollowedBy
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList();
 
             return this.Ok(followers);
         }

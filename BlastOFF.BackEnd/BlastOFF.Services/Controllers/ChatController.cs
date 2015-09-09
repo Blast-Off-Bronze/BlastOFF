@@ -9,6 +9,8 @@
     using BlastOFF.Services.Models.ChatModels;
     using Microsoft.AspNet.Identity;
 
+    using BlastOFF.Services.Constants;
+
     [Authorize]
     public class ChatController : BaseApiController
     {
@@ -25,7 +27,8 @@
         // GET api/message
         [HttpGet]
         [Route("api/message")]
-        public IHttpActionResult GetMessages([FromUri] string partnerId)
+        public IHttpActionResult GetMessages([FromUri] string partnerId, [FromUri] int CurrentPage = MainConstants.DefaultPage, 
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
@@ -36,6 +39,9 @@
 
             var messages = this.Data.Messages.All().Where(m => (m.SenderId == user.Id && m.ReceiverId == partnerId)
             || (m.SenderId == partnerId && m.ReceiverId == user.Id) && m.Deleted == false)
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
                 .Select(m => MessageViewModel.Create(m));
 
             return this.Ok(messages);

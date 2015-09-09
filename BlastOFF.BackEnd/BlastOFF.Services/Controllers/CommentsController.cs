@@ -12,6 +12,9 @@
     using BlastOFF.Services.Models.CommentModels;
     using BlastOFF.Services.UserSessionUtils;
 
+    using BlastOFF.Services.Constants;
+    using BlastOFF.Services.Models.UserModels;
+
     [SessionAuthorize]
     public class CommentsController : BaseApiController
     {
@@ -43,6 +46,30 @@
             var returnItem = CommentViewModel.Create(comment, currentUser);
 
             return this.Ok(returnItem);
+        }
+
+        [HttpGet]
+        [Route("api/comments/{id}/likes")]
+        [AllowAnonymous]
+        public IHttpActionResult CommentLikes([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var comment = this.Data.Comments.Find(id);
+
+            if (comment == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var userLikes = comment.LikedBy
+                            .Skip(CurrentPage * PageSize)
+                            .Take(PageSize)
+                            .ToList()
+                            .Select(u => UserPreviewViewModel.Create(u, currentUser));
+
+            return this.Ok(userLikes);
         }
 
         //// PUT /api/comments/{id}

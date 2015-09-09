@@ -16,6 +16,10 @@
 
     using BlastOFF.Services.UserSessionUtils;
 
+    using BlastOFF.Services.Constants;
+
+    using BlastOFF.Services.Models.UserModels;
+
     [SessionAuthorize]
     public class BlastsController : BaseApiController
     {
@@ -34,11 +38,16 @@
         [HttpGet]
         [Route("api/blasts")]
         [AllowAnonymous]
-        public IHttpActionResult GetAll()
+        public IHttpActionResult GetAll([FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var blasts = this.Data.Blasts.All().ToList().Select(b => BlastViewModel.Create(b, user));
+            var blasts = this.Data.Blasts.All()
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(b => BlastViewModel.Create(b, user));
 
             return this.Ok(blasts);
         }
@@ -46,7 +55,8 @@
         [HttpGet]
         [Route("api/blasts/{username}/wall")]
         [AllowAnonymous]
-        public IHttpActionResult GetWallBlasts([FromUri] string username, [FromUri] int StartPostId, [FromUri] int PageSize)
+        public IHttpActionResult GetWallBlasts([FromUri] string username, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var user = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
 
@@ -58,8 +68,8 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
             
             var blasts = user.Blasts
-                .Where(b => b.Id >= StartPostId)
                 .OrderByDescending(b => b.PostedOn)
+                .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
                 .Select(b => BlastViewModel.Create(b, currentUser));
@@ -70,13 +80,14 @@
         [HttpGet]
         [Route("api/blasts/public")]
         [AllowAnonymous]
-        public IHttpActionResult GetPublicBlasts([FromUri] int StartPostId = 0, [FromUri] int PageSize = 3)
+        public IHttpActionResult GetPublicBlasts([FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blasts = this.Data.Blasts.All()
-                .Where(b => b.IsPublic && b.Id >= StartPostId)
                 .OrderByDescending(b => b.PostedOn)
+                .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
                 .Select(b => BlastViewModel.Create(b, currentUser));
@@ -101,6 +112,30 @@
             var blastToReturn = BlastViewModel.Create(blast, currentUser);
 
             return this.Ok(blastToReturn);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("api/blasts/{id}/likes")]
+        public IHttpActionResult BlastLikes([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var blast = this.Data.Blasts.Find(id);
+
+            if (blast == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var userLikes = blast.UserLikes
+                .Skip(CurrentPage*PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(u => UserPreviewViewModel.Create(u, currentUser)); ;
+
+            return this.Ok(userLikes);
         }
 
         [HttpPost]

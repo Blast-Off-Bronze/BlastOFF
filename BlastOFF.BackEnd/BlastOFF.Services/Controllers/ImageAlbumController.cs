@@ -13,6 +13,9 @@
 
     using BlastOFF.Services.Models.CommentModels;
     using BlastOFF.Services.UserSessionUtils;
+    using BlastOFF.Services.Constants;
+
+    using BlastOFF.Services.Models.UserModels;
 
     [SessionAuthorize]
     public class ImageAlbumController : BaseApiController
@@ -32,11 +35,15 @@
         [HttpGet]
         [AllowAnonymous]
         [Route("api/imageAlbums")]
-        public IHttpActionResult GetAllImageAlbums()
+        public IHttpActionResult GetAllImageAlbums([FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var imageAlbums = this.Data.ImageAlbums.All().ToList()
+            var imageAlbums = this.Data.ImageAlbums.All()
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
                 .Select(a => ImageAlbumViewModel.Create(a, currentUser));
 
             return this.Ok(imageAlbums);
@@ -279,6 +286,30 @@
             return Ok();
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("api/imageAlbums/{id}/likes")]
+        public IHttpActionResult ImageAlbumLikes([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var imageAlbum = this.Data.ImageAlbums.Find(id);
+
+            if (imageAlbum == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var userLikes = imageAlbum.UserLikes
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+
+            return this.Ok(userLikes);
+        }
+
         //// POST /api/imageAlbums/{id}/likes
         [HttpPost]
         [Route("api/imageAlbums/{id}/like")]
@@ -343,6 +374,30 @@
             this.Data.SaveChanges();
 
             return this.Ok(string.Format("Image Album {0}, created by {1} successfully unliked.", imageAlbum.Title, imageAlbum.CreatedBy.UserName));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("api/imageAlbums/{id}/followers")]
+        public IHttpActionResult ImageAlbumFollowers([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var imageAlbum = this.Data.ImageAlbums.Find(id);
+
+            if (imageAlbum == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var followers = imageAlbum.Followers
+                .Skip(CurrentPage*PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+
+            return this.Ok(followers);
         }
 
         //// POST /api/imageAlbums/{id}/follow
@@ -415,7 +470,8 @@
         [HttpGet]
         [Route("api/imageAlbums/{id}/comments")]
         [AllowAnonymous]
-        public IHttpActionResult AllImageAlbumComments([FromUri] int id)
+        public IHttpActionResult AllImageAlbumComments([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var imageAlbum = this.Data.ImageAlbums.Find(id);
 
@@ -426,7 +482,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var comments = imageAlbum.Comments.Select(c => CommentViewModel.Create(c, currentUser));
+            var comments = imageAlbum.Comments
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(c => CommentViewModel.Create(c, currentUser));
 
             return this.Ok(comments);
         }
@@ -435,7 +495,8 @@
         [HttpGet]
         [Route("api/images/{id}/comments")]
         [AllowAnonymous]
-        public IHttpActionResult AllImageComments([FromUri] int id)
+        public IHttpActionResult AllImageComments([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
         {
             var image = this.Data.Images.Find(id);
 
@@ -446,7 +507,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var comments = image.Comments.Select(c => CommentViewModel.Create(c, currentUser));
+            var comments = image.Comments
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(c => CommentViewModel.Create(c, currentUser));
 
             return this.Ok(comments);
         }
@@ -518,6 +583,30 @@
             var commentToReturn = CommentViewModel.Create(newComment, user);
 
             return this.Ok(commentToReturn);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("api/images/{id}/likes")]
+        public IHttpActionResult ImageLikes([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var image = this.Data.Images.Find(id);
+
+            if (image == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var userLikes = image.UserLikes
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+
+            return this.Ok(userLikes);
         }
 
         //// POST /api/images/{id}/likes
