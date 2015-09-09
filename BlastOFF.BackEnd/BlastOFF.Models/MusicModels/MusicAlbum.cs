@@ -20,6 +20,8 @@
             this.comments = new HashSet<Comment>();
             this.followers = new HashSet<ApplicationUser>();
             this.songs = new HashSet<Song>();
+            this.IsPublic = true;
+            this.ViewsCount = 0;
         }
 
         [Key]
@@ -32,13 +34,11 @@
 
         public virtual ApplicationUser Author { get; set; }
 
-        [DefaultValue(1)]
         public bool IsPublic { get; set; }
 
         [Required]
         public DateTime DateCreated { get; set; }
 
-        [DefaultValue(0)]
         public int ViewsCount { get; set; }
 
         public virtual ICollection<ApplicationUser> UserLikes

@@ -334,16 +334,16 @@
         [Route("api/songs/{id}/comments")]
         public IHttpActionResult AddSongComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
         {
+            if (comment == null)
+            {
+                return this.BadRequest("Cannot create an empty comment model.");
+            }
+
             var song = this.Data.Songs.Find(id);
 
             if (song == null)
             {
                 return this.NotFound();
-            }
-
-            if (comment == null)
-            {
-                return this.BadRequest("Cannot create an empty comment model.");
             }
 
             if (!this.ModelState.IsValid)
@@ -358,7 +358,7 @@
                                          Content = comment.Content,
                                          AuthorId = user.Id,
                                          PostedOn = DateTime.Now,
-                                         MusicAlbumId = id
+                                         SongId = id
                                      };
 
             this.Data.Comments.Add(newSongComment);

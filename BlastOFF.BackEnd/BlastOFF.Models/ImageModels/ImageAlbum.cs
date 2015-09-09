@@ -20,6 +20,8 @@ namespace BlastOFF.Models.GalleryModels
             this.userLikes = new HashSet<ApplicationUser>();
             this.followers = new HashSet<ApplicationUser>();
             this.comments = new HashSet<Comment>();
+            this.IsPublic = true;
+            this.ViewsCount = 0;
         }
 
         [Key]
@@ -33,11 +35,12 @@ namespace BlastOFF.Models.GalleryModels
 
         public virtual ApplicationUser CreatedBy { get; set; }
 
-        [DefaultValue(true)]
         public bool IsPublic { get; set; }
 
         [Required]
         public DateTime DateCreated { get; set; }
+
+        public int ViewsCount { get; set; }
 
         public virtual ICollection<Image> Images
         {

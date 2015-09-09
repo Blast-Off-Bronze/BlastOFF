@@ -1,9 +1,12 @@
 ﻿namespace BlastOFF.Services.Models.MusicModels
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using BlastOFF.Models.MusicModels;
     using BlastOFF.Models.UserModel;
+    using BlastOFF.Services.Models.CommentModels;
 
     public class SongViewModel
     {
@@ -26,6 +29,9 @@
         public bool IsOwn { get; set; }
 
         public bool IsLiked { get; set; }
+
+        // Comments
+        public IEnumerable<CommentViewModel> Comments { get; set; }
 
 
         //// OPTIONAL
@@ -56,7 +62,9 @@
                            DateAdded = s.DateAdded,
                            ViewsCount = s.ViewsCount, 
                            LikesCount = s.UserLikes.Count, 
-                           CommentsCount = s.Comments.Count, 
+                           CommentsCount = s.Comments.Count,
+
+                           Comments = s.Comments.OrderBy(c => c.PostedOn).ToList().Select(c => CommentViewModel.Create(c, user)).Take(3),
 
                            //Optional
                            TrackNumber = s.TrackNumber, 

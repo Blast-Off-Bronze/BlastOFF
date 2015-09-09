@@ -16,6 +16,7 @@
         {
             this.usersLikes = new HashSet<ApplicationUser>();
             this.comments = new HashSet<Comment>();
+            this.ViewsCount = 0;
         }
 
         [Key]
@@ -32,7 +33,6 @@
 
         public DateTime DateAdded { get; set; }
 
-        [DefaultValue(0)]
         public int ViewsCount { get; set; }
 
         public int? MusicAlbumId { get; set; }

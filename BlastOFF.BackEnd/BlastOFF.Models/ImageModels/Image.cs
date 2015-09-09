@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using BlastOFF.Models.UserModel;
-
-namespace BlastOFF.Models.GalleryModels
+﻿namespace BlastOFF.Models.GalleryModels
 {
+    using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+
+    using BlastOFF.Models.UserModel;
 
     public class Image
     {
         private ICollection<Comment> comments;
-        private ICollection<ApplicationUser> userLikes; 
+
+        private ICollection<ApplicationUser> userLikes;
 
         public Image()
         {
@@ -41,14 +42,28 @@ namespace BlastOFF.Models.GalleryModels
 
         public virtual ICollection<Comment> Comments
         {
-            get { return this.comments; }
-            set { this.comments = value; }
+            get
+            {
+                return this.comments;
+            }
+
+            set
+            {
+                this.comments = value;
+            }
         }
 
         public virtual ICollection<ApplicationUser> UserLikes
         {
-            get { return this.userLikes; }
-            set { this.userLikes = value; }
+            get
+            {
+                return this.userLikes;
+            }
+
+            set
+            {
+                this.userLikes = value;
+            }
         }
     }
 }
