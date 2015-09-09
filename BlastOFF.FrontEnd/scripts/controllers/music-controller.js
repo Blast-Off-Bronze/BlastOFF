@@ -70,6 +70,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                         function (response) {
 
                             musicAlbum['isLiked'] = true;
+                            musicAlbum['likesCount']++;
 
                             notificationService.alertSuccess(response);
                         },
@@ -78,6 +79,59 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                         });
                 };
 
+                $scope.unlikeMusicAlbum = function (musicAlbum) {
+
+                    var albumId = musicAlbum['id'];
+
+                    musicDataService.unlikeMusicAlbum(albumId).then(
+                        function (response) {
+
+                            musicAlbum['isLiked'] = false;
+                            musicAlbum['likesCount']--;
+
+                            notificationService.alertSuccess(response);
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+                // LIKES - End
+
+                // FOLLOWERS
+                $scope.followMusicAlbum = function (musicAlbum) {
+
+                    var albumId = musicAlbum['id'];
+
+                    musicDataService.followMusicAlbum(albumId).then(
+                        function (response) {
+
+                            musicAlbum['isFollowed'] = true;
+                            musicAlbum['followersCount']++;
+
+                            notificationService.alertSuccess(response);
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
+                $scope.unfollowMusicAlbum = function (musicAlbum) {
+
+                    var albumId = musicAlbum['id'];
+
+                    musicDataService.unfollowMusicAlbum(albumId).then(
+                        function (response) {
+
+                            musicAlbum['isFollowed'] = false;
+                            musicAlbum['followersCount']--;
+
+                            notificationService.alertSuccess(response);
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+                // FOLLOWERS - End
 
                 $scope.addMusicAlbum = function (musicAlbum) {
 

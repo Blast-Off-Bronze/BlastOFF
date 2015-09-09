@@ -14,14 +14,24 @@
 
         <!-- Likes -->
         <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item not-active">Likes ({{musicAlbum.likesCount}})</a>
-
         <a ng-if="!musicAlbum.isOwn && musicAlbum.isLiked" class="btn btn-default stat-item" ng-click="unlikeMusicAlbum(musicAlbum)">Unlike ({{musicAlbum.likesCount}})</a>
-
         <a ng-if="!musicAlbum.isOwn && !musicAlbum.isLiked" class="btn btn-default stat-item" ng-click="likeMusicAlbum(musicAlbum)">Like ({{musicAlbum.likesCount}})</a>
+        <!-- Likes - End -->
+
+        <!-- Followers -->
+        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item not-active">Followers ({{musicAlbum.followersCount}})</a>
+        <a ng-if="!musicAlbum.isOwn && musicAlbum.isFollowed" class="btn btn-default stat-item" ng-click="unfollowMusicAlbum(musicAlbum)">Unfollow ({{musicAlbum.followersCount}})</a>
+        <a ng-if="!musicAlbum.isOwn && !musicAlbum.isFollowed" class="btn btn-default stat-item" ng-click="followMusicAlbum(musicAlbum)">Follow ({{musicAlbum.followersCount}})</a>
+        <!-- Followers - End -->
 
 
 
-        <a href="#" class="btn btn-default stat-item">Follow ({{musicAlbum.followersCount}})</a>
+
+
+
+
+
+
         <a href="#" class="btn btn-default stat-item" style="margin-right:0">Comment ({{musicAlbum.commentsCount}})</a>
     </div>
 </div>
