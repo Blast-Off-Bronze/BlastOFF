@@ -305,6 +305,7 @@
     <Compile Include="Models\ImageModels\ImageViewModel.cs" />
     <Compile Include="Models\UserModels\LoginUserBindingModel.cs" />
     <Compile Include="Models\UserModels\RegisterUserBindingModel.cs" />
+    <Compile Include="Models\UserModels\UserProfileViewModel.cs" />
     <Compile Include="UserSessionUtils\SessionAuthorizeAttribute.cs" />
     <Compile Include="UserSessionUtils\UserSessionManager.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />

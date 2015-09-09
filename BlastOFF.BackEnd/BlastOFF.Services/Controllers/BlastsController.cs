@@ -42,6 +42,43 @@
         }
 
         [HttpGet]
+        [Route("api/blasts/{username}/wall")]
+        [AllowAnonymous]
+        public IHttpActionResult GetWallBlasts([FromUri] string username, [FromUri] int StartPostId, [FromUri] int PageSize)
+        {
+            var user = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
+
+            if (user == null)
+            {
+                return this.BadRequest("No user with that username.");
+            }
+
+            var blasts = user.Blasts
+                .Where(b => b.Id >= StartPostId)
+                .OrderByDescending(b => b.PostedOn)
+                .Take(PageSize)
+                .ToList()
+                .Select(b => BlastViewModel.Create(b));
+
+            return this.Ok(blasts);
+        }
+
+        [HttpGet]
+        [Route("api/blasts/public")]
+        [AllowAnonymous]
+        public IHttpActionResult GetPublicBlasts([FromUri] int StartPostId, [FromUri] int PageSize)
+        {
+            var blasts = this.Data.Blasts.All()
+                .Where(b => b.IsPublic && b.Id >= StartPostId)
+                .OrderByDescending(b => b.PostedOn)
+                .Take(PageSize)
+                .ToList()
+                .Select(b => BlastViewModel.Create(b));
+
+            return this.Ok(blasts);
+        }
+
+        [HttpGet]
         [Route("api/blasts/{id}")]
         [AllowAnonymous]
         public IHttpActionResult GetBlastById([FromUri] int id)

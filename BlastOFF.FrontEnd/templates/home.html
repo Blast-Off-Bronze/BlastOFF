@@ -1,5 +1,51 @@
 <div ng-include="'templates/partials/header.html'"></div>
 
-<a href="" ng-show="isLogged" ng-click="showMusic = !showMusic; showMusic && getAllMusicAlbums()">Music</a>
 
-<div ng-include="'templates/partials/music.html'"></div>
+<div class="row">
+    <div class="col-md-4 col-sm-6">
+        <div class="well">
+            <form role="form" class="form-horizontal">
+                <h4>What's New</h4>
+                <div style="padding:14px;" class="form-group">
+                    <textarea placeholder="Update your status" ng-model="blastToPost.content" class="form-control">{{ blastToPost.content }}</textarea>
+                </div>
+
+                <button type="button" class="btn btn-success pull-right" ng-click="makeABlast()">Post</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- SCROLLABLE BLASTS -->
+<div infinite-scroll="getPagedBlasts(lastBlastId)" ng-if="isLogged"
+     infinite-scroll-distance='1'
+     infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
+
+    <!-- Blast -->
+    <div class="row" ng-repeat="blast in allBlasts">
+        <div class="col-md-2">
+            <img src="http://bootdey.com/img/Content/user_3.jpg" class="img-responsive  img-circle">
+        </div>
+        <div class="col-md-10">
+            <div class="row post">
+                <div class="col-md-12">
+                    <!--<p>{{blast}}</p>-->
+                    <p>{{blast.content}}</p>
+                    <a data-placement="top" class="btn btn-success btn-xs glyphicon glyphicon-ok tip"
+                       href="#" title="View"></a>
+                    <a data-placement="top" class="btn btn-danger  btn-xs glyphicon glyphicon-trash tip"
+                       href="#" title="Delete"></a>
+                    <a data-placement="top" class="btn btn-info  btn-xs glyphicon glyphicon-share tip"
+                       href="#" title="Share"></a>
+
+                    <p>date = {{blast.postedOn}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- SCROLLABLE BLASTS - END -->
+
+<!--<a href="" ng-show="isLogged" ng-click="showMusic = !showMusic; showMusic && getAllMusicAlbums()">Music</a>-->
+
+<!--<div ng-include="'templates/partials/music.html'"></div>-->
