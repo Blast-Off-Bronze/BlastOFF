@@ -12,8 +12,6 @@
 
         public string FileDataUrl { get; set; }
 
-        public string MusicAlbumId { get; set; }
-
         // OPTIONAL
         public string TrackNumber { get; set; }
 

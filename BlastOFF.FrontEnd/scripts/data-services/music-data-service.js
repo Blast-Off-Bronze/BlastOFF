@@ -5,6 +5,18 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         var serviceUrl = constants.BASE_URL + 'music/albums';
         var songsUrl = constants.BASE_URL + 'songs';
 
+        function getPagedMusicAlbums(currentPage, pageSize) {
+
+            var currentPage = currentPage || constants.DEFAULT_CURRENT_PAGE;
+            var pageSize = pageSize || 3;
+
+            var headers = new requestHeaders().get();
+
+            var url = serviceUrl + '/?CurrentPage=' + currentPage + '&PageSize=' + pageSize;
+
+            return requester.get(headers, url);
+        }
+
         function getAllMusicAlbums() {
 
             var headers = new requestHeaders().get();
@@ -152,6 +164,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         }
 
         return {
+            getPagedMusicAlbums: getPagedMusicAlbums,
             getAllMusicAlbums: getAllMusicAlbums,
             getAllSongs: getAllSongs,
 

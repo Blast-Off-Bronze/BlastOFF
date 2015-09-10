@@ -45,16 +45,16 @@
         [HttpGet]
         [Route("api/music/albums")]
         [AllowAnonymous]
-        public IHttpActionResult AllMusicAlbums([FromUri] int CurrentPage = MainConstants.DefaultPage,
-            [FromUri] int PageSize = MainConstants.PageSize)
+        public IHttpActionResult AllMusicAlbums()
+            //[FromUri] int CurrentPage = MainConstants.DefaultPage,[FromUri] int PageSize = MainConstants.PageSize
         {
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var albums = this.Data.MusicAlbums.All()
                     .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
                     .OrderByDescending(a => a.DateCreated)
-                    .Skip(CurrentPage * PageSize)
-                    .Take(PageSize)
+                    //.Skip(CurrentPage * PageSize)
+                    //.Take(PageSize)
                     .ToList()
                     .Select(a => MusicAlbumViewModel.Create(a, currentUser));
 
@@ -325,7 +325,7 @@
                 return this.BadRequest(string.Format("Song size should be less than {0} kB.", SongKilobyteLimit));
             }
 
-            var metadataStart = song.FileDataUrl.IndexOf("data:audio/mp3;base64,", StringComparison.Ordinal);
+            var metadataStart = song.FileDataUrl.IndexOf("data:audio/mp3;base64,");
 
             if (metadataStart != -1)
             {
@@ -340,7 +340,7 @@
                                   Title = song.Title,
                                   Artist = song.Artist,
                                   FilePath = song.FileDataUrl,
-                                  MusicAlbumId = int.Parse(song.MusicAlbumId),
+                                  MusicAlbumId = album.Id,
                                   UploaderId = album.AuthorId,
                                   DateAdded = DateTime.Now,
                                   TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber),
@@ -845,16 +845,7 @@
                             {
                                 Title = fileName,
                                 MimeType = AudioMimeType,
-                                Parents =
-                                    new List<ParentReference>
-                                        {
-                                            new ParentReference
-                                                {
-                                                    Id =
-                                                        MusicConstants
-                                                        .GoogleDriveBlastOFFMusicFolderId
-                                                }
-                                        }
+                                Parents = new List<ParentReference> { new ParentReference { Id = MusicConstants.GoogleDriveBlastOFFMusicFolderId } }
                             };
 
             try
@@ -862,7 +853,7 @@
                 FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, AudioMimeType);
                 request.Upload();
 
-                return "https://drive.google.com/open?id=" + request.ResponseBody.Id;
+                return "http://docs.google.com/uc?export=open&id=" + request.ResponseBody.Id;
             }
             catch (Exception exception)
             {

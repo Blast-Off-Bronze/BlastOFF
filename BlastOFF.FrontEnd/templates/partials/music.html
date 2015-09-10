@@ -22,13 +22,27 @@
 
                 <div class="panel panel-white post panel-shadow" ng-if="requesterIsBusy">Retrieving albums ...</div>
 
-                <div class="panel panel-white post panel-shadow" ng-if="!requesterIsBusy" ng-repeat="musicAlbum in allMusicAlbums">
+                <div class="panel panel-white post panel-shadow" ng-if="!requesterIsBusy" ng-repeat="musicAlbum in allMusicAlbums | filter:showOwnAndFollowedAlbums">
 
                     <div ng-include="'templates/partials/music-album.html'"></div>
 
                 </div>
-
             </div>
+
+            <!--&lt;!&ndash; SCROLLABLE MUSIC ALBUMS &ndash;&gt;-->
+            <!--<div-->
+            <!--infinite-scroll="getPagedMusicAlbums(currentPage)"-->
+            <!--infinite-scroll-distance='1'-->
+            <!--infinite-scroll-disabled="gettingMusicAlbums && noMusicAlbumsAvailable">-->
+
+            <!--<div class="panel panel-white post panel-shadow" ng-repeat="musicAlbum in allMusicAlbums">-->
+
+            <!--<div ng-include="'templates/partials/music-album.html'"></div>-->
+
+            <!--</div>-->
+            <!--&lt;!&ndash; SCROLLABLE MUSIC ALBUMS - END &ndash;&gt;-->
+            <!--</div>-->
+            <!--</div>-->
 
             <div role="tabpanel" class="tab-pane" id="followed">
 
@@ -63,47 +77,8 @@
 
                         <br/>
                     </div>
-                    <!-- EDIT MUSIC ALBUM - End -->
-
-                    <!--<br/>-->
-
-                    <!--<input type="text" ng-model="musicAlbum.title"/>-->
-
-                    <!--<br/>-->
-                    <!--<br/>-->
-
-                    <!--<input type="file" cover-image-upload="onFileSelect($files)" ng-model="musicAlbum.coverImageData"/>-->
-
-                    <!--<br/>-->
-                    <!--<br/>-->
-
-                    <!--<button type="button" ng-click="addMusicAlbum(musicAlbum)">Add Music Album</button>-->
-
-                    <!--<br/>-->
-                    <!--<br/>-->
-                    <!--<hr/>-->
-                    <!--<br/>-->
-
-                    <!--<input type="text" ng-model="song.title"/>-->
-
-                    <!--<br/>-->
-                    <!--<br/>-->
-
-                    <!--<input type="text" ng-model="song.artist"/>-->
-
-                    <!--<br/>-->
-                    <!--<br/>-->
-
-                    <!--<input type="file" song-upload="onFileSelect($files)" ng-model="song.fileDataUrl"/>-->
-
-                    <!--<br/>-->
-                    <!--<br/>-->
-
-                    <!--<button type="button" ng-click="addSong(song)">Upload Song</button>-->
-
                 </div>
             </div>
         </div>
     </div>
-
 </div>

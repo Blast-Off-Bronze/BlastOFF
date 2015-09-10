@@ -1,12 +1,13 @@
 <!-- DISPLAY MUSIC ALBUM -->
-<div class="post-image" ng-if="!displayEditMusicAlbum">
+<div class="post-image" ng-if="!musicAlbum.displayEditMusicAlbum">
     <span>
         <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
     </span>
 
     <h4 style="display: inline-block">{{musicAlbum.title}}
 
-        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="toggledEditMusicAlbum()">Edit </a>
+        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="musicAlbum.displayAddSong = !musicAlbum.displayAddSong">Add song</a>
+        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="musicAlbum.displayEditMusicAlbum = true">Edit </a>
         <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="deleteMusicAlbum(musicAlbum)">Delete</a>
 
     </h4>
@@ -17,24 +18,49 @@
 </div>
 
 <!-- EDIT MUSIC ALBUM -->
-<div class="post-image" ng-if="displayEditMusicAlbum">
+<div class="post-image" ng-if="musicAlbum.displayEditMusicAlbum">
     <span>
         <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
         <input type="file" cover-image-upload="onFileSelect($files)" ng-model="musicAlbum.coverImageData"/>
     </span>
 
-    <h4 style="display: inline-block"><input type="text" ng-model="musicAlbum.title"/>
+        <h4 style="display: inline-block"><input type="text" ng-model="musicAlbum.title"/>
 
-        <a class="btn btn-default stat-item" ng-click="saveMusicAlbumChanges(musicAlbum)">Save</a>
-        <a class="btn btn-default stat-item" ng-click="toggledEditMusicAlbum()">Cancel</a>
+            <a class="btn btn-default stat-item" ng-click="saveMusicAlbumChanges(musicAlbum)">Save</a>
+            <a class="btn btn-default stat-item" ng-click="">Cancel</a>
 
-    </h4>
+        </h4>
 
     <br/>
 
     <p style="display: inline-block">{{musicAlbum.author}} created this music album on {{musicAlbum.dateCreated | date: 'MMM dd, yyyy'}}</p>
 </div>
 <!-- EDIT MUSIC ALBUM - End -->
+
+<!-- ADD SONG TO ALBUM -->
+<div class="comment-heading" ng-if="musicAlbum.displayAddSong">
+    <h5 class="user">
+        <input type="text" ng-model="newSong.title" placeholder="Title"/>
+        <input type="text" ng-model="newSong.artist" placeholder="Artist"/>
+
+        <a class="btn btn-default stat-item" ng-click="addSong(musicAlbum, newSong)">Save</a>
+        <a class="btn btn-default stat-item" ng-click="musicAlbum.displayAddSong = false">Cancel</a>
+
+    </h5>
+
+    <input type="file" song-upload="onFileSelect($files)" ng-model="newSong.fileDataUrl"/><br/>
+
+    <!-- Song optional info -->
+    <input type="number" ng-model="newSong.trackNumber" placeholder="Track Number"/>
+    <input type="text" ng-model="newSong.originalAlbumTitle" placeholder="Original Album Title"/>
+    <input type="text" ng-model="newSong.originalAlbumArtist" placeholder="Original Album Artist"/>
+    <input type="text" ng-model="newSong.originalDate" placeholder="Original Date"/>
+    <input type="text" ng-model="newSong.genre" placeholder="Genre"/>
+    <input type="text" ng-model="newSong.composer" placeholder="Composer"/>
+    <input type="text" ng-model="newSong.publisher" placeholder="Publisher"/>
+    <input type="number" ng-model="newSong.bpm" placeholder="Bpm"/>
+
+</div>
 
 <div class="post-description">
 
@@ -102,7 +128,7 @@
 <!-- MUSIC ALBUM COMMENTS - End -->
 
 <!-- SONGS -->
-<ul class="comments-list" ng-if="musicAlbum.songsCount > 0">
+<ul class="comments-list">
     <li class="comment" ng-repeat="song in musicAlbum.songs" ng-bind-unsafe="song.filePath">
 
         <hr/>
@@ -113,7 +139,7 @@
             <div class="comment-heading" ng-if="!displayEditSong">
                 <h5 class="user"><b>{{song.title}} - {{song.artist}}</b>
 
-                    <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click = toggledEditSong()>Edit</a>
+                    <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="song.displayEditSong = !song.displayEditSong">Edit</a>
                     <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="deleteSong(musicAlbum, song)">Delete</a>
 
                 </h5>
@@ -121,13 +147,13 @@
             </div>
 
             <!-- Display edit song -->
-            <div class="comment-heading" ng-if="displayEditSong">
+            <div class="comment-heading" ng-if="song.displayEditSong">
                 <h5 class="user">
                     <input type="text" ng-model="song.title"/>
                     <input type="text" ng-model="song.artist"/>
 
                     <a class="btn btn-default stat-item" ng-click="saveSongChanges(song)">Save</a>
-                    <a class="btn btn-default stat-item" ng-click="toggledEditSong()">Cancel</a>
+                    <a class="btn btn-default stat-item" ng-click="song.displayEditSong = false">Cancel</a>
 
                 </h5>
 

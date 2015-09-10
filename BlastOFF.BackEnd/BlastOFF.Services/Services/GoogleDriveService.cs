@@ -11,11 +11,10 @@ namespace BlastOFF.Services.Services
     public static class GoogleDriveService
     {
         private const string GoogleDriveServiceAccountEmail = "549251813735-6efg2gfp38a6q4moeknilsk2e9n9ajos@developer.gserviceaccount.com";
+        private const string GoogleDriveKeyFilePath = @"D:\GitHub\BlastOFF\BlastOFF.BackEnd\BlastOFF.Services\Credentials\BlastOFF.p12";
 
         public static DriveService Get()
         {
-            string GoogleDriveKeyFilePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "BlastOFF.Services/Credentials/BlastOFF.p12");
-
             string[] scopes = new string[] { DriveService.Scope.Drive, DriveService.Scope.DriveFile };
 
             var certificate = new X509Certificate2(GoogleDriveKeyFilePath, "notasecret", X509KeyStorageFlags.Exportable);

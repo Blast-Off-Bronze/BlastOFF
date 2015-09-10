@@ -9,34 +9,31 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 $scope.isLogged = storageService.isLogged();
                 $scope.requesterIsBusy = true;
                 $scope.allMusicAlbums = [];
-                $scope.followedMusicAlbums = [];
                 $scope.defaultMusicAlbumCoverImage = constants.DEFAULT_MUSIC_ALBUM_COVER_IMAGE_URL;
-                $scope.displayEditMusicAlbum = false;
-                $scope.displayEditSong = false;
+
+                $scope.noMusicAlbumsAvailable = false;
+                $scope.gettingMusicAlbums = false;
+                $scope.currentPage = 0;
 
                 $scope.newMusicAlbum = {
                     title: '',
                     coverImageData: null
                 };
 
-
-
-
-
-                //$scope.song = {
-                //    title: 'Song_01',
-                //    artist: 'Artist_01',
-                //    fileDataUrl: '',
-                //    musicAlbumId: musicAlbumId
-                //    trackNumber: null,
-                //    originalAlbumTitle: null,
-                //    originalAlbumArtist: null,
-                //    originalDate: null,
-                //    genre: null,
-                //    composer: null,
-                //    publisher: null,
-                //    bpm: null
-                //};
+                $scope.newSong = {
+                    title: '',
+                    artist: '',
+                    fileDataUrl: '',
+                    // Optional
+                    trackNumber: null,
+                    originalAlbumTitle: null,
+                    originalAlbumArtist: null,
+                    originalDate: null,
+                    genre: null,
+                    composer: null,
+                    publisher: null,
+                    bpm: null
+                };
 
                 $scope.musicAlbumComment = {
                     content: '',
@@ -47,6 +44,32 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                     content: '',
                     songId: ''
                 };
+
+                //$scope.getPagedMusicAlbums = function (currentPage, pageSize) {
+                //
+                //    $scope.gettingMusicAlbums = true;
+                //
+                //    musicDataService.getPagedMusicAlbums(currentPage, pageSize)
+                //        .then(function (response) {
+                //            if(response.length < 1) {
+                //                $scope.noMusicAlbumsAvailable = true;
+                //            } else {
+                //                $scope.noMusicAlbumsAvailable = false;
+                //                response.forEach(function (musicAlbum) {
+                //                    $scope.allMusicAlbums.push(musicAlbum);
+                //                });
+                //
+                //                $scope.currentPage += pageSize || 3;
+                //            }
+                //
+                //            $scope.gettingMusicAlbums = false;
+                //
+                //            console.log(response);
+                //        }, function (error) {
+                //            $scope.noMusicAlbumsAvailable = false;
+                //            console.log(error);
+                //        });
+                //};
 
                 musicDataService.getAllMusicAlbums().then(
                     function (response) {
@@ -74,8 +97,9 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 };
 
                 // ADD
-
                 $scope.addMusicAlbum = function (musicAlbum) {
+
+                    musicAlbum['isPublic'] = true;
 
                     musicDataService.addMusicAlbum(musicAlbum).then(
                         function (response) {
@@ -91,20 +115,34 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                         });
                 };
 
-                $scope.addSong = function (song) {
+                $scope.addSong = function (musicAlbum, song) {
 
-                    console.log(song);
+                    var albumId = musicAlbum['id'];
+                    musicAlbum['displayAddSong'] = '';
 
-                    musicDataService.addSong(musicAlbumId, song).then(
+                    musicDataService.addSong(albumId, song).then(
                         function (response) {
 
-                            console.log(response);
+                            musicAlbum['songs'].unshift(response);
 
+                            $scope.newSong = {
+                                title: '',
+                                artist: '',
+                                fileDataUrl: null,
+                                trackNumber: null,
+                                originalAlbumTitle: null,
+                                originalAlbumArtist: null,
+                                originalDate: null,
+                                genre: null,
+                                composer: null,
+                                publisher: null,
+                                bpm: null
+                            };
+                            notificationService.alertSuccess("Song successfully added to album.")
+                            musicAlbum['displayAddSong'] = false;
                         },
                         function (error) {
-
-                            console.log(error);
-
+                            notificationService.alertError(error);
                         });
                 };
 
@@ -112,11 +150,12 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 $scope.saveMusicAlbumChanges = function (musicAlbum) {
 
                     var albumId = musicAlbum['id'];
+                    musicAlbum['displayEditMusicAlbum'] = '';
 
                     musicDataService.updateMusicAlbum(albumId, musicAlbum).then(
                         function (response) {
                             musicAlbum = response;
-                            $scope.displayEditMusicAlbum = false;
+                            musicAlbum['displayEditMusicAlbum'] = false;
                         },
                         function (error) {
                             notificationService.alertError(error);
@@ -126,11 +165,12 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 $scope.saveSongChanges = function (song) {
 
                     var songId = song['id'];
+                    song['displayEditSong'] = '';
 
                     musicDataService.updateSong(songId, song).then(
                         function (response) {
                             song = response;
-                            $scope.displayEditSong = false;
+                            song['displayEditSong'] = false;
                         },
                         function (error) {
                             notificationService.alertError(error);
@@ -326,20 +366,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                     };
                 };
 
-
-
-
-
-
                 // MISCELLANEOUS FUNCTIONS
-                $scope.toggledEditMusicAlbum = function () {
-                    $scope.displayEditMusicAlbum = !$scope.displayEditMusicAlbum;
-                };
-
-                $scope.toggledEditSong = function () {
-                    $scope.displayEditSong = !$scope.displayEditSong;
-                };
-
                 $scope.showOwnAndFollowedAlbums = function (album) {
                     return album['isOwn'] == true || album['isFollowed'] == true;
                 };
