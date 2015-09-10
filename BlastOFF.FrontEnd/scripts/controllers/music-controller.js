@@ -73,10 +73,6 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
                 musicDataService.getAllMusicAlbums().then(
                     function (response) {
-
-                        console.log(response)
-
-
                         $scope.allMusicAlbums = response;
                         $scope.requesterIsBusy = false;
                     },
@@ -346,6 +342,20 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 };
 
                 // SONG COMMENTS
+                $scope.getSongComments = function (song) {
+
+                    var songId = song['id'];
+
+                    musicDataService.getAllSongComments(songId).then(
+                        function (response) {
+                            song['comments'] = response;
+                            song['allCommentsDisplayed'] = true;
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
                 $scope.addSongComment = function (song) {
 
                     var songId = song['id'];

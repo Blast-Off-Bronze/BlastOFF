@@ -4,13 +4,13 @@
         <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
     </span>
 
-    <h4 style="display: inline-block">{{musicAlbum.title}}
+    <h3 style="display: inline-block">{{musicAlbum.title}}
 
         <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="musicAlbum.displayAddSong = !musicAlbum.displayAddSong">Add song</a>
         <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="musicAlbum.displayEditMusicAlbum = true">Edit </a>
         <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="deleteMusicAlbum(musicAlbum)">Delete</a>
 
-    </h4>
+    </h3>
 
     <br/>
 
@@ -110,12 +110,15 @@
 
                     <div class="comment-body">
                         <div class="comment-heading">
-                            <h4 class="user">{{comment.author}}
+                            <h4 class="user">{{comment.author.username}}
 
                                 <a ng-if="comment.isMine" class="btn btn-default stat-item" ng-click="comment.showEditComment = !comment.showEditComment">Edit</a>
                                 <a ng-if="comment.isMine" class="btn btn-default stat-item" ng-click="deleteComment(comment, musicAlbum)">Delete</a>
 
                             </h4>
+
+                            <br/>
+
                             <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
                         </div>
 
@@ -222,12 +225,15 @@
 
                             <div class="comment-body">
                                 <div class="comment-heading">
-                                    <h4 class="user">{{comment.author}}
+                                    <h4 class="user">{{comment.author.username}}
 
                                         <a ng-if="comment.isMine" class="btn btn-default stat-item" ng-click="comment.showEditComment = !comment.showEditComment">Edit</a>
                                         <a ng-if="comment.isMine" class="btn btn-default stat-item" ng-click="deleteComment(comment, song)">Delete</a>
 
                                     </h4>
+
+                                    <br/>
+
                                     <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
                                 </div>
 
@@ -236,10 +242,18 @@
                                 <!-- Edit comment -->
                                 <div class="input-group"  ng-if="comment.showEditComment">
                                     <input class="form-control" type="text" ng-model="comment.content">
-                            <span class="input-group-addon">
-                                <a ng-click="modifyComment(comment, song)">Save</a>
-                            </span>
+                                    <span class="input-group-addon">
+                                        <a ng-click="modifyComment(comment, song)">Save</a>
+                                    </span>
                                 </div>
+                            </div>
+                        </li>
+
+                        <li class="comment" ng-if="song.commentsCount > 3 && song.allCommentsDisplayed == false">
+                            <div class="comment-body">
+
+                                <a ng-click="getSongComments(song)">View all comments ({{song.commentsCount}})</a>
+
                             </div>
                         </li>
                     </ul>
