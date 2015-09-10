@@ -112,7 +112,7 @@
                         <div class="comment-heading">
                             <h4 class="user">{{comment.author}}
 
-                                <a ng-if="comment.amiTheAuthor" class="btn btn-default stat-item" ng-click="">Edit</a>
+                                <a ng-if="comment.amiTheAuthor" class="btn btn-default stat-item" ng-click="comment.showEditComment = !comment.showEditComment">Edit</a>
                                 <a ng-if="comment.amiTheAuthor" class="btn btn-default stat-item" ng-click="deleteComment(comment, musicAlbum)">Delete</a>
 
                             </h4>
@@ -120,14 +120,16 @@
                         </div>
 
 
-                        <p>{{comment.content}}</p>
+                        <p ng-if="!comment.showEditComment">{{comment.content}}</p>
+
+
                         <!-- Edit comment -->
-                        <!--<div class="input-group"  ng-if="comment.displayEditComment = true">-->
-                            <!--<input class="form-control" type="text" ng-model="comment.content">-->
-                            <!--<span class="input-group-addon">-->
-                                <!--<a ng-click="saveComment(musicAlbum)">Send</a>-->
-                            <!--</span>-->
-                        <!--</div>-->
+                        <div class="input-group"  ng-if="comment.showEditComment">
+                            <input class="form-control" type="text" ng-model="comment.content">
+                            <span class="input-group-addon">
+                                <a ng-click="modifyComment(comment, musicAlbum)">Save</a>
+                            </span>
+                        </div>
                     </div>
                 </li>
             </ul>
