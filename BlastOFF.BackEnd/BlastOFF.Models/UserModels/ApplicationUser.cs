@@ -1,11 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using BlastOFF.Models.ChatModels;
-using BlastOFF.Models.Enumerations;
-using BlastOFF.Models.GalleryModels;
-using BlastOFF.Models.MusicModels;
-
-namespace BlastOFF.Models.UserModel
+﻿namespace BlastOFF.Models.UserModel
 {
     using System.Collections.Generic;
     using Microsoft.AspNet.Identity.EntityFramework;
@@ -14,6 +7,12 @@ namespace BlastOFF.Models.UserModel
     using Microsoft.AspNet.Identity;
 
     using BlastModels;
+
+    using System;
+    using BlastOFF.Models.ChatModels;
+    using BlastOFF.Models.Enumerations;
+    using BlastOFF.Models.GalleryModels;
+    using BlastOFF.Models.MusicModels;
 
     public class ApplicationUser : IdentityUser
     {
@@ -35,7 +34,9 @@ namespace BlastOFF.Models.UserModel
         private ICollection<MusicAlbum> followedMusicAlbums;
 
         private ICollection<Message> sentMessages;
-        private ICollection<Message> receivedMessages;  
+        private ICollection<Message> receivedMessages;
+
+        private ICollection<Notification> notifications; 
 
         public ApplicationUser()
         {

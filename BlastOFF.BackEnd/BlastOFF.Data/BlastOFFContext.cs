@@ -1,8 +1,3 @@
-using System.Data.Entity.ModelConfiguration.Conventions;
-using BlastOFF.Models;
-using BlastOFF.Models.ChatModels;
-using BlastOFF.Models.UserModels;
-
 namespace BlastOFF.Data
 {
     using System.Data.Entity;
@@ -14,6 +9,11 @@ namespace BlastOFF.Data
     using Models.MusicModels;
     using Models.UserModel;
     using Models.BlastModels;
+
+    using System.Data.Entity.ModelConfiguration.Conventions;
+    using BlastOFF.Models;
+    using BlastOFF.Models.ChatModels;
+    using BlastOFF.Models.UserModels;
 
     public class BlastOFFContext : IdentityDbContext<ApplicationUser>, IBlastOFFContext
     {
@@ -44,6 +44,7 @@ namespace BlastOFF.Data
         public virtual IDbSet<Song> Songs { get; set; }
 
         public virtual IDbSet<UserSession> UserSessions { get; set; }
+        public virtual IDbSet<Notification> Notifications { get; set; }
 
         // END - DB SETS
 

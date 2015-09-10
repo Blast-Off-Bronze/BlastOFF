@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using BlastOFF.Models.BlastModels;
-using BlastOFF.Models.GalleryModels;
-using BlastOFF.Models.MusicModels;
-using BlastOFF.Models.UserModel;
-
-namespace BlastOFF.Models
+﻿namespace BlastOFF.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using BlastOFF.Models.BlastModels;
+    using BlastOFF.Models.GalleryModels;
+    using BlastOFF.Models.MusicModels;
+    using BlastOFF.Models.UserModel;
+
     public class Comment
     {
         private ICollection<ApplicationUser> likedBy;
