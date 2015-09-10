@@ -1,7 +1,8 @@
-﻿using BlastOFF.Models.UserModel;
-
-namespace BlastOFF.Services.Models.BlastModels
+﻿namespace BlastOFF.Services.Models.BlastModels
 {
+    using BlastOFF.Models.UserModel;
+    using BlastOFF.Services.Models.UserModels;
+
     using BlastOFF.Models.BlastModels;
     using BlastOFF.Models.Enumerations;
     using System;
@@ -9,6 +10,8 @@ namespace BlastOFF.Services.Models.BlastModels
     using System.Linq;
 
     using BlastOFF.Services.Models.CommentModels;
+
+    using BlastOFF.Services.Constants;
 
     public class BlastViewModel
     {
@@ -35,13 +38,22 @@ namespace BlastOFF.Services.Models.BlastModels
                 Content = model.Content,
                 PostedOn = model.PostedOn,
                 BlastType = model.BlastType,
-                Author = model.Author.UserName,
-                Comments = model.Comments.ToList().Take(3).Select(c => CommentViewModel.Create(c, currentUser)),
+                Author = UserPreviewViewModel.Create(model.Author, currentUser),
+                Comments = model.Comments.ToList().Take(MainConstants.PageSize)
+                .Select(c => CommentViewModel.Create(c, currentUser)),
+                Likes = model.UserLikes.ToList().Take(MainConstants.PageSize)
+                .Select(u => UserPreviewViewModel.Create(u, currentUser)),
                 LikesCount = model.UserLikes.Count,
                 Id = model.Id,
                 IsLiked = liked,
-                AmITheAuthor = owner
+                IsMine = owner,
+                CommentsCount = model.Comments.Count
             };
+
+            if(result.Author.ProfileImage == null || result.Author.ProfileImage.Length <= 0)
+            {
+                result.Author.ProfileImage = "http://www.filecluster.com/howto/wp-content/uploads/2014/07/User-Default.jpg";
+            }
 
             return result;
         }
@@ -54,14 +66,18 @@ namespace BlastOFF.Services.Models.BlastModels
 
         public BlastType BlastType { get; set; }
 
-        public string Author { get; set; }
+        public UserPreviewViewModel Author { get; set; }
 
         public bool IsLiked { get; set; }
 
         public IEnumerable<CommentViewModel> Comments { get; set; }
 
+        public IEnumerable<UserPreviewViewModel> Likes { get; set; }
+
+        public int CommentsCount { get; set; }
+
         public int LikesCount { get; set; }
 
-        public bool AmITheAuthor { get; set; }
+        public bool IsMine { get; set; }
     }
 }

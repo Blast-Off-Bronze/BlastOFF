@@ -1,8 +1,12 @@
-﻿using System.Linq;
-using BlastOFF.Models.UserModel;
-
-namespace BlastOFF.Services.Models.ImageModels
+﻿namespace BlastOFF.Services.Models.ImageModels
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using BlastOFF.Models.UserModel;
+    using BlastOFF.Services.Constants;
+    using BlastOFF.Services.Models.CommentModels;
+    using BlastOFF.Services.Models.UserModels;
+
     using System;
     using BlastOFF.Models.GalleryModels;
 
@@ -33,12 +37,15 @@ namespace BlastOFF.Services.Models.ImageModels
                 ImageAlbumId = model.ImageAlbumId,
                 ImageAlbum = model.ImageAlbum.Title,
                 DateAdded = model.DateCreated,
-                LikesCount = model.UserLikes.Count,
-                CommentsCount = model.Comments.Count,
-                UploadedBy = model.UploadedBy.UserName,
-                UploadedById = model.UploadedBy.Id,
+                Likes = model.UserLikes.Take(MainConstants.PageSize)
+                .ToList().Select(u => UserPreviewViewModel.Create(u, currentUser)),
+                Comments = model.Comments.Take(MainConstants.PageSize)
+                .ToList().Select(c => CommentViewModel.Create(c, currentUser)),
+                UploadedBy = UserPreviewViewModel.Create(model.UploadedBy, currentUser),
                 IsLiked = liked,
-                AmITheOwner = owner
+                IsMine = owner,
+                LikesCount = model.UserLikes.Count,
+                CommentsCount = model.Comments.Count
             };
 
             return result;
@@ -52,20 +59,22 @@ namespace BlastOFF.Services.Models.ImageModels
 
         public string ImageAlbum { get; set; }
 
-        public string UploadedById { get; set; }
-
-        public string UploadedBy { get; set; }
+        public UserPreviewViewModel UploadedBy { get; set; }
 
         public string ImageData { get; set; }
 
         public DateTime DateAdded { get; set; }
 
+        public IEnumerable<UserPreviewViewModel> Likes { get; set; } 
+
         public int LikesCount { get; set; }
 
         public int CommentsCount { get; set; }
 
+        public IEnumerable<CommentViewModel> Comments { get; set; } 
+
         public bool IsLiked { get; set; }
 
-        public bool AmITheOwner { get; set; }
+        public bool IsMine { get; set; }
     }
 }

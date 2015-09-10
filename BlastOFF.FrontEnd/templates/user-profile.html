@@ -44,17 +44,40 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-9" id="contentCol">
-                <!-- SCROLLABLE BLASTS -->
-                <div infinite-scroll="getBlasts(currentPage)"
-                     infinite-scroll-distance='1'
-                     infinite-scroll-disabled="gettingBlasts && noBlastsAvailable">
+        <div class="panel with-nav-tabs panel-default">
+            <div class="panel-heading">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tabBlasts" data-toggle="tab" ng-click="setFilters($event)">Blasts</a></li>
+                    <li><a href="#tabMusicAlbums" data-toggle="tab" ng-click="setFilters($event)">Music Albums</a></li>
+                    <li><a href="#tabImageAlbums" data-toggle="tab" ng-click="setFilters($event)">Image Albums</a></li>
+                </ul>
+            </div>
+            <div class="panel-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="tabBlasts">
+                        <h1 class="text-center">All Blasts</h1>
+                        <div class="col-md-9">
+                            <div infinite-scroll="getBlasts(currentPageBlasts)"
+                                 infinite-scroll-distance='1'
+                                 infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
 
-                    <div ng-include="'templates/blast-feed.html'"></div>
+                                <div ng-include="'templates/blast-feed.html'"></div>
 
-                </div><!-- SCROLLABLE BLASTS - END -->
-
-                <hr>
+                            </div>
+                            <!-- SCROLLABLE BLASTS - END -->
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tabMusicAlbums">
+                        <h1 class="text-center">All Music Albums</h1>
+                        <div style="margin-top: 60px">
+                            <div ng-include="'templates/partials/music.html'"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tabImageAlbums">
+                        <h1 class="text-center">All Image Albums</h1>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

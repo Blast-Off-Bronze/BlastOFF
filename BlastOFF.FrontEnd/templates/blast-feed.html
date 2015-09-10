@@ -3,14 +3,14 @@
         <div class="panel panel-white post panel-shadow" ng-repeat="blast in blasts">
             <div class="post-heading">
                 <div class="pull-left image">
-                    <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                    <img ng-src="{{ blast.author.profileImage }}" class="img-circle avatar" alt="user profile image">
                 </div>
                 <div class="pull-left meta">
                     <div class="title h5">
-                        <a href="#"><b>{{ blast.author }}</b></a>
+                        <a href="#"><b>{{ blast.author.username }}</b></a>
                         made a blast.
                     </div>
-                    <h6 class="text-muted time">1 minute ago</h6>
+                    <h6 class="text-muted time">{{ blast.postedOn | date: 'MMM dd, yyyy HH:mm' }}</h6>
                 </div>
             </div>
             <div class="post-description">
@@ -37,12 +37,12 @@
                 <ul class="comments-list" ng-controller="commentController">
                     <li class="comment" ng-repeat="comment in blast.comments">
                         <a class="pull-left" href="#">
-                            <img class="avatar" src="http://bootdey.com/img/Content/user_1.jpg" alt="avatar">
+                            <img class="avatar" ng-src="{{ comment.author.profileImage }}" alt="avatar">
                         </a>
                         <div class="comment-body">
                             <div class="comment-heading">
-                                <h4 class="user">{{ comment.author }}</h4>
-                                <h5 class="time">5 minutes ago</h5>
+                                <h4 class="user">{{ comment.author.username }}</h4>
+                                <h5 class="time">{{ comment.postedOn | date: 'MMM dd, yyyy HH:mm' }}</h5>
                             </div>
                             <p>{{ comment.content }}</p>
                             <a href="" ng-click="likeComment(comment)" class="btn btn-default stat-item" ng-if="!comment.isLiked">
@@ -51,7 +51,7 @@
                             <a href="" ng-click="unlikeComment(comment)" class="btn btn-default stat-item" ng-if="comment.isLiked">
                                 <i class="fa fa-thumbs-down icon"></i>{{ comment.likesCount }}
                             </a>
-                            <a href="" ng-click="deleteComment(comment, blast)" class="btn btn-danger stat-item" ng-if="comment.amiTheAuthor">
+                            <a href="" ng-click="deleteComment(comment, blast)" class="btn btn-danger stat-item" ng-if="comment.isMine">
                                 <i class="fa fa-trash-o icon"></i>
                             </a>
                         </div>

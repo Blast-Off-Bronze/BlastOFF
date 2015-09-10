@@ -12,9 +12,14 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
 
                 $scope.blasts = [];
 
+                $scope.imageAlbums = [];
+
                 $scope.noBlastsAvailable = false;
+                $scope.noImageAlbumsAvailable = false;
                 $scope.gettingBlasts = false;
-                $scope.currentPage = 0;
+                $scope.gettingImageAlbums = false;
+                $scope.currentPageImageAlbums = 0;
+                $scope.currentPageBlasts = 0;
 
                 userDataService.userProfile($routeParams.username)
                 .then(function (response){
@@ -27,7 +32,6 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
                 });
 
                 $scope.getBlasts = function(currentPage, pageSize) {
-
                         $scope.gettingBlasts = true;
 
                         userDataService.getBlasts($routeParams.username, currentPage, pageSize)
@@ -40,7 +44,7 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
                                     $scope.blasts.push(blast);
                                 });
 
-                                $scope.currentPage += pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
+                                $scope.currentPageBlasts += pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
                             }
 
                             $scope.gettingBlasts = false;
@@ -50,7 +54,31 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
                             $scope.noBlastsAvailable = false;
                             console.log(error);
                         });
+                };
 
+                $scope.getImageAlbums = function(currentPage, pageSize) {
+                    $scope.gettingImageAlbums = true;
+
+                    userDataService.getImageAlbums($routeParams.username, currentPage, pageSize)
+                    .then(function (response) {
+                        if(response.length < 1) {
+                            $scope.noImageAlbumsAvailable = true;
+                        } else {
+                            $scope.noImageAlbumsAvailable = false;
+                            response.forEach(function (imageAlbum) {
+                                $scope.imageAlbums.push(imageAlbum);
+                            });
+
+                            $scope.currentPageImageAlbums += pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
+                        }
+
+                        $scope.gettingImageAlbums = false;
+
+                        console.log(response);
+                    }, function (error) {
+                        $scope.noImageAlbumsAvailable = false;
+                        console.log(error);
+                    });
                 };
 
                 $scope.follow = function() {
@@ -71,6 +99,10 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
                     }, function (error) {
                         console.log(error);
                     });
+                };
+
+                $scope.setFilters = function (event) {
+                    event.preventDefault();
                 };
             });
     });

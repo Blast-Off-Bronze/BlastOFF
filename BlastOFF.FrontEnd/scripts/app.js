@@ -29,25 +29,18 @@ define(['angularAMD', 'angular-messages', 'angular-route', 'infiniteScroll'], fu
             }));
 
         $routeProvider
-            .when('/image', angularAMD.route({
-                templateUrl: 'templates/image.html',
-                controller: 'imageController',
-                controllerUrl: 'controllers/image-controller'
-            }));
-
-         $routeProvider
-            .when('/blast-feed', angularAMD.route({
-                templateUrl: 'templates/blast-feed.html',
-                controller: 'blastController',
-                controllerUrl: 'controllers/blast-controller'
-            }));
-
-        $routeProvider
             .when('/users/:username', angularAMD.route({
                 templateUrl: 'templates/user-profile.html',
                 controller: 'userProfileController',
                 controllerUrl: 'controllers/user-profile-controller'
             }));
+
+//        $routeProvider
+//            .when('/editProfile', angularAMD.route({
+//                templateUrl: 'templates/edit-profile.html',
+//                controller: 'editProfileController',
+//                controllerUrl: 'controllers/edit-profile-controller'
+//            }));
 
         //// Add music album
         //$routeProvider

@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using BlastOFF.Models.UserModel;
-
-namespace BlastOFF.Services.Models.CommentModels
+﻿namespace BlastOFF.Services.Models.CommentModels
 {
+    using System.Linq;
+    using BlastOFF.Models.UserModel;
+    using BlastOFF.Services.Models.UserModels;
+
     using System;
 
     using BlastOFF.Models;
@@ -33,12 +34,16 @@ namespace BlastOFF.Services.Models.CommentModels
                 Id = model.Id,
                 Content = model.Content,
                 PostedOn = model.PostedOn,
-                AuthorId = model.AuthorId,
-                Author = model.Author.UserName,
+                Author = UserPreviewViewModel.Create(model.Author, currentUser),
                 LikesCount = model.LikedBy.Count,
                 IsLiked = liked,
-                AmITheAuthor = owner
+                IsMine = owner
             };
+
+            if (result.Author.ProfileImage == null || result.Author.ProfileImage.Length <= 0)
+            {
+                result.Author.ProfileImage = "http://www.filecluster.com/howto/wp-content/uploads/2014/07/User-Default.jpg";
+            }
 
             return result;
         }
@@ -49,14 +54,12 @@ namespace BlastOFF.Services.Models.CommentModels
 
         public DateTime PostedOn { get; set; }
 
-        public string AuthorId { get; set; }
-
-        public string Author { get; set; }
+        public UserPreviewViewModel Author { get; set; }
 
         public int LikesCount { get; set; }
 
         public bool IsLiked { get; set; }
 
-        public bool AmITheAuthor { get; set; }
+        public bool IsMine { get; set; }
     }
 }

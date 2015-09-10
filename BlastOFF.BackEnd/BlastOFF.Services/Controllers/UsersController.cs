@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using BlastOFF.Services.Models.MusicModels;
+
+namespace BlastOFF.Services.Controllers
 {
     using System.Linq;
     using Microsoft.AspNet.Identity;
@@ -194,6 +196,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blasts = this.Data.Blasts.All()
+                .Where(b => b.AuthorId == searchedUser.Id)
                 .OrderByDescending(b => b.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
@@ -218,6 +221,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var imageAlbums = this.Data.ImageAlbums.All()
+                .Where(a => a.CreatedBy.Id == searchedUser.Id)
                 .OrderByDescending(a => a.DateCreated)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
@@ -225,6 +229,31 @@
                 .Select(b => ImageAlbumViewModel.Create(b, currentUser));
 
             return this.Ok(imageAlbums);
+        }
+
+        [HttpGet]
+        [Route("api/users/{username}/music/albums")]
+        public IHttpActionResult GetMusicAlbumsByUsername([FromUri] string username, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
+
+            if (searchedUser == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var musicAlbums = this.Data.MusicAlbums.All()
+                .Where(a => a.Author.Id == searchedUser.Id)
+                .OrderByDescending(a => a.DateCreated)
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(a => MusicAlbumViewModel.Create(a, currentUser));
+
+            return this.Ok(musicAlbums);
         }
 
         [HttpGet]
@@ -239,13 +268,6 @@
             }
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-            
-            //if (searchedUser.Id == currentUser.Id)
-            //{
-            //    var ownProfile = UserViewOwnModel.Create(currentUser);
-
-            //    return this.Ok(ownProfile);
-            //}
 
             var userProfile = UserProfileViewModel.Create(searchedUser, currentUser);
 
@@ -264,13 +286,41 @@
                 return this.NotFound();
             }
 
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
             // needs view model
 
             var followers = searchedUser.FollowedBy
                 .OrderByDescending(u => u.UserName)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
-                .ToList();
+                .ToList()
+                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+
+            return this.Ok(followers);
+        }
+
+        [HttpGet]
+        [Route("api/users/{username}/following")]
+        public IHttpActionResult GetFollowing([FromUri] string username, [FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var searchedUser = this.Data.Users.All().FirstOrDefault(u => u.UserName == username);
+
+            if (searchedUser == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+            // needs view model
+
+            var followers = searchedUser.FollowedUsers
+                .OrderByDescending(u => u.UserName)
+                .Skip(CurrentPage * PageSize)
+                .Take(PageSize)
+                .ToList()
+                .Select(u => UserPreviewViewModel.Create(u, currentUser));
 
             return this.Ok(followers);
         }

@@ -1,9 +1,3 @@
-<div style="margin-top: 60px">
-    <a href="" ng-show="isLogged" ng-click="showMusic = !showMusic">Music</a>
-
-    <div ng-include="'templates/partials/music.html'"></div>
-</div>
-
 <div class="navbar navbar-default navbar-fixed-top" role="navigation" ng-controller="headerController">
 
     <div class="navbar-header">
@@ -21,12 +15,12 @@
             <li><a href="#/registration" ng-show="!isLogged">Register</a></li>
             <li><a href="#/login" ng-show="!isLogged">Login</a></li>
             <li><a href="#/users/{{currentUserDetails.username}}" ng-show="isLogged">My Profile</a></li>
-            <li><a href="#/blast-feed" ng-show="isLogged">Blast section</a></li>
-            <li><a href="#/image" ng-show="isLogged">Image Section</a></li>
+            <li><a href="#/blast-feed" ng-show="isLogged">Add Image Album</a></li>
+            <li><a href="#/image" ng-show="isLogged">Add Music Album</a></li>
+            <li><a href="#/editProfile" ng-show="isLogged">Edit Profile</a></li>
             <li><a href="" class="btn" ng-click="logout()" ng-show="isLogged">Logout</a></li>
         </ul>
         <div class="col-sm-3 col-md-3 pull-right">
-            <div class="navbar-text">Text</div>
             <form class="navbar-form" role="search">
                 <div class="input-group">
                     <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">

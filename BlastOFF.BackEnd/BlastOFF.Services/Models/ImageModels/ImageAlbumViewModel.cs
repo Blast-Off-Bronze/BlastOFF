@@ -1,12 +1,14 @@
-﻿using BlastOFF.Models.UserModel;
-using BlastOFF.Services.Models.CommentModels;
-
-namespace BlastOFF.Services.Models.ImageModels
+﻿namespace BlastOFF.Services.Models.ImageModels
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using BlastOFF.Models.GalleryModels;
+
+    using BlastOFF.Models.UserModel;
+    using BlastOFF.Services.Constants;
+    using BlastOFF.Services.Models.CommentModels;
+    using BlastOFF.Services.Models.UserModels;
 
     public class ImageAlbumViewModel
     {
@@ -32,16 +34,22 @@ namespace BlastOFF.Services.Models.ImageModels
             {
                 Id = model.Id,
                 Title = model.Title,
-                CreatedBy = model.CreatedBy.UserName,
-                CreatedById = model.CreatedBy.Id,
+                CreatedBy = UserPreviewViewModel.Create(model.CreatedBy, currentUser),
                 DateCreated = model.DateCreated,
+                Likes = model.UserLikes.Take(MainConstants.PageSize)
+                .ToList().Select(u => UserPreviewViewModel.Create(u, currentUser)),
                 LikesCount = model.UserLikes.Count,
-                CommentsCount = model.Comments.Count,
+                Followers = model.Followers.Take(MainConstants.PageSize)
+                .ToList().Select(u => UserPreviewViewModel.Create(u, currentUser)),
                 FollowersCount = model.Followers.Count,
+                CommentsCount = model.Comments.Count,
                 ImagesCount = model.Images.Count,
-                Comments = model.Comments.ToList().Take(3).Select(c => CommentViewModel.Create(c, currentUser)),
+                Comments = model.Comments.Take(MainConstants.PageSize).ToList()
+                .Select(c => CommentViewModel.Create(c, currentUser)),
                 IsLiked = liked,
-                AmITheAuthor = owner
+                IsMine = owner,
+                Images = model.Images.Take(MainConstants.PageSize).ToList()
+                .Select(i => ImageViewModel.Create(i, currentUser))
             };
 
             return result;
@@ -51,25 +59,27 @@ namespace BlastOFF.Services.Models.ImageModels
 
         public string Title { get; set; }
 
-        public string CreatedById { get; set; }
-
-        public string CreatedBy { get; set; }
+        public UserPreviewViewModel CreatedBy { get; set; }
 
         public DateTime DateCreated { get; set; }
+
+        public IEnumerable<UserPreviewViewModel> Likes { get; set; }
+
+        public IEnumerable<UserPreviewViewModel> Followers { get; set; }
+
+        public bool IsLiked { get; set; }
+
+        public bool IsMine { get; set; }
 
         public int LikesCount { get; set; }
 
         public int CommentsCount { get; set; }
 
-        public int FollowersCount { get; set; }
-
         public int ImagesCount { get; set; }
 
-        public bool IsLiked { get; set; }
+        public int FollowersCount { get; set; }
 
-        public bool AmITheAuthor { get; set; }
-
-        public IEnumerable<string> Images { get; set; }
+        public IEnumerable<ImageViewModel> Images { get; set; }
 
         public IEnumerable<CommentViewModel> Comments { get; set; }
     }

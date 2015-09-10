@@ -1,59 +1,58 @@
 <div ng-include="'templates/partials/header.html'"></div>
 
-<div ng-if="isLogged" class="container">
-
-    <div class="row">
-        <div class="col-md-4 col-sm-6">
-            <div class="well">
-                <form role="form" class="form-horizontal">
-                    <h4>What's New</h4>
-
-                    <div style="padding:14px;" class="form-group">
-                        <textarea placeholder="Update your status" ng-model="blastToPost.content" class="form-control">{{ blastToPost.content }}</textarea>
-                    </div>
-
-                    <button type="button" class="btn btn-success pull-right" ng-click="makeABlast()">Post</button>
-                </form>
-            </div>
+<div class="container">
+    <div class="panel with-nav-tabs panel-default">
+        <div class="panel-heading">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tabBlasts" data-toggle="tab" ng-click="setFilters($event)">Blasts</a></li>
+                <li><a href="#tabMusicAlbums" data-toggle="tab" ng-click="setFilters($event)">Music Albums</a></li>
+                <li><a href="#tabImageAlbums" data-toggle="tab" ng-click="setFilters($event)">Image Albums</a></li>
+            </ul>
         </div>
+        <div class="panel-body">
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="tabBlasts">
+                    <h1 class="text-center">All Blasts</h1>
+                    <div ng-if="isLogged" class="container">
 
+                        <div class="row">
+                            <div class="col-md-11">
+                                <div class="well">
+                                    <form role="form" class="form-horizontal">
+                                        <h4>Share a blast</h4>
 
-    </div>
+                                        <div style="padding:14px;" class="form-group">
+                                            <textarea placeholder="Blast off" ng-model="blastToPost.content" class="form-control">{{ blastToPost.content }}</textarea>
+                                        </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <!-- Nav tabs --><div class="card">
-                <ul class="nav nav-tabs">
-                    <li role="presentation" class="active"><a href="#blasts" data-toggle="tab">Blasts</a></li>
-                    <li role="presentation"><a href="#musicAlbums" data-toggle="tab">Music Albums</a></li>
-                    <li role="presentation"><a href="#imageAlbums" data-toggle="tab">Image Albums</a></li>
-                </ul>
-
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="blasts">
-                        <div class="col-md-9">
-                            <div infinite-scroll="getPublicBlasts(lastBlastId)"
-                                 infinite-scroll-distance='1'
-                                 infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
-
-                                <div ng-include="'templates/blast-feed.html'"></div>
-
+                                        <button type="button" class="btn btn-success pull-right" ng-click="makeABlast()">Post</button>
+                                    </form>
+                                </div>
                             </div>
-                            <!-- SCROLLABLE BLASTS - END -->
+
                         </div>
                     </div>
-                    <div role="tabpanel" class="tab-pane" id="musicAlbums">
+                    <div class="col-md-9">
+                        <div infinite-scroll="getPublicBlasts(lastBlastId)"
+                             infinite-scroll-distance='1'
+                             infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
 
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="imageAlbums">
+                            <div ng-include="'templates/blast-feed.html'"></div>
 
+                        </div>
+                        <!-- SCROLLABLE BLASTS - END -->
                     </div>
                 </div>
-            </div>
+                <div class="tab-pane fade" id="tabMusicAlbums">
+                    <h1 class="text-center">All Music Albums</h1>
+                    <div style="margin-top: 60px">
+                        <div ng-include="'templates/partials/music.html'"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tabImageAlbums">
+                    <h1 class="text-center">All Image Albums</h1>
+                </div>
             </div>
         </div>
     </div>
-
 </div>

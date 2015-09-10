@@ -46,5 +46,9 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                         console.log(error);
                     });
                 };
+
+                $scope.setFilters = function (event) {
+                    event.preventDefault();
+                };
             });
     });
