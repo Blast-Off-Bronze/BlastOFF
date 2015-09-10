@@ -22,8 +22,8 @@
                     <a href="" ng-click="unlikeBlast(blast)" class="btn btn-default stat-item" ng-if="blast.isLiked">
                         <i class="fa fa-thumbs-down icon"></i>{{ blast.likesCount }}
                     </a>
-                    <a href="#" class="btn btn-default stat-item">
-                        <i class="fa fa-share icon"></i>12
+                    <a href="" ng-click="deleteBlast(blast, blasts)" class="btn btn-danger stat-item" ng-if="blast.isMine">
+                        <i class="fa fa-trash-o icon"></i>
                     </a>
                 </div>
             </div>

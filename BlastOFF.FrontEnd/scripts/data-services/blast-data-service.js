@@ -22,6 +22,12 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.post(headers, serviceUrl + blast.id + '/like', null);
         }
 
+        function deleteBlast(blast) {
+            var headers = new requestHeaders().get();
+
+            return requester.remove(headers, serviceUrl + blast.id, null);
+        }
+
         function unlikeBlast(blast) {
 
             var headers = new requestHeaders().get();
@@ -40,6 +46,8 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             likeBlast: likeBlast,
             unlikeBlast: unlikeBlast,
+
+            deleteBlast: deleteBlast,
 
             commentBlast: commentBlast
         }

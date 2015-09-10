@@ -87,6 +87,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blasts = this.Data.Blasts.All()
+                .Where(b => b.IsPublic == true)
                 .OrderByDescending(b => b.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
@@ -113,6 +114,27 @@
             var blastToReturn = BlastViewModel.Create(blast, currentUser);
 
             return this.Ok(blastToReturn);
+        }
+
+        [HttpDelete]
+        [Route("api/blasts/{id}")]
+        [AllowAnonymous]
+        public IHttpActionResult DeleteById([FromUri] int id)
+        {
+            var blast = this.Data.Blasts.Find(id);
+
+            if (blast == null)
+            {
+                return this.NotFound();
+            }
+
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            this.Data.Blasts.Delete(blast);
+
+            this.Data.SaveChanges();
+
+            return this.Ok();
         }
 
         [HttpGet]

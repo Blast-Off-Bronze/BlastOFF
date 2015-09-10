@@ -26,7 +26,7 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
                     console.log(response);
                     $scope.currentUserProfile = response;
 
-                    $scope.getBlasts();
+                    $scope.getBlasts($scope.currentPageBlasts);
                 }, function (error){
                     console.log(error);
                 });
@@ -44,7 +44,7 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
                                     $scope.blasts.push(blast);
                                 });
 
-                                $scope.currentPageBlasts += pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
+                                $scope.currentPageBlasts += 1;
                             }
 
                             $scope.gettingBlasts = false;
@@ -69,7 +69,7 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
                                 $scope.imageAlbums.push(imageAlbum);
                             });
 
-                            $scope.currentPageImageAlbums += pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
+                            $scope.currentPageImageAlbums += 1;
                         }
 
                         $scope.gettingImageAlbums = false;

@@ -12,9 +12,14 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 $scope.isLogged = storageService.isLogged();
 
                 $scope.noBlastsAvailable = false;
+                $scope.noImageAlbumsAvailable = false;
                 $scope.gettingBlasts = false;
-                $scope.previousBlastsExist = false;
+                $scope.gettingImageAlbums = false;
+                $scope.currentPageImageAlbums = 0;
+                $scope.currentPageBlasts = 0;
+
                 $scope.blasts = [];
+                $scope.imageAlbums = [];
 
                 $scope.blastToPost = {};
 
@@ -23,11 +28,21 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                 function getPublicBlasts(currentPage, pageSize) {
                     blastDataService.getPublicBlasts(currentPage, pageSize)
                     .then(function (response) {
-                        response.forEach(function (blast) {
-                            $scope.blasts.push(blast);
-                        });
+                        if(response.length < 1) {
+                            $scope.noBlastsAvailable = true;
+                        } else {
+                            $scope.noBlastsAvailable = false;
+                            response.forEach(function (blast) {
+                                $scope.blasts.push(blast);
+                            });
+
+                            $scope.currentPageBlasts += 1;
+                        }
+
+                        $scope.gettingBlasts = false;
                         console.log(response);
                     }, function (error) {
+                        $scope.noBlastsAvailable = false;
                         console.log(error);
                         notificationService.alertError(error);
                     });
