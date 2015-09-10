@@ -158,6 +158,11 @@ namespace BlastOFF.Data
                     m.ToTable("SongsUserLikes");
                 });
 
+            modelBuilder.Entity<Song>()
+                .HasMany(a => a.Comments)
+                .WithOptional(c => c.Song)
+                .WillCascadeOnDelete(true);
+
             //Gallery mapping
 
             modelBuilder.Entity<ImageAlbum>()

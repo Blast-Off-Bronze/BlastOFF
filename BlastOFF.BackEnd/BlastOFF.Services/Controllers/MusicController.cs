@@ -12,9 +12,9 @@
     using BlastOFF.Services.Constants;
     using BlastOFF.Services.Models.CommentModels;
     using BlastOFF.Services.Models.MusicModels;
+    using BlastOFF.Services.Models.UserModels;
     using BlastOFF.Services.Services;
     using BlastOFF.Services.UserSessionUtils;
-    using BlastOFF.Services.Models.UserModels;
 
     using Google.Apis.Drive.v2;
     using Google.Apis.Drive.v2.Data;
@@ -46,17 +46,17 @@
         [Route("api/music/albums")]
         [AllowAnonymous]
         public IHttpActionResult AllMusicAlbums()
-            //[FromUri] int CurrentPage = MainConstants.DefaultPage,[FromUri] int PageSize = MainConstants.PageSize
         {
+            // [FromUri] int CurrentPage = MainConstants.DefaultPage,[FromUri] int PageSize = MainConstants.PageSize
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var albums = this.Data.MusicAlbums.All()
-                    .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
-                    .OrderByDescending(a => a.DateCreated)
-                    //.Skip(CurrentPage * PageSize)
-                    //.Take(PageSize)
-                    .ToList()
-                    .Select(a => MusicAlbumViewModel.Create(a, currentUser));
+                .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
+                .OrderByDescending(a => a.DateCreated)
+
+                // .Skip(CurrentPage * PageSize)
+                // .Take(PageSize)
+                .ToList().Select(a => MusicAlbumViewModel.Create(a, currentUser));
 
             return this.Ok(albums);
         }
@@ -76,10 +76,10 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var songs = album.Songs
-                .OrderByDescending(s => s.DateAdded)
-                .ToList()
-                .Select(s => SongViewModel.Create(s, currentUser));
+            var songs =
+                album.Songs.OrderByDescending(s => s.DateAdded)
+                    .ToList()
+                    .Select(s => SongViewModel.Create(s, currentUser));
 
             return this.Ok(songs);
         }
@@ -99,10 +99,10 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var comments = album.Comments
-                .OrderByDescending(c => c.PostedOn)
-                .ToList()
-                .Select(a => CommentViewModel.Create(a, currentUser));
+            var comments =
+                album.Comments.OrderByDescending(c => c.PostedOn)
+                    .ToList()
+                    .Select(a => CommentViewModel.Create(a, currentUser));
 
             return this.Ok(comments);
         }
@@ -122,10 +122,10 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var comments = song.Comments
-                .OrderByDescending(c => c.PostedOn)
-                .ToList()
-                .Select(a => CommentViewModel.Create(a, currentUser));
+            var comments =
+                song.Comments.OrderByDescending(c => c.PostedOn)
+                    .ToList()
+                    .Select(a => CommentViewModel.Create(a, currentUser));
 
             return this.Ok(comments);
         }
@@ -166,10 +166,10 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var userLikes = album.UserLikes
-                            .OrderByDescending(u => u.UserName)
-                            .ToList()
-                            .Select(u => UserPreviewViewModel.Create(u, currentUser));
+            var userLikes =
+                album.UserLikes.OrderByDescending(u => u.UserName)
+                    .ToList()
+                    .Select(u => UserPreviewViewModel.Create(u, currentUser));
 
             return this.Ok(userLikes);
         }
@@ -188,10 +188,10 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var followers = album.Followers
-                            .OrderByDescending(u => u.UserName)
-                            .ToList()
-                            .Select(u => UserPreviewViewModel.Create(u, currentUser));
+            var followers =
+                album.Followers.OrderByDescending(u => u.UserName)
+                    .ToList()
+                    .Select(u => UserPreviewViewModel.Create(u, currentUser));
 
             return this.Ok(followers);
         }
@@ -230,10 +230,10 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var userLikes = song.UserLikes
-                .OrderByDescending(u => u.UserName)
-                .ToList()
-                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+            var userLikes =
+                song.UserLikes.OrderByDescending(u => u.UserName)
+                    .ToList()
+                    .Select(u => UserPreviewViewModel.Create(u, currentUser));
 
             return this.Ok(userLikes);
         }
@@ -264,10 +264,10 @@
 
             var newMusicAlbum = new MusicAlbum
                                     {
-                                        Title = musicAlbum.Title,
-                                        AuthorId = user.Id,
-                                        IsPublic = musicAlbum.IsPublic,
-                                        DateCreated = DateTime.Now,
+                                        Title = musicAlbum.Title, 
+                                        AuthorId = user.Id, 
+                                        IsPublic = musicAlbum.IsPublic, 
+                                        DateCreated = DateTime.Now, 
                                         CoverImageData = musicAlbum.CoverImageData
                                     };
 
@@ -337,20 +337,20 @@
 
             var newSong = new Song
                               {
-                                  Title = song.Title,
-                                  Artist = song.Artist,
-                                  FilePath = song.FileDataUrl,
-                                  MusicAlbumId = album.Id,
-                                  UploaderId = album.AuthorId,
-                                  DateAdded = DateTime.Now,
-                                  TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber),
-                                  OriginalAlbumTitle = song.OriginalAlbumTitle,
-                                  OriginalAlbumArtist = song.OriginalAlbumArtist,
+                                  Title = song.Title, 
+                                  Artist = song.Artist, 
+                                  FilePath = song.FileDataUrl, 
+                                  MusicAlbumId = album.Id, 
+                                  UploaderId = album.AuthorId, 
+                                  DateAdded = DateTime.Now, 
+                                  TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber), 
+                                  OriginalAlbumTitle = song.OriginalAlbumTitle, 
+                                  OriginalAlbumArtist = song.OriginalAlbumArtist, 
                                   OriginalDate =
-                                      song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate),
-                                  Genre = song.Genre,
-                                  Composer = song.Composer,
-                                  Publisher = song.Publisher,
+                                      song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate), 
+                                  Genre = song.Genre, 
+                                  Composer = song.Composer, 
+                                  Publisher = song.Publisher, 
                                   Bpm = song.Bpm == null ? (int?)null : int.Parse(song.Bpm)
                               };
 
@@ -393,9 +393,9 @@
 
             var newMusicAlbumComment = new Comment
                                            {
-                                               Content = comment.Content,
-                                               AuthorId = user.Id,
-                                               PostedOn = DateTime.Now,
+                                               Content = comment.Content, 
+                                               AuthorId = user.Id, 
+                                               PostedOn = DateTime.Now, 
                                                MusicAlbumId = id
                                            };
 
@@ -433,9 +433,9 @@
 
             var newSongComment = new Comment
                                      {
-                                         Content = comment.Content,
-                                         AuthorId = user.Id,
-                                         PostedOn = DateTime.Now,
+                                         Content = comment.Content, 
+                                         AuthorId = user.Id, 
+                                         PostedOn = DateTime.Now, 
                                          SongId = id
                                      };
 
@@ -555,6 +555,8 @@
             {
                 return this.Unauthorized();
             }
+            
+            existingMusicAlbum.Comments.Clear();
 
             this.Data.MusicAlbums.Delete(existingMusicAlbum);
             this.Data.SaveChanges();
@@ -622,8 +624,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully liked.",
-                        album.Title,
+                        "Music Album {0}, created by {1}, successfully liked.", 
+                        album.Title, 
                         album.Author.UserName));
         }
 
@@ -660,8 +662,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully unliked.",
-                        album.Title,
+                        "Music Album {0}, created by {1}, successfully unliked.", 
+                        album.Title, 
                         album.Author.UserName));
         }
 
@@ -769,8 +771,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully followed.",
-                        album.Title,
+                        "Music Album {0}, created by {1}, successfully followed.", 
+                        album.Title, 
                         album.Author.UserName));
         }
 
@@ -807,8 +809,8 @@
             return
                 this.Ok(
                     string.Format(
-                        "Music Album {0}, created by {1}, successfully unfollowed.",
-                        album.Title,
+                        "Music Album {0}, created by {1}, successfully unfollowed.", 
+                        album.Title, 
                         album.Author.UserName));
         }
 
@@ -843,9 +845,18 @@
 
             File body = new File
                             {
-                                Title = fileName,
-                                MimeType = AudioMimeType,
-                                Parents = new List<ParentReference> { new ParentReference { Id = MusicConstants.GoogleDriveBlastOFFMusicFolderId } }
+                                Title = fileName, 
+                                MimeType = AudioMimeType, 
+                                Parents =
+                                    new List<ParentReference>
+                                        {
+                                            new ParentReference
+                                                {
+                                                    Id =
+                                                        MusicConstants
+                                                        .GoogleDriveBlastOFFMusicFolderId
+                                                }
+                                        }
                             };
 
             try

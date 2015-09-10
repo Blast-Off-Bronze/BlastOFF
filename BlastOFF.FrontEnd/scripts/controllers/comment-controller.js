@@ -29,6 +29,7 @@ define(['app', 'comment-data-service', 'storage-service', 'notification-service'
                     commentDataService.deleteComment(comment)
                     .then(function (response) {
                         commentedObject.comments.splice(commentedObject.comments.indexOf(comment), 1);
+                            commentedObject.commentsCount--;
                         console.log(response);
                     }, function (error) {
                         console.log(error);

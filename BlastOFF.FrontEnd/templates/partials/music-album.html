@@ -112,13 +112,22 @@
                         <div class="comment-heading">
                             <h4 class="user">{{comment.author}}
 
-                                <a ng-if="comment.AmITheAuthor" class="btn btn-default stat-item" ng-click="modifyComment(comment, musicAlbum)">Edit</a>
-                                <a ng-if="comment.AmITheAuthor" class="btn btn-default stat-item" ng-click="deleteComment(comment, musicAlbum)">Delete</a>
+                                <a ng-if="comment.amiTheAuthor" class="btn btn-default stat-item" ng-click="">Edit</a>
+                                <a ng-if="comment.amiTheAuthor" class="btn btn-default stat-item" ng-click="deleteComment(comment, musicAlbum)">Delete</a>
 
                             </h4>
                             <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
                         </div>
+
+
                         <p>{{comment.content}}</p>
+                        <!-- Edit comment -->
+                        <!--<div class="input-group"  ng-if="comment.displayEditComment = true">-->
+                            <!--<input class="form-control" type="text" ng-model="comment.content">-->
+                            <!--<span class="input-group-addon">-->
+                                <!--<a ng-click="saveComment(musicAlbum)">Send</a>-->
+                            <!--</span>-->
+                        <!--</div>-->
                     </div>
                 </li>
             </ul>

@@ -73,6 +73,10 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
                 musicDataService.getAllMusicAlbums().then(
                     function (response) {
+
+                        console.log(response)
+
+
                         $scope.allMusicAlbums = response;
                         $scope.requesterIsBusy = false;
                     },
