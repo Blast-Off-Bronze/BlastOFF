@@ -14,8 +14,7 @@
         {
             return new UserViewOwnModel
                        {
-                           Username = model.UserName, 
-                           PhoneNumber = model.PhoneNumber, 
+                           Username = model.UserName,  
                            Email = model.Email, 
                            FollowedUsers = model.FollowedUsers.Select(u => u.UserName), 
                            FollowedBy = model.FollowedBy.Select(u => u.UserName), 
