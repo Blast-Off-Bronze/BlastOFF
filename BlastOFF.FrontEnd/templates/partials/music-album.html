@@ -1,11 +1,12 @@
-<div class="post-image">
+<!-- DISPLAY MUSIC ALBUM -->
+<div class="post-image" ng-if="!displayEditMusicAlbum">
     <span>
         <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
     </span>
 
     <h4 style="display: inline-block">{{musicAlbum.title}}
 
-        <a href="#" class="btn btn-default stat-item">Edit </a>
+        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="toggledEditMusicAlbum()">Edit </a>
         <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="deleteMusicAlbum(musicAlbum)">Delete</a>
 
     </h4>
@@ -14,6 +15,26 @@
 
     <p style="display: inline-block">{{musicAlbum.author}} created this music album on {{musicAlbum.dateCreated | date: 'MMM dd, yyyy'}}</p>
 </div>
+
+<!-- EDIT MUSIC ALBUM -->
+<div class="post-image" ng-if="displayEditMusicAlbum">
+    <span>
+        <img ng-src="{{musicAlbum.coverImageData || defaultMusicAlbumCoverImage}}" class="image">
+        <input type="file" cover-image-upload="onFileSelect($files)" ng-model="musicAlbum.coverImageData"/>
+    </span>
+
+    <h4 style="display: inline-block"><input type="text" ng-model="musicAlbum.title"/>
+
+        <a class="btn btn-default stat-item" ng-click="saveMusicAlbumChanges(musicAlbum)">Save</a>
+        <a class="btn btn-default stat-item" ng-click="toggledEditMusicAlbum()">Cancel</a>
+
+    </h4>
+
+    <br/>
+
+    <p style="display: inline-block">{{musicAlbum.author}} created this music album on {{musicAlbum.dateCreated | date: 'MMM dd, yyyy'}}</p>
+</div>
+<!-- EDIT MUSIC ALBUM - End -->
 
 <div class="post-description">
 
@@ -41,32 +62,41 @@
 
 <!-- MUSIC ALBUM COMMENTS -->
 <div ng-if="showMusicAlbumComments">
-    <div class="post-footer">
-        <!-- Add comment -->
-        <div class="input-group">
-            <input class="form-control" placeholder="Add a comment" type="text" ng-model="musicAlbumComment.content">
+
+    <div ng-controller="commentController">
+
+        <div class="post-footer">
+            <!-- Add comment -->
+            <div class="input-group">
+                <input class="form-control" placeholder="Add a comment" type="text" ng-model="musicAlbumComment.content">
                         <span class="input-group-addon">
                             <a ng-click="addMusicAlbumComment(musicAlbum)"><i class="fa fa-edit"></i></a>
                         </span>
-        </div>
+            </div>
 
-        <!-- Existing comments -->
-        <ul class="comments-list">
+            <!-- Existing comments -->
+            <ul class="comments-list">
 
-            <li class="comment" ng-repeat="comment in musicAlbum.comments">
-                <a class="pull-left" href="#">
-                    <img class="avatar" src="http://bootdey.com/img/Content/user_3.jpg" alt="avatar">
-                </a>
+                <li class="comment" ng-repeat="comment in musicAlbum.comments">
+                    <a class="pull-left" href="#">
+                        <img class="avatar" src="http://bootdey.com/img/Content/user_3.jpg" alt="avatar">
+                    </a>
 
-                <div class="comment-body">
-                    <div class="comment-heading">
-                        <h4 class="user">{{comment.author}}</h4>
-                        <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
+                    <div class="comment-body">
+                        <div class="comment-heading">
+                            <h4 class="user">{{comment.author}}
+
+                                <a ng-if="comment.AmITheAuthor" class="btn btn-default stat-item" ng-click="modifyComment(comment, musicAlbum)">Edit</a>
+                                <a ng-if="comment.AmITheAuthor" class="btn btn-default stat-item" ng-click="deleteComment(comment, musicAlbum)">Delete</a>
+
+                            </h4>
+                            <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
+                        </div>
+                        <p>{{comment.content}}</p>
                     </div>
-                    <p>{{comment.content}}</p>
-                </div>
-            </li>
-        </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 <!-- MUSIC ALBUM COMMENTS - End -->
@@ -81,7 +111,7 @@
             <div class="comment-heading">
                 <h5 class="user"><b>{{song.title}} - {{song.artist}}</b>
 
-                    <a href="#" class="btn btn-default stat-item">Edit</a>
+                    <a ng-if="song.isOwn" class="btn btn-default stat-item">Edit</a>
                     <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="deleteSong(musicAlbum, song)">Delete</a>
 
                 </h5>
@@ -109,32 +139,41 @@
 
         <!-- SONG COMMENTS -->
         <div ng-if="showSongComments">
-            <div class="post-footer">
-                <!-- Add comment -->
-                <div class="input-group">
-                    <input class="form-control" placeholder="Add a comment" type="text" ng-model="songComment.content">
+
+            <div ng-controller="commentController">
+
+                <div class="post-footer">
+                    <!-- Add comment -->
+                    <div class="input-group">
+                        <input class="form-control" placeholder="Add a comment" type="text" ng-model="songComment.content">
                         <span class="input-group-addon">
                             <a ng-click="addSongComment(song)"><i class="fa fa-edit"></i></a>
                         </span>
-                </div>
+                    </div>
 
-                <!-- Existing comments -->
-                <ul class="comments-list">
+                    <!-- Existing comments -->
+                    <ul class="comments-list">
 
-                    <li class="comment" ng-repeat="comment in song.comments">
-                        <a class="pull-left" href="#">
-                            <img class="avatar" src="http://bootdey.com/img/Content/user_3.jpg" alt="avatar">
-                        </a>
+                        <li class="comment" ng-repeat="comment in song.comments">
+                            <a class="pull-left" href="#">
+                                <img class="avatar" src="http://bootdey.com/img/Content/user_3.jpg" alt="avatar">
+                            </a>
 
-                        <div class="comment-body">
-                            <div class="comment-heading">
-                                <h4 class="user">{{comment.author}}</h4>
-                                <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
+                            <div class="comment-body">
+                                <div class="comment-heading">
+                                    <h4 class="user">{{comment.author}}
+
+                                        <a ng-if="comment.AmITheAuthor" class="btn btn-default stat-item" ng-click="modifyComment(comment, song)">Edit</a>
+                                        <a ng-if="comment.AmITheAuthor" class="btn btn-default stat-item" ng-click="deleteComment(comment, song)">Delete</a>
+
+                                    </h4>
+                                    <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
+                                </div>
+                                <p>{{comment.content}}</p>
                             </div>
-                            <p>{{comment.content}}</p>
-                        </div>
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <!-- SONG COMMENTS - End -->

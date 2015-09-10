@@ -148,6 +148,11 @@ namespace BlastOFF.Data
                 .WithOptional(s => s.MusicAlbum)
                 .WillCascadeOnDelete(true);
 
+            modelBuilder.Entity<MusicAlbum>()
+                .HasMany(a => a.Comments)
+                .WithOptional(c => c.MusicAlbum)
+                .WillCascadeOnDelete(true);
+
             modelBuilder.Entity<Song>()
                 .HasMany(s => s.UserLikes)
                 .WithMany(u => u.LikedSongs)
@@ -157,6 +162,11 @@ namespace BlastOFF.Data
                     m.MapRightKey("Song_Id");
                     m.ToTable("SongsUserLikes");
                 });
+
+            //modelBuilder.Entity<Song>()
+            //    .HasMany(a => a.Comments)
+            //    .WithOptional(c => c.Song)
+            //    .WillCascadeOnDelete(true);
 
 
             //Gallery mapping

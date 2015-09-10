@@ -47,6 +47,8 @@
 
         public bool AllSongsDisplayed { get; set; }
 
+        public bool AllCommentsDisplayed { get; set; }
+
         public static MusicAlbumViewModel Create(MusicAlbum a, ApplicationUser user)
         {
             return new MusicAlbumViewModel
@@ -69,7 +71,8 @@
                            IsFollowed = a.Author != user && a.Followers.Contains(user),
                            IsLiked = a.Author != user && a.UserLikes.Contains(user),
 
-                           AllSongsDisplayed = false
+                           AllSongsDisplayed = false,
+                           AllCommentsDisplayed = false
                        };
         }
     }

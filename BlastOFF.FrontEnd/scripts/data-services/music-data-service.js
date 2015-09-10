@@ -20,6 +20,15 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.get(headers, url);
         }
 
+        // EDIT
+        function updateMusicAlbum(albumId, musicAlbum) {
+
+            var headers = new requestHeaders().get();
+            var url = serviceUrl + '/' + albumId;
+
+            return requester.put(headers, url, musicAlbum);
+        }
+
         // DELETE
         function deleteMusicAlbum(albumId) {
 
@@ -137,6 +146,9 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
         return {
             getAllMusicAlbums: getAllMusicAlbums,
             getAllSongs: getAllSongs,
+
+            // Edit
+            updateMusicAlbum: updateMusicAlbum,
 
             // Delete
             deleteMusicAlbum: deleteMusicAlbum,

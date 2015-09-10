@@ -65,8 +65,7 @@
         [HttpGet]
         [Route("api/music/albums/{id}/songs")]
         [AllowAnonymous]
-        public IHttpActionResult AllSongs([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
-            [FromUri] int PageSize = MainConstants.PageSize)
+        public IHttpActionResult AllSongs([FromUri] int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -79,8 +78,6 @@
 
             var songs = album.Songs
                 .OrderBy(s => s.DateAdded)
-                .Skip(CurrentPage * PageSize)
-                .Take(PageSize)
                 .ToList()
                 .Select(s => SongViewModel.Create(s, currentUser));
 
@@ -91,8 +88,7 @@
         [HttpGet]
         [Route("api/music/albums/{id}/comments")]
         [AllowAnonymous]
-        public IHttpActionResult AllMusicAlbumComments([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
-            [FromUri] int PageSize = MainConstants.PageSize)
+        public IHttpActionResult AllMusicAlbumComments([FromUri] int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -105,8 +101,6 @@
 
             var comments = album.Comments
                 .OrderByDescending(c => c.PostedOn)
-                .Skip(CurrentPage * PageSize)
-                .Take(PageSize)
                 .ToList()
                 .Select(a => CommentViewModel.Create(a, currentUser));
 
@@ -117,8 +111,7 @@
         [HttpGet]
         [Route("api/songs/{id}/comments")]
         [AllowAnonymous]
-        public IHttpActionResult AllSongComments([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
-            [FromUri] int PageSize = MainConstants.PageSize)
+        public IHttpActionResult AllSongComments([FromUri] int id)
         {
             var song = this.Data.Songs.Find(id);
 
@@ -131,8 +124,6 @@
 
             var comments = song.Comments
                 .OrderByDescending(c => c.PostedOn)
-                .Skip(CurrentPage * PageSize)
-                .Take(PageSize)
                 .ToList()
                 .Select(a => CommentViewModel.Create(a, currentUser));
 
@@ -164,8 +155,7 @@
         [HttpGet]
         [Route("api/music/albums/{id}/likes")]
         [AllowAnonymous]
-        public IHttpActionResult MusicAlbumLikes([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
-            [FromUri] int PageSize = MainConstants.PageSize)
+        public IHttpActionResult MusicAlbumLikes([FromUri] int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -178,8 +168,6 @@
 
             var userLikes = album.UserLikes
                             .OrderByDescending(u => u.UserName)
-                            .Skip(CurrentPage * PageSize)
-                            .Take(PageSize)
                             .ToList()
                             .Select(u => UserPreviewViewModel.Create(u, currentUser));
 
@@ -189,8 +177,7 @@
         [HttpGet]
         [Route("api/music/albums/{id}/followers")]
         [AllowAnonymous]
-        public IHttpActionResult MusicAlbumFollowers([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
-            [FromUri] int PageSize = MainConstants.PageSize)
+        public IHttpActionResult MusicAlbumFollowers([FromUri] int id)
         {
             var album = this.Data.MusicAlbums.Find(id);
 
@@ -203,8 +190,6 @@
 
             var followers = album.Followers
                             .OrderByDescending(u => u.UserName)
-                            .Skip(CurrentPage * PageSize)
-                            .Take(PageSize)
                             .ToList()
                             .Select(u => UserPreviewViewModel.Create(u, currentUser));
 
@@ -234,8 +219,7 @@
         [HttpGet]
         [Route("api/songs/{id}/likes")]
         [AllowAnonymous]
-        public IHttpActionResult SongLikes([FromUri] int id, [FromUri] int CurrentPage = MainConstants.DefaultPage,
-            [FromUri] int PageSize = MainConstants.PageSize)
+        public IHttpActionResult SongLikes([FromUri] int id)
         {
             var song = this.Data.Songs.Find(id);
 
@@ -248,8 +232,6 @@
 
             var userLikes = song.UserLikes
                 .OrderByDescending(u => u.UserName)
-                .Skip(CurrentPage * PageSize)
-                .Take(PageSize)
                 .ToList()
                 .Select(u => UserPreviewViewModel.Create(u, currentUser));
 

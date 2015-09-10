@@ -33,6 +33,7 @@
         // Comments
         public IEnumerable<CommentViewModel> Comments { get; set; }
 
+        public bool AllCommentsDisplayed { get; set; }
 
         //// OPTIONAL
         public int? TrackNumber { get; set; }
@@ -65,6 +66,7 @@
                            CommentsCount = s.Comments.Count,
 
                            Comments = s.Comments.OrderBy(c => c.PostedOn).ToList().Select(c => CommentViewModel.Create(c, user)).Take(3),
+                           AllCommentsDisplayed = false,
 
                            //Optional
                            TrackNumber = s.TrackNumber, 
