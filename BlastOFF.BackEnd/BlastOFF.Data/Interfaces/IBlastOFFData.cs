@@ -1,6 +1,4 @@
-﻿using BlastOFF.Models.UserModels;
-
-namespace BlastOFF.Data.Interfaces
+﻿namespace BlastOFF.Data.Interfaces
 {
     using Models.ChatModels;
 
@@ -9,6 +7,8 @@ namespace BlastOFF.Data.Interfaces
     using Models.GalleryModels;
     using Models.MusicModels;
     using Models.UserModel;
+
+    using BlastOFF.Models.UserModels;
 
     public interface IBlastOFFData
     {
@@ -37,6 +37,8 @@ namespace BlastOFF.Data.Interfaces
         IRepository<Message> Messages { get; }
 
         IRepository<UserSession> UserSessions { get; }
+
+        IRepository<Notification> Notifications { get; }
 
         //// END - Repositories
 

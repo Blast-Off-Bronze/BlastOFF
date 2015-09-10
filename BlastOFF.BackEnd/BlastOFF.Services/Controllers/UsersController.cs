@@ -232,6 +232,23 @@ namespace BlastOFF.Services.Controllers
         }
 
         [HttpGet]
+        [Route("api/users/me/notifications")]
+        public IHttpActionResult GetNotifications([FromUri] int CurrentPage = MainConstants.DefaultPage,
+            [FromUri] int PageSize = MainConstants.PageSize)
+        {
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            var notifications = currentUser.Notifications
+                .OrderByDescending(n => n.IsSeen)
+                .ThenByDescending(n => n.DateCreated)
+                .Skip(CurrentPage*PageSize)
+                .Take(PageSize)
+                .ToList();
+                
+            return this.Ok(notifications);
+        }
+
+        [HttpGet]
         [Route("api/users/{username}/music/albums")]
         public IHttpActionResult GetMusicAlbumsByUsername([FromUri] string username, [FromUri] int CurrentPage = MainConstants.DefaultPage,
             [FromUri] int PageSize = MainConstants.PageSize)

@@ -1,7 +1,4 @@
-﻿using BlastOFF.Models.ChatModels;
-using BlastOFF.Models.UserModels;
-
-namespace BlastOFF.Data
+﻿namespace BlastOFF.Data
 {
     using System;
 
@@ -12,6 +9,9 @@ namespace BlastOFF.Data
     using Models.UserModel;
 
     using Interfaces;
+
+    using BlastOFF.Models.ChatModels;
+    using BlastOFF.Models.UserModels;
 
     public class BlastOFFData : IBlastOFFData, IDisposable
     {
@@ -25,6 +25,7 @@ namespace BlastOFF.Data
         private IRepository<MusicAlbum> musicAlbums;
         private IRepository<Song> songs;
         private IRepository<UserSession> userSessions;
+        private IRepository<Notification> notifications;
 
         private IBlastOFFContext context;
         private bool disposed = false;
@@ -52,6 +53,19 @@ namespace BlastOFF.Data
                 }
 
                 return this.users;
+            }
+        }
+
+        public IRepository<Notification> Notifications
+        {
+            get
+            {
+                if (this.notifications == null)
+                {
+                    this.notifications = new Repository<Notification>(this.context);
+                }
+
+                return this.notifications;
             }
         }
 

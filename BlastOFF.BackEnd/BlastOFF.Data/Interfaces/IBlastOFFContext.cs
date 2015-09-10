@@ -8,11 +8,6 @@
 
     public interface IBlastOFFContext : IDisposable
     {
-        //// Gallery Db sets
-        IDbSet<ImageAlbum> ImageAlbums { get; set; }
-
-        IDbSet<Image> Images { get; set; }
-
         //// Service methods
         void SaveChanges();
 

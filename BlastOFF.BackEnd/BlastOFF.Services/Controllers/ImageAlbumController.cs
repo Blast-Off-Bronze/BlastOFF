@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using BlastOFF.Models.Enumerations;
+
+namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Linq;
@@ -111,7 +113,23 @@
 
             this.Data.ImageAlbums.Add(imageAlbum); 
             this.Data.SaveChanges();
-                        
+
+            foreach (var userId in user.FollowedBy.Select(u => u.Id))
+            {
+                var notification = new Notification()
+                {
+                    ImageAlbumId = imageAlbum.Id,
+                    RecipientId = userId,
+                    NotificationType = NotificationType.CreatedImageAlbum,
+                    DateCreated = DateTime.Now,
+                    Message = user.UserName + " created image album " + imageAlbum.Title + "."
+                };
+
+                this.Data.Notifications.Add(notification);
+            }
+
+            this.Data.SaveChanges();
+
             var returnItem = ImageAlbumViewModel.Create(imageAlbum, user);
 
             return this.Ok(returnItem);
@@ -223,6 +241,40 @@
             };
 
             this.Data.Images.Add(image);
+            this.Data.SaveChanges();
+
+            var userFollowers = user.FollowedBy.Select(u => u.Id);
+            var albumFollowers = imageAlbum.Followers.Where(u => !userFollowers.Contains(u.Id))
+                .Select(u => u.Id);
+
+            foreach (var userId in userFollowers)
+            {
+                var notification = new Notification()
+                {
+                    ImageId = image.Id,
+                    RecipientId = userId,
+                    NotificationType = NotificationType.AddedImage,
+                    DateCreated = DateTime.Now,
+                    Message = user.UserName + " created image."
+                };
+
+                this.Data.Notifications.Add(notification);
+            }
+
+            foreach (var userId in albumFollowers)
+            {
+                var notification = new Notification()
+                {
+                    ImageId = image.Id,
+                    RecipientId = userId,
+                    NotificationType = NotificationType.AddedImage,
+                    DateCreated = DateTime.Now,
+                    Message = imageAlbum.Title + " new image."
+                };
+
+                this.Data.Notifications.Add(notification);
+            }
+
             this.Data.SaveChanges();
 
             var returnItem = ImageViewModel.Create(image, user);

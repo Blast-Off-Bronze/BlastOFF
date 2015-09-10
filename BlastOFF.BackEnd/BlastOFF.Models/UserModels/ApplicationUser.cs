@@ -57,6 +57,8 @@
 
             this.sentMessages = new HashSet<Message>();
             this.receivedMessages = new HashSet<Message>();
+
+            this.notifications = new HashSet<Notification>();
         }
 
         public DateTime? BirthDate { get; set; }
@@ -78,6 +80,12 @@
             get { return this.comments; }
             set { this.comments = value; }
         }
+
+        public virtual ICollection<Notification> Notifications
+        {
+            get { return this.notifications; }
+            set { this.notifications = value; }
+        } 
 
         public virtual ICollection<ApplicationUser> FollowedUsers
         {

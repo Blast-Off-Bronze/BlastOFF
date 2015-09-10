@@ -2,8 +2,9 @@
 {
     public enum NotificationType
     {
-        User,
-        MusicAlbum,
-        ImageAlbum
+        AddedSong,
+        AddedImage,
+        CreatedMusicAlbum,
+        CreatedImageAlbum
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿
+namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -20,6 +21,9 @@
     using Google.Apis.Drive.v2.Data;
 
     using Microsoft.AspNet.Identity;
+
+    using BlastOFF.Models;
+    using BlastOFF.Models.Enumerations;
 
     using Comment = BlastOFF.Models.Comment;
     using File = Google.Apis.Drive.v2.Data.File;
@@ -281,6 +285,22 @@
             this.Data.MusicAlbums.Add(newMusicAlbum);
             this.Data.SaveChanges();
 
+            foreach (var userId in user.FollowedBy.Select(u => u.Id))
+            {
+                var notification = new Notification()
+                {
+                    MusicAlbumId = newMusicAlbum.Id,
+                    RecipientId = userId,
+                    NotificationType = NotificationType.CreatedMusicAlbum,
+                    DateCreated = DateTime.Now,
+                    Message = user.UserName + " created music album."
+                };
+
+                this.Data.Notifications.Add(notification);
+            }
+
+            this.Data.SaveChanges();
+
             var musicAlbumToReturn = MusicAlbumViewModel.Create(newMusicAlbum, user);
 
             return this.Ok(musicAlbumToReturn);
@@ -360,6 +380,40 @@
             }
 
             this.Data.Songs.Add(newSong);
+            this.Data.SaveChanges();
+
+            var userFollowers = user.FollowedBy.Select(u => u.Id);
+            var albumFollowers = album.Followers.Where(u => !userFollowers.Contains(u.Id))
+                .Select(u => u.Id);
+
+            foreach (var userId in user.FollowedBy.Select(u => u.Id))
+            {
+                var notification = new Notification()
+                {
+                    SongId = newSong.Id,
+                    RecipientId = userId,
+                    NotificationType = NotificationType.AddedSong,
+                    DateCreated = DateTime.Now,
+                    Message = user.UserName + " added song."
+                };
+
+                this.Data.Notifications.Add(notification);
+            }
+
+            foreach (var userId in albumFollowers)
+            {
+                var notification = new Notification()
+                {
+                    SongId = newSong.Id,
+                    RecipientId = userId,
+                    NotificationType = NotificationType.AddedSong,
+                    DateCreated = DateTime.Now,
+                    Message = album.Title + " new song."
+                };
+
+                this.Data.Notifications.Add(notification);
+            }
+
             this.Data.SaveChanges();
 
             var songToReturn = SongViewModel.Create(newSong, user);
