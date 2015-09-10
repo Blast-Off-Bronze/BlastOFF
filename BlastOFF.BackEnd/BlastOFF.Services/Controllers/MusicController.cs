@@ -1,5 +1,4 @@
-﻿
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Collections.Generic;

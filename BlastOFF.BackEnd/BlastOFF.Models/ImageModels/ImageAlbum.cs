@@ -1,11 +1,10 @@
-﻿using System;
-using System.ComponentModel;
-using BlastOFF.Models.UserModel;
-
-namespace BlastOFF.Models.GalleryModels
+﻿namespace BlastOFF.Models.GalleryModels
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+
+    using System;
+    using BlastOFF.Models.UserModel;
 
     public class ImageAlbum
     {

@@ -219,9 +219,14 @@
         [Route("api/blasts")]
         public IHttpActionResult CreateNewBlast([FromBody] BlastCreateBindingModel model)
         {
+            if (model == null)
+            {
+                return this.BadRequest();
+            }
+
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Wrong or missing input parameters");
+                return this.BadRequest(this.ModelState);
             }
 
             var user = this.Data.Users.Find(this.User.Identity.GetUserId());
@@ -246,16 +251,21 @@
         [Route("api/blasts/{id}")]
         public IHttpActionResult UpdateBlast([FromUri] int id, [FromBody] BlastEditBindingModel model)
         {
+            if (model == null)
+            {
+                return this.BadRequest();
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
             var oldBlast = this.Data.Blasts.Find(id);
 
             if (oldBlast == null)
             {
                 return this.NotFound();
-            }
-
-            if (!this.ModelState.IsValid)
-            {
-                return this.BadRequest("Wrong or missing input parameters");
             }
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
@@ -276,18 +286,11 @@
 
         [HttpPost]
         [Route("api/blasts/{id}/comments")]
-        public IHttpActionResult AddBlastComment([FromUri] int id, [FromBody] CommentCreateBindingModel comment)
+        public IHttpActionResult AddBlastComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
-            var blast = this.Data.Blasts.Find(id);
-
-            if (blast == null)
+            if (model == null)
             {
-                return this.NotFound();
-            }
-
-            if (comment == null)
-            {
-                return this.BadRequest("Cannot create an empty comment model.");
+                return this.BadRequest();
             }
 
             if (!this.ModelState.IsValid)
@@ -295,11 +298,18 @@
                 return this.BadRequest(this.ModelState);
             }
 
+            var blast = this.Data.Blasts.Find(id);
+
+            if (blast == null)
+            {
+                return this.NotFound();
+            }
+
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
             
             var newComment = new Comment
             {
-                Content = comment.Content,
+                Content = model.Content,
                 AuthorId = currentUser.Id,
                 PostedOn = DateTime.Now,
                 BlastId = id

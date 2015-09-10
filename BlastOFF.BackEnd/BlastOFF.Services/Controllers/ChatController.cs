@@ -53,11 +53,21 @@
         [Route("api/message")]
         public IHttpActionResult PostMessage([FromBody] MessageCreateBindingModel model)
         {
+            if (model == null)
+            {
+                return this.BadRequest();
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             if (currentUser.Id == model.ReceiverId)
             {
-                return this.BadRequest("Enter a valid, diffrent from yours, receiver-username.");
+                return this.BadRequest("Enter a valid, different from yours, receiver-username.");
             }
 
             var receiverUser = this.Data.Users.Find(model.ReceiverId);
@@ -86,7 +96,7 @@
 
         // DELETE api/message
         [HttpDelete]
-        [Route("api/message")]
+        [Route("api/message/{id}")]
         public IHttpActionResult Delete([FromBody] int id)
         {
             var message = this.Data.Messages.Find(id);

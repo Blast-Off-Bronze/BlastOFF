@@ -4,8 +4,6 @@
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
 
-    using Models.GalleryModels;
-
     public interface IBlastOFFContext : IDisposable
     {
         //// Service methods

@@ -1,6 +1,4 @@
-﻿using BlastOFF.Models.Enumerations;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Linq;
@@ -18,6 +16,7 @@ namespace BlastOFF.Services.Controllers
     using BlastOFF.Services.Constants;
 
     using BlastOFF.Services.Models.UserModels;
+    using BlastOFF.Models.Enumerations;
 
     [SessionAuthorize]
     public class ImageAlbumController : BaseApiController
@@ -48,18 +47,6 @@ namespace BlastOFF.Services.Controllers
                 .Take(PageSize)
                 .ToList()
                 .Select(a => ImageAlbumViewModel.Create(a, currentUser));
-
-            return this.Ok(imageAlbums);
-        }
-
-        [HttpGet]
-        [Route("api/imageAlbums/my")]
-        public IHttpActionResult GetMyImageAlbums()
-        {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
-
-            var imageAlbums = this.Data.ImageAlbums.All().Where(a => a.CreatedById == user.Id).ToList()
-                .Select(a => ImageAlbumViewModel.Create(a, user));
 
             return this.Ok(imageAlbums);
         }
@@ -139,9 +126,14 @@ namespace BlastOFF.Services.Controllers
         [Route("api/imageAlbums/{id}")]
         public IHttpActionResult EditImageAlbum([FromUri]int id, [FromBody] ImageAlbumModifyBindingModel model)
         {
+            if (model == null)
+            {
+                return this.BadRequest();
+            }
+
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Wrong or missing input parameters");
+                return this.BadRequest(this.ModelState);
             }
 
             var imageAlbum = this.Data.ImageAlbums.Find(id);
@@ -218,9 +210,14 @@ namespace BlastOFF.Services.Controllers
         [Route("api/images")]
         public IHttpActionResult CreateNewImage([FromBody] ImageCreateBindingModel model)
         {
+            if (model == null)
+            {
+                return this.BadRequest();
+            }
+
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Wrong or missing input parameters");
+                return this.BadRequest(this.ModelState);
             }
 
             if (!this.Data.ImageAlbums.All().Any(a => a.Id == model.ImageAlbumId))
@@ -286,9 +283,14 @@ namespace BlastOFF.Services.Controllers
         [Route("api/images/{id}")]
         public IHttpActionResult EditImage([FromUri] int id, [FromBody] ImageModifyBindingModel model)
         {
+            if (model == null)
+            {
+                return this.BadRequest();
+            }
+
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Wrong or missing input parameters");
+                return this.BadRequest(this.ModelState);
             }
 
             var image = this.Data.Images.Find(id);
@@ -578,17 +580,22 @@ namespace BlastOFF.Services.Controllers
         [Route("api/imageAlbums/{id}/comments")]
         public IHttpActionResult AddImageAlbumComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
-            var imageAlbum = this.Data.ImageAlbums.Find(id);
-
-            if (imageAlbum == null)
+            if (model == null)
             {
-                return this.NotFound();
+                return this.BadRequest();
             }
 
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest(this.ModelState);
             }
+
+            var imageAlbum = this.Data.ImageAlbums.Find(id);
+
+            if (imageAlbum == null)
+            {
+                return this.NotFound();
+            }           
 
             var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 
@@ -612,17 +619,22 @@ namespace BlastOFF.Services.Controllers
         [Route("api/images/{id}/comments")]
         public IHttpActionResult AddImagesComment([FromUri] int id, [FromBody] CommentCreateBindingModel model)
         {
-            var image = this.Data.Images.Find(id);
-
-            if (image == null)
+            if (model == null)
             {
-                return this.NotFound();
+                return this.BadRequest();
             }
 
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest(this.ModelState);
             }
+
+            var image = this.Data.Images.Find(id);
+
+            if (image == null)
+            {
+                return this.NotFound();
+            }         
 
             var user = this.Data.Users.Find(this.User.Identity.GetUserId());
 

@@ -78,6 +78,16 @@
         [Route("api/comments/{id}")]
         public IHttpActionResult UpdateComment([FromUri] int id, [FromBody] CommentEditBindingModel model)
         {
+            if (model == null)
+            {
+                return this.BadRequest();
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
             var existingComment = this.Data.Comments.Find(id);
 
             if (existingComment == null)
@@ -90,16 +100,6 @@
             if (currentUser.Id != existingComment.AuthorId)
             {
                 return this.Unauthorized();
-            }
-
-            if (model == null)
-            {
-                return this.BadRequest("Cannot create an empty comment model.");
-            }
-
-            if (!this.ModelState.IsValid)
-            {
-                return this.BadRequest(this.ModelState);
             }
 
             existingComment.Content = model.Content;

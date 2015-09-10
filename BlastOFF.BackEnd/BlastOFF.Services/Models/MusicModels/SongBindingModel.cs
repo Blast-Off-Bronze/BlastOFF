@@ -1,7 +1,5 @@
 ﻿namespace BlastOFF.Services.Models.MusicModels
 {
-    using System;
-
     public class SongBindingModel
     {
         public string Id { get; set; }

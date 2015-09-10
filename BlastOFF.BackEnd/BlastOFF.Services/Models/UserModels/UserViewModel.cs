@@ -11,7 +11,6 @@
                 return new UserViewModel
                 {
                     Username = model.UserName,
-                    PhoneNumber = model.PhoneNumber,
                     Email = model.Email,
                     FollowedUsers = model.FollowedUsers.Select(u => u.UserName),
                     FollowedBy = model.FollowedBy.Select(u => u.UserName),
@@ -30,8 +29,6 @@
 
         public string Username { get; set; }
 
-        public string PhoneNumber { get; set; }
-
         public string Email { get; set; }
 
         public string ProfileImage { get; set; }
@@ -48,12 +45,8 @@
 
         public virtual IEnumerable<string> LikedImages { get; set; }
 
-        //public virtual ICollection<Blast> LikedBlasts { get; set; }
-
         public virtual IEnumerable<string> LikedMusicAlbums { get; set; }
 
         public virtual IEnumerable<string> LikedImageAlbums { get; set; }
-
-        //public virtual ICollection<Comment> LikedComments { get; set; }
     }
 }

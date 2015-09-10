@@ -1,8 +1,7 @@
-﻿using BlastOFF.Models.Enumerations;
-
-namespace BlastOFF.Services.Models.UserModels
+﻿namespace BlastOFF.Services.Models.UserModels
 {
     using System.ComponentModel.DataAnnotations;
+    using BlastOFF.Models.Enumerations;
 
     public class RegisterUserBindingModel
     {

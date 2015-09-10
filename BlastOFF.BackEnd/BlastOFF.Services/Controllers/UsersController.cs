@@ -1,6 +1,4 @@
-﻿using BlastOFF.Services.Models.MusicModels;
-
-namespace BlastOFF.Services.Controllers
+﻿namespace BlastOFF.Services.Controllers
 {
     using System.Linq;
     using Microsoft.AspNet.Identity;
@@ -24,6 +22,8 @@ namespace BlastOFF.Services.Controllers
 
     using BlastOFF.Services.Constants;
     using BlastOFF.Services.Models.ImageModels;
+
+    using BlastOFF.Services.Models.MusicModels;
 
     [SessionAuthorize]
     public class UsersController : BaseApiController
@@ -305,8 +305,6 @@ namespace BlastOFF.Services.Controllers
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            // needs view model
-
             var followers = searchedUser.FollowedBy
                 .OrderByDescending(u => u.UserName)
                 .Skip(CurrentPage * PageSize)
@@ -330,7 +328,6 @@ namespace BlastOFF.Services.Controllers
             }
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-            // needs view model
 
             var followers = searchedUser.FollowedUsers
                 .OrderByDescending(u => u.UserName)

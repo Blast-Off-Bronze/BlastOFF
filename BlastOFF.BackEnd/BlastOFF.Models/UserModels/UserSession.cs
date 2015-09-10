@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using BlastOFF.Models.UserModel;
-
-namespace BlastOFF.Models.UserModels
+﻿namespace BlastOFF.Models.UserModels
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    using BlastOFF.Models.UserModel;
+
     public class UserSession
     {
         [Key]
