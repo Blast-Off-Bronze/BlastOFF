@@ -108,13 +108,38 @@
         <hr/>
 
         <div class="comment-body">
-            <div class="comment-heading">
+
+            <!-- Display song -->
+            <div class="comment-heading" ng-if="!displayEditSong">
                 <h5 class="user"><b>{{song.title}} - {{song.artist}}</b>
 
-                    <a ng-if="song.isOwn" class="btn btn-default stat-item">Edit</a>
+                    <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click = toggledEditSong()>Edit</a>
                     <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="deleteSong(musicAlbum, song)">Delete</a>
 
                 </h5>
+
+            </div>
+
+            <!-- Display edit song -->
+            <div class="comment-heading" ng-if="displayEditSong">
+                <h5 class="user">
+                    <input type="text" ng-model="song.title"/>
+                    <input type="text" ng-model="song.artist"/>
+
+                    <a class="btn btn-default stat-item" ng-click="saveSongChanges(song)">Save</a>
+                    <a class="btn btn-default stat-item" ng-click="toggledEditSong()">Cancel</a>
+
+                </h5>
+
+                <!-- Song optional info -->
+                <input type="number" ng-model="song.trackNumber" placeholder="Track Number"/>
+                <input type="text" ng-model="song.originalAlbumTitle" placeholder="Original Album Title"/>
+                <input type="text" ng-model="song.originalAlbumArtist" placeholder="Original Album Artist"/>
+                <input type="text" ng-model="song.originalDate" placeholder="Original Date"/>
+                <input type="text" ng-model="song.genre" placeholder="Genre"/>
+                <input type="text" ng-model="song.composer" placeholder="Composer"/>
+                <input type="text" ng-model="song.publisher" placeholder="Publisher"/>
+                <input type="number" ng-model="song.bpm" placeholder="Bpm"/>
 
             </div>
 

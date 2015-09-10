@@ -65,7 +65,7 @@
                            LikesCount = s.UserLikes.Count, 
                            CommentsCount = s.Comments.Count,
 
-                           Comments = s.Comments.OrderBy(c => c.PostedOn).ToList().Select(c => CommentViewModel.Create(c, user)).Take(3),
+                           Comments = s.Comments.OrderByDescending(c => c.PostedOn).ToList().Select(c => CommentViewModel.Create(c, user)).Take(3),
                            AllCommentsDisplayed = false,
 
                            //Optional

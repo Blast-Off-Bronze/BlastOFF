@@ -12,6 +12,8 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 $scope.followedMusicAlbums = [];
                 $scope.defaultMusicAlbumCoverImage = constants.DEFAULT_MUSIC_ALBUM_COVER_IMAGE_URL;
                 $scope.displayEditMusicAlbum = false;
+                $scope.displayEditSong = false;
+
 
                 //$scope.musicAlbum = {
                 //    title: 'MusicAlbum_01',
@@ -77,6 +79,20 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                         function (response) {
                             musicAlbum = response;
                             $scope.displayEditMusicAlbum = false;
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
+                $scope.saveSongChanges = function (song) {
+
+                    var songId = song['id'];
+
+                    musicDataService.updateSong(songId, song).then(
+                        function (response) {
+                            song = response;
+                            $scope.displayEditSong = false;
                         },
                         function (error) {
                             notificationService.alertError(error);
@@ -306,6 +322,10 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 // MISCELLANEOUS FUNCTIONS
                 $scope.toggledEditMusicAlbum = function () {
                     $scope.displayEditMusicAlbum = !$scope.displayEditMusicAlbum;
+                };
+
+                $scope.toggledEditSong = function () {
+                    $scope.displayEditSong = !$scope.displayEditSong;
                 };
 
                 $scope.showOwnAndFollowedAlbums = function (album) {

@@ -29,6 +29,14 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.put(headers, url, musicAlbum);
         }
 
+        function updateSong(songId, song) {
+
+            var headers = new requestHeaders().get();
+            var url = songsUrl + '/' + songId;
+
+            return requester.put(headers, url, song);
+        }
+
         // DELETE
         function deleteMusicAlbum(albumId) {
 
@@ -149,6 +157,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
 
             // Edit
             updateMusicAlbum: updateMusicAlbum,
+            updateSong: updateSong,
 
             // Delete
             deleteMusicAlbum: deleteMusicAlbum,

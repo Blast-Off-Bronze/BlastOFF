@@ -1,3 +1,7 @@
+input {
+    -webkit-flex: 1;
+}
+
 a {
     cursor: pointer;
 }

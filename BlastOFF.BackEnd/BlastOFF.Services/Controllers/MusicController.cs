@@ -52,7 +52,7 @@
 
             var albums = this.Data.MusicAlbums.All()
                     .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
-                    .OrderBy(a => a.DateCreated)
+                    .OrderByDescending(a => a.DateCreated)
                     .Skip(CurrentPage * PageSize)
                     .Take(PageSize)
                     .ToList()
@@ -77,7 +77,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var songs = album.Songs
-                .OrderBy(s => s.DateAdded)
+                .OrderByDescending(s => s.DateAdded)
                 .ToList()
                 .Select(s => SongViewModel.Create(s, currentUser));
 
