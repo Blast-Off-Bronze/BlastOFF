@@ -41,6 +41,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var imageAlbums = this.Data.ImageAlbums.All()
+                .OrderByDescending(a => a.DateCreated)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -302,6 +303,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var userLikes = imageAlbum.UserLikes
+                .OrderByDescending(u => u.UserName)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -392,6 +394,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var followers = imageAlbum.Followers
+                .OrderByDescending(u => u.UserName)
                 .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -483,6 +486,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var comments = imageAlbum.Comments
+                .OrderByDescending(c => c.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -508,6 +512,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var comments = image.Comments
+                .OrderByDescending(c => c.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -601,6 +606,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var userLikes = image.UserLikes
+                .OrderByDescending(u => u.UserName)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()

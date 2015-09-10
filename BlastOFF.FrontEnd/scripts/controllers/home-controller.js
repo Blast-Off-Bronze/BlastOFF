@@ -20,8 +20,8 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
 
                 getPublicBlasts();
 
-                function getPublicBlasts(startBlastId, pageSize) {
-                    blastDataService.getPublicBlasts(startBlastId, pageSize)
+                function getPublicBlasts(currentPage, pageSize) {
+                    blastDataService.getPublicBlasts(currentPage, pageSize)
                     .then(function (response) {
                         response.forEach(function (blast) {
                             $scope.blasts.push(blast);
@@ -33,8 +33,8 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
                     });
                 }
 
-                $scope.getBlasts = function (startBlastId, pageSize) {
-                    getPublicBlasts(startBlastId, pageSize);
+                $scope.getBlasts = function (currentPage, pageSize) {
+                    getPublicBlasts(currentPage, pageSize);
                 };
 
                 $scope.makeABlast = function () {

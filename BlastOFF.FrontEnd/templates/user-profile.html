@@ -46,9 +46,9 @@
         </div>
         <div class="col-md-9" id="contentCol">
                 <!-- SCROLLABLE BLASTS -->
-                <div infinite-scroll="getBlasts(lastBlastId)"
+                <div infinite-scroll="getBlasts(currentPage)"
                      infinite-scroll-distance='1'
-                     infinite-scroll-disabled="gettingBlasts || noBlastsAvailable">
+                     infinite-scroll-disabled="gettingBlasts && noBlastsAvailable">
 
                     <div ng-include="'templates/blast-feed.html'"></div>
 

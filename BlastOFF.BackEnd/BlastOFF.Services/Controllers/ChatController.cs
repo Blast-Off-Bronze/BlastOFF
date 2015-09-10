@@ -39,6 +39,7 @@
 
             var messages = this.Data.Messages.All().Where(m => (m.SenderId == user.Id && m.ReceiverId == partnerId)
             || (m.SenderId == partnerId && m.ReceiverId == user.Id) && m.Deleted == false)
+                .OrderBy(m => m.SentDateTime)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()

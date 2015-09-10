@@ -104,6 +104,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var comments = album.Comments
+                .OrderByDescending(c => c.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -129,6 +130,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var comments = song.Comments
+                .OrderByDescending(c => c.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -175,6 +177,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var userLikes = album.UserLikes
+                            .OrderByDescending(u => u.UserName)
                             .Skip(CurrentPage * PageSize)
                             .Take(PageSize)
                             .ToList()
@@ -199,6 +202,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var followers = album.Followers
+                            .OrderByDescending(u => u.UserName)
                             .Skip(CurrentPage * PageSize)
                             .Take(PageSize)
                             .ToList()
@@ -243,7 +247,8 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var userLikes = song.UserLikes
-                .Skip(CurrentPage*PageSize)
+                .OrderByDescending(u => u.UserName)
+                .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
                 .Select(u => UserPreviewViewModel.Create(u, currentUser));

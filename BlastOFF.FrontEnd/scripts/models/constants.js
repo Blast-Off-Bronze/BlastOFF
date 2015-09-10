@@ -16,7 +16,7 @@ define(['app'], function (app) {
         'BYTE_SIZE': 1024,
         'DEFAULT_REDIRECTION_TIMEOUT': 1000,
         'DEFAULT_BLAST_FEED_PAGE_SIZE': 3,
-
+        'DEFAULT_CURRENT_PAGE': 0,
         // Messages
         'SUCCESSFUL_REGISTRATION_MESSAGE': 'You were successfully registered as ',
         'SUCCESSFUL_LOGIN_MESSAGE': 'You were successfully logged in as ',

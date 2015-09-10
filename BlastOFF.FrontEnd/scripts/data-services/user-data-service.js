@@ -63,14 +63,38 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.post(headers, constants.BASE_URL + 'blasts', blast);
         }
 
-        function getBlasts(username, startBlastId, pageSize) {
+        function getBlasts(username, currentPage, pageSize) {
 
-            var startBlastId = startBlastId || 0;
+            var currentPage = currentPage || constants.DEFAULT_CURRENT_PAGE;
             var pageSize = pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
 
             var headers = new requestHeaders().get();
 
-            var url = usersServiceUrl + username + '/blasts/?StartPostId=' + startBlastId + '&PageSize=' + pageSize;
+            var url = usersServiceUrl + username + '/blasts/?CurrentPage=' + currentPage + '&PageSize=' + pageSize;
+
+            return requester.get(headers, url);
+        }
+
+        function getMusicAlbums(username, currentPage, pageSize) {
+
+            var currentPage = currentPage || constants.DEFAULT_CURRENT_PAGE;
+            var pageSize = pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
+
+            var headers = new requestHeaders().get();
+
+            var url = usersServiceUrl + username + '/music/albums/?CurrentPage=' + currentPage + '&PageSize=' + pageSize;
+
+            return requester.get(headers, url);
+        }
+
+        function getImageAlbums(username, currentPage, pageSize) {
+
+            var currentPage = currentPage || constants.DEFAULT_CURRENT_PAGE;
+            var pageSize = pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
+
+            var headers = new requestHeaders().get();
+
+            var url = usersServiceUrl + username + '/imageAlbums/?CurrentPage=' + currentPage + '&PageSize=' + pageSize;
 
             return requester.get(headers, url);
         }
@@ -103,7 +127,9 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             userProfile: userProfile,
             userFollowers: userFollowers,
             makeABlast: makeABlast,
-            getBlasts: getBlasts
+            getBlasts: getBlasts,
+            getImageAlbums: getImageAlbums,
+            getMusicAlbums: getMusicAlbums
         }
     });
 });

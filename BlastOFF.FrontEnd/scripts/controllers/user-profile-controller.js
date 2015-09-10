@@ -12,6 +12,10 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
 
                 $scope.blasts = [];
 
+                $scope.noBlastsAvailable = false;
+                $scope.gettingBlasts = false;
+                $scope.currentPage = 0;
+
                 userDataService.userProfile($routeParams.username)
                 .then(function (response){
                     console.log(response);
@@ -22,17 +26,31 @@ define(['app', 'user-data-service', 'notification-service', 'storage-service', '
                     console.log(error);
                 });
 
-                $scope.getBlasts = function(startPostId, pageSize) {
-                    userDataService.getBlasts($routeParams.username, startPostId, pageSize)
-                    .then(function (response) {
-                        response.forEach(function (blast) {
-                            $scope.blasts.push(blast);
+                $scope.getBlasts = function(currentPage, pageSize) {
+
+                        $scope.gettingBlasts = true;
+
+                        userDataService.getBlasts($routeParams.username, currentPage, pageSize)
+                        .then(function (response) {
+                            if(response.length < 1) {
+                                $scope.noBlastsAvailable = true;
+                            } else {
+                                $scope.noBlastsAvailable = false;
+                                response.forEach(function (blast) {
+                                    $scope.blasts.push(blast);
+                                });
+
+                                $scope.currentPage += pageSize || constants.DEFAULT_BLAST_FEED_PAGE_SIZE;
+                            }
+
+                            $scope.gettingBlasts = false;
+
+                            console.log(response);
+                        }, function (error) {
+                            $scope.noBlastsAvailable = false;
+                            console.log(error);
                         });
 
-                        console.log(response);
-                    }, function (error) {
-                        console.log(error);
-                    });
                 };
 
                 $scope.follow = function() {

@@ -194,6 +194,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blasts = this.Data.Blasts.All()
+                .OrderByDescending(b => b.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -217,6 +218,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var imageAlbums = this.Data.ImageAlbums.All()
+                .OrderByDescending(a => a.DateCreated)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList()
@@ -265,6 +267,7 @@
             // needs view model
 
             var followers = searchedUser.FollowedBy
+                .OrderByDescending(u => u.UserName)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
                 .ToList();

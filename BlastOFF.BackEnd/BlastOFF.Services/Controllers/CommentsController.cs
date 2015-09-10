@@ -64,6 +64,7 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var userLikes = comment.LikedBy
+                            .OrderByDescending(u => u.UserName)
                             .Skip(CurrentPage * PageSize)
                             .Take(PageSize)
                             .ToList()
