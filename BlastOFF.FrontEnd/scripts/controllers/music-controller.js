@@ -122,7 +122,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 $scope.addSong = function (musicAlbum, song) {
 
                     var albumId = musicAlbum['id'];
-                    musicAlbum['displayAddSong'] = '';
+                    musicAlbum['displayAddSong'] = true;
 
                     musicDataService.addSong(albumId, song).then(
                         function (response) {
@@ -142,7 +142,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                                 publisher: null,
                                 bpm: null
                             };
-                            notificationService.alertSuccess("Song successfully added to album.")
+                            notificationService.alertSuccess("Song successfully added to album.");
                             musicAlbum['displayAddSong'] = false;
                         },
                         function (error) {
