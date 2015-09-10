@@ -122,7 +122,6 @@
 
                         <p ng-if="!comment.showEditComment">{{comment.content}}</p>
 
-
                         <!-- Edit comment -->
                         <div class="input-group"  ng-if="comment.showEditComment">
                             <input class="form-control" type="text" ng-model="comment.content">
@@ -209,7 +208,7 @@
                     <div class="input-group">
                         <input class="form-control" placeholder="Add a comment" type="text" ng-model="songComment.content">
                         <span class="input-group-addon">
-                            <a ng-click="addSongComment(song)"><i class="fa fa-edit"></i></a>
+                            <a ng-click="addSongComment(song)">Add</a>
                         </span>
                     </div>
 
@@ -225,13 +224,22 @@
                                 <div class="comment-heading">
                                     <h4 class="user">{{comment.author}}
 
-                                        <a ng-if="comment.AmITheAuthor" class="btn btn-default stat-item" ng-click="modifyComment(comment, song)">Edit</a>
-                                        <a ng-if="comment.AmITheAuthor" class="btn btn-default stat-item" ng-click="deleteComment(comment, song)">Delete</a>
+                                        <a ng-if="comment.amiTheAuthor" class="btn btn-default stat-item" ng-click="comment.showEditComment = !comment.showEditComment">Edit</a>
+                                        <a ng-if="comment.amiTheAuthor" class="btn btn-default stat-item" ng-click="deleteComment(comment, song)">Delete</a>
 
                                     </h4>
                                     <h5 class="time">commented on {{comment.postedOn | date: 'MMM dd, yyyy'}}</h5>
                                 </div>
-                                <p>{{comment.content}}</p>
+
+                                <p ng-if="!comment.showEditComment">{{comment.content}}</p>
+
+                                <!-- Edit comment -->
+                                <div class="input-group"  ng-if="comment.showEditComment">
+                                    <input class="form-control" type="text" ng-model="comment.content">
+                            <span class="input-group-addon">
+                                <a ng-click="modifyComment(comment, song)">Save</a>
+                            </span>
+                                </div>
                             </div>
                         </li>
                     </ul>
