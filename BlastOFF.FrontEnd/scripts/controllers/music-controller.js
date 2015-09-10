@@ -14,12 +14,15 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 $scope.displayEditMusicAlbum = false;
                 $scope.displayEditSong = false;
 
+                $scope.newMusicAlbum = {
+                    title: '',
+                    coverImageData: null
+                };
 
-                //$scope.musicAlbum = {
-                //    title: 'MusicAlbum_01',
-                //    coverImageData: null
-                //};
-                //
+
+
+
+
                 //$scope.song = {
                 //    title: 'Song_01',
                 //    artist: 'Artist_01',
@@ -67,6 +70,41 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                         },
                         function (error) {
                             notificationService.alertError(error);
+                        });
+                };
+
+                // ADD
+
+                $scope.addMusicAlbum = function (musicAlbum) {
+
+                    musicDataService.addMusicAlbum(musicAlbum).then(
+                        function (response) {
+                            $scope.allMusicAlbums.unshift(response);
+                            $scope.newMusicAlbum = {
+                                title: '',
+                                coverImageData: null
+                            };
+                            notificationService.alertSuccess("Music album successfully created.")
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
+                $scope.addSong = function (song) {
+
+                    console.log(song);
+
+                    musicDataService.addSong(musicAlbumId, song).then(
+                        function (response) {
+
+                            console.log(response);
+
+                        },
+                        function (error) {
+
+                            console.log(error);
+
                         });
                 };
 
@@ -247,7 +285,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
                     musicDataService.addMusicAlbumComment(albumId, $scope.musicAlbumComment).then(
                         function (response) {
-                            musicAlbum['comments'].push(response);
+                            musicAlbum['comments'].unshift(response);
                             musicAlbum['commentsCount']++;
                             $scope.resetMusicAlbumComment();
                         },
@@ -272,7 +310,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
                     musicDataService.addSongComment(songId, $scope.songComment).then(
                         function (response) {
-                            song['comments'].push(response);
+                            song['comments'].unshift(response);
                             song['commentsCount']++;
                             $scope.resetSongComment();
                         },
@@ -289,34 +327,8 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 };
 
 
-                $scope.addMusicAlbum = function (musicAlbum) {
 
-                    musicDataService.addMusicAlbum(musicAlbum).then(
-                        function (response) {
-                            $scope.allMusicAlbums.push(response);
-                            notificationService.alertSuccess("Music album successfully created.")
-                        },
-                        function (error) {
-                            notificationService.alertError(error);
-                        });
-                };
 
-                $scope.addSong = function (song) {
-
-                    console.log(song);
-
-                    musicDataService.addSong(musicAlbumId, song).then(
-                        function (response) {
-
-                            console.log(response);
-
-                        },
-                        function (error) {
-
-                            console.log(error);
-
-                        });
-                };
 
 
                 // MISCELLANEOUS FUNCTIONS

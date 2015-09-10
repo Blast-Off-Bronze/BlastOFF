@@ -81,6 +81,11 @@ ul {
     margin-left: 15px;
 }
 
+.image {
+    width: 128px !important;
+    height: auto;
+}
+
 .post .post-image .image {
     width: 128px !important;
     height: auto;
