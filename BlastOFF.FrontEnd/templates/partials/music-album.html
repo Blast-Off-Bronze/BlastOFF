@@ -6,9 +6,11 @@
 
     <h3 style="display: inline-block">{{musicAlbum.title}}
 
-        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="musicAlbum.displayAddSong = !musicAlbum.displayAddSong">Add song</a>
-        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="musicAlbum.displayEditMusicAlbum = true">Edit </a>
-        <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="deleteMusicAlbum(musicAlbum)">Delete</a>
+        <span style="margin-left: 25px">
+            <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="musicAlbum.displayAddSong = !musicAlbum.displayAddSong">Add song</a>
+            <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="musicAlbum.displayEditMusicAlbum = true">Edit </a>
+            <a ng-if="musicAlbum.isOwn" class="btn btn-default stat-item" ng-click="deleteMusicAlbum(musicAlbum)">Delete</a>
+        </span>
 
     </h3>
 
@@ -24,12 +26,12 @@
         <input type="file" cover-image-upload="onFileSelect($files)" ng-model="musicAlbum.coverImageData"/>
     </span>
 
-        <h4 style="display: inline-block"><input type="text" ng-model="musicAlbum.title"/>
+    <h4 style="display: inline-block"><input type="text" ng-model="musicAlbum.title"/>
 
-            <a class="btn btn-default stat-item" ng-click="saveMusicAlbumChanges(musicAlbum)">Save</a>
-            <a class="btn btn-default stat-item" ng-click="">Cancel</a>
+        <a class="btn btn-default stat-item" ng-click="saveMusicAlbumChanges(musicAlbum)">Save</a>
+        <a class="btn btn-default stat-item" ng-click="">Cancel</a>
 
-        </h4>
+    </h4>
 
     <br/>
 
@@ -126,7 +128,7 @@
                         <p ng-if="!comment.showEditComment">{{comment.content}}</p>
 
                         <!-- Edit comment -->
-                        <div class="input-group"  ng-if="comment.showEditComment">
+                        <div class="input-group" ng-if="comment.showEditComment">
                             <input class="form-control" type="text" ng-model="comment.content">
                             <span class="input-group-addon">
                                 <a ng-click="modifyComment(comment, musicAlbum)">Save</a>
@@ -161,9 +163,10 @@
             <div class="comment-heading" ng-if="!displayEditSong">
                 <h5 class="user"><b>{{song.title}} - {{song.artist}}</b>
 
-                    <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="song.displayEditSong = !song.displayEditSong">Edit</a>
-                    <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="deleteSong(musicAlbum, song)">Delete</a>
-
+                    <span style="margin-left: 25px">
+                        <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="song.displayEditSong = !song.displayEditSong">Edit</a>
+                        <a ng-if="song.isOwn" class="btn btn-default stat-item" ng-click="deleteSong(musicAlbum, song)">Delete</a>
+                    </span>
                 </h5>
 
             </div>
@@ -249,7 +252,7 @@
                                 <p ng-if="!comment.showEditComment">{{comment.content}}</p>
 
                                 <!-- Edit comment -->
-                                <div class="input-group"  ng-if="comment.showEditComment">
+                                <div class="input-group" ng-if="comment.showEditComment">
                                     <input class="form-control" type="text" ng-model="comment.content">
                                     <span class="input-group-addon">
                                         <a ng-click="modifyComment(comment, song)">Save</a>
