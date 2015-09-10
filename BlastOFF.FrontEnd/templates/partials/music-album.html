@@ -134,6 +134,15 @@
                         </div>
                     </div>
                 </li>
+
+                <li class="comment" ng-if="musicAlbum.commentsCount > 3 && musicAlbum.allCommentsDisplayed == false">
+
+                    <div class="comment-body">
+
+                        <a ng-click="getMusicAlbumComments(musicAlbum)">View all comments ({{musicAlbum.commentsCount}})</a>
+
+                    </div>
+                </li>
             </ul>
         </div>
     </div>

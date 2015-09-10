@@ -317,6 +317,20 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                 // FOLLOWERS - End
 
                 // MUSIC ALBUM COMMENTS
+                $scope.getMusicAlbumComments = function (musicAlbum) {
+
+                    var albumId = musicAlbum['id'];
+
+                    musicDataService.getAllMusicAlbumComments(albumId).then(
+                        function (response) {
+                            musicAlbum['comments'] = response;
+                            musicAlbum['allCommentsDisplayed'] = true;
+                        },
+                        function (error) {
+                            notificationService.alertError(error);
+                        });
+                };
+
                 $scope.addMusicAlbumComment = function (musicAlbum) {
 
                     var albumId = musicAlbum['id'];

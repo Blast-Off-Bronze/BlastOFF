@@ -138,6 +138,14 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             return requester.get(headers, url);
         }
 
+        function getAllMusicAlbumComments(albumId) {
+
+            var headers = new requestHeaders().get();
+
+            var url = serviceUrl + '/' + albumId + '/comments';
+
+            return requester.get(headers, url);
+        }
 
         function addMusicAlbumComment(albumId, musicAlbumComment) {
 
@@ -197,6 +205,7 @@ define(['app', 'constants', 'request-headers', 'requester'], function (app) {
             unfollowMusicAlbum: unfollowMusicAlbum,
 
             // Comments
+            getAllMusicAlbumComments: getAllMusicAlbumComments,
             getAllSongComments: getAllSongComments,
             addMusicAlbumComment: addMusicAlbumComment,
             addSongComment: addSongComment,
