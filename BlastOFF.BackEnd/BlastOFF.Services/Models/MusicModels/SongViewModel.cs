@@ -1,4 +1,6 @@
-﻿namespace BlastOFF.Services.Models.MusicModels
+﻿using BlastOFF.Services.Constants;
+
+namespace BlastOFF.Services.Models.MusicModels
 {
     using System;
     using System.Collections.Generic;
@@ -65,7 +67,9 @@
                            LikesCount = s.UserLikes.Count, 
                            CommentsCount = s.Comments.Count,
 
-                           Comments = s.Comments.OrderByDescending(c => c.PostedOn).ToList().Select(c => CommentViewModel.Create(c, user)).Take(3),
+                           Comments = s.Comments.OrderByDescending(c => c.PostedOn)
+                           .Take(MainConstants.PageSize).Select(c => CommentViewModel.Create(c, user))
+                           .ToList(),
                            AllCommentsDisplayed = false,
 
                            //Optional

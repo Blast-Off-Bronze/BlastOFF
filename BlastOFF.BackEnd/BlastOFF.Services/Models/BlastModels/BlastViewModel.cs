@@ -39,10 +39,10 @@
                 PostedOn = model.PostedOn,
                 BlastType = model.BlastType,
                 Author = UserPreviewViewModel.Create(model.Author, currentUser),
-                Comments = model.Comments.ToList().Take(MainConstants.PageSize)
-                .Select(c => CommentViewModel.Create(c, currentUser)),
-                Likes = model.UserLikes.ToList().Take(MainConstants.PageSize)
-                .Select(u => UserPreviewViewModel.Create(u, currentUser)),
+                Comments = model.Comments.Take(MainConstants.PageSize)
+                .Select(c => CommentViewModel.Create(c, currentUser)).ToList(),
+                Likes = model.UserLikes.Take(MainConstants.PageSize)
+                .Select(u => UserPreviewViewModel.Create(u, currentUser)).ToList(),
                 LikesCount = model.UserLikes.Count,
                 Id = model.Id,
                 IsLiked = liked,

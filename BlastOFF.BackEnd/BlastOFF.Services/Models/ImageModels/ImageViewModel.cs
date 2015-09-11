@@ -38,9 +38,9 @@
                 ImageAlbum = model.ImageAlbum.Title,
                 DateAdded = model.DateCreated,
                 Likes = model.UserLikes.Take(MainConstants.PageSize)
-                .ToList().Select(u => UserPreviewViewModel.Create(u, currentUser)),
+                .Select(u => UserPreviewViewModel.Create(u, currentUser)).ToList(),
                 Comments = model.Comments.Take(MainConstants.PageSize)
-                .ToList().Select(c => CommentViewModel.Create(c, currentUser)),
+                .Select(c => CommentViewModel.Create(c, currentUser)).ToList(),
                 UploadedBy = UserPreviewViewModel.Create(model.UploadedBy, currentUser),
                 IsLiked = liked,
                 IsMine = owner,
