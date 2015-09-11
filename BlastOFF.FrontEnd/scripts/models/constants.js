@@ -29,12 +29,14 @@ define(['app'], function (app) {
         'INVALID_SONG_SIZE_MESSAGE': 'Invalid song size.' + '<br/>' + 'The song size cannot exceed more than ',
 
         'INVALID_COVER_IMAGE_FORMAT_MESSAGE': 'Invalid cover image format.' + '<br/>' + 'Allowed format is ',
+        'INVALID_IMAGE_FORMAT_MESSAGE': 'Invalid image format.' + '<br/>' + 'Allowed format is ',
         'INVALID_COVER_IMAGE_SIZE_MESSAGE': 'Invalid cover image size.' + '<br/>' + 'The cover image size cannot exceed more than ',
 
 
         // Miscellaneous
         'DEFAULT_SONG_FORMAT': '.mp3.',
         'DEFAULT_COVER_IMAGE_FORMAT': '.jpg',
+        'DEFAULT_IMAGE_FORMAT': '.jpg',
         'DEFAULT_FILE_SIZE_UNIT': ' kB.'
     });
 });
