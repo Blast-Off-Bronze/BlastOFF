@@ -23,7 +23,7 @@ define(['app', 'storage-service', 'escape-special-chars-service', 'user-data-ser
 
                 $scope.blastToPost = {};
 
-                getPublicBlasts();
+                getPublicBlasts($scope.currentPageBlasts, 3);
 
                 function getPublicBlasts(currentPage, pageSize) {
                     blastDataService.getPublicBlasts(currentPage, pageSize)

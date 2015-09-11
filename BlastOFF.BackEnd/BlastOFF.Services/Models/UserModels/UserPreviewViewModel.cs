@@ -7,13 +7,29 @@
     {
         public static UserPreviewViewModel Create(ApplicationUser model, ApplicationUser currentUser)
         {
+            bool isMe = false;
+            bool followedByMe = false;
+
+            if (currentUser != null)
+            {
+                if (currentUser.Id == model.Id)
+                {
+                    isMe = true;
+                }
+
+                if (model.FollowedBy.Any(u => u.Id == currentUser.Id))
+                {
+                    followedByMe = true;
+                }
+            }
+
             return new UserPreviewViewModel
             {
                 Id = model.Id,
                 Username = model.UserName,
                 ProfileImage = model.ProfileImage,
-                FollowedByMe = model.FollowedBy.Any(u => u.Id == currentUser.Id),
-                IsMe = model.Id == currentUser.Id
+                FollowedByMe = followedByMe,
+                IsMe = isMe
             };
         }
 
