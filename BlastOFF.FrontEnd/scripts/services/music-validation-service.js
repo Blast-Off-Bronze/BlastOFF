@@ -7,7 +7,7 @@ define(['app', 'notification-service', 'constants'], function (app) {
                 return true;
             }
 
-            if (false) {
+            if (song.type !== 'audio/mp3') {
                 var error = {
                     message: constants.INVALID_SONG_FORMAT_MESSAGE + constants.DEFAULT_SONG_FORMAT
                 };
