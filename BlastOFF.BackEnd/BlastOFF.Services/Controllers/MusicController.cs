@@ -283,7 +283,9 @@
             this.Data.MusicAlbums.Add(newMusicAlbum);
             this.Data.SaveChanges();
 
-            foreach (var userId in user.FollowedBy.Select(u => u.Id))
+            var userFollowers = user.FollowedBy.Select(u => u.Id);
+
+            foreach (var userId in userFollowers)
             {
                 var notification = new Notification()
                                        {
@@ -391,7 +393,7 @@
                 var userFollowers = user.FollowedBy.Select(u => u.Id);
                 var albumFollowers = album.Followers.Where(u => !userFollowers.Contains(u.Id)).Select(u => u.Id);
 
-                foreach (var userId in user.FollowedBy.Select(u => u.Id))
+                foreach (var userId in userFollowers)
                 {
                     var notification = new Notification()
                                            {
