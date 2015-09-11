@@ -42,26 +42,36 @@
 <!-- ADD SONG TO ALBUM -->
 <div class="comment-heading" ng-if="musicAlbum.displayAddSong">
     <h5 class="user">
-        <input type="text" ng-model="newSong.title" placeholder="Title"/>
-        <input type="text" ng-model="newSong.artist" placeholder="Artist"/>
 
-        <a class="btn btn-default stat-item" ng-click="addSong(musicAlbum, newSong)">Save</a>
+        <span ng-if="!uploadingSong">
+            <input type="text" ng-model="newSong.title" placeholder="Title"/>
+            <input type="text" ng-model="newSong.artist" placeholder="Artist"/>
+
+            <a class="btn btn-default stat-item" ng-click="addSong(musicAlbum, newSong)">Save</a>
+        </span>
+
+
+        <div ng-if="uploadingSong" class="progress col-sm-3">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%"></div>
+        </div>
+
         <a class="btn btn-default stat-item" ng-click="musicAlbum.displayAddSong = false">Cancel</a>
 
     </h5>
 
-    <input type="file" song-upload="onFileSelect($files)" ng-model="newSong.fileDataUrl"/><br/>
+    <span ng-if="!uploadingSong">
+        <input type="file" song-upload="onFileSelect($files)" ng-model="newSong.fileDataUrl"/><br/>
 
-    <!-- Song optional info -->
-    <input type="number" ng-model="newSong.trackNumber" placeholder="Track Number"/>
-    <input type="text" ng-model="newSong.originalAlbumTitle" placeholder="Original Album Title"/>
-    <input type="text" ng-model="newSong.originalAlbumArtist" placeholder="Original Album Artist"/>
-    <input type="text" ng-model="newSong.originalDate" placeholder="Original Date"/>
-    <input type="text" ng-model="newSong.genre" placeholder="Genre"/>
-    <input type="text" ng-model="newSong.composer" placeholder="Composer"/>
-    <input type="text" ng-model="newSong.publisher" placeholder="Publisher"/>
-    <input type="number" ng-model="newSong.bpm" placeholder="Bpm"/>
-
+        <!-- Song optional info -->
+        <input type="number" ng-model="newSong.trackNumber" placeholder="Track Number"/>
+        <input type="text" ng-model="newSong.originalAlbumTitle" placeholder="Original Album Title"/>
+        <input type="text" ng-model="newSong.originalAlbumArtist" placeholder="Original Album Artist"/>
+        <input type="text" ng-model="newSong.originalDate" placeholder="Original Date"/>
+        <input type="text" ng-model="newSong.genre" placeholder="Genre"/>
+        <input type="text" ng-model="newSong.composer" placeholder="Composer"/>
+        <input type="text" ng-model="newSong.publisher" placeholder="Publisher"/>
+        <input type="number" ng-model="newSong.bpm" placeholder="Bpm"/>
+    </span>
 </div>
 
 <div class="post-description">

@@ -7,6 +7,7 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
             function ($scope, $rootScope, $routeParams, $location, $http, storageService, musicDataService, constants, notificationService) {
 
                 $scope.isLogged = storageService.isLogged();
+                $scope.uploadingSong = false;
                 $scope.requesterIsBusy = true;
                 $scope.allMusicAlbums = [];
                 $scope.defaultMusicAlbumCoverImage = constants.DEFAULT_MUSIC_ALBUM_COVER_IMAGE_URL;
@@ -117,11 +118,15 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
 
                 $scope.addSong = function (musicAlbum, song) {
 
+                    $scope.uploadingSong = true;
+
                     var albumId = musicAlbum['id'];
                     musicAlbum['displayAddSong'] = true;
 
                     musicDataService.addSong(albumId, song).then(
                         function (response) {
+
+                            $scope.uploadingSong = false;
 
                             musicAlbum['songs'].unshift(response);
 
@@ -139,9 +144,12 @@ define(['app', 'songUpload', 'coverImageUpload', 'storage-service', 'music-data-
                                 bpm: null
                             };
                             notificationService.alertSuccess("Song successfully added to album.");
+
+
                             musicAlbum['displayAddSong'] = false;
                         },
                         function (error) {
+                            $scope.uploadingSong = false;
                             notificationService.alertError(error);
                         });
                 };
