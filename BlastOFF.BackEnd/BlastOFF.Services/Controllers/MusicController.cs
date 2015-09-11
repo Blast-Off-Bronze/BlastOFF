@@ -8,6 +8,8 @@
 
     using BlastOFF.Data;
     using BlastOFF.Data.Interfaces;
+    using BlastOFF.Models;
+    using BlastOFF.Models.Enumerations;
     using BlastOFF.Models.MusicModels;
     using BlastOFF.Services.Constants;
     using BlastOFF.Services.Models.CommentModels;
@@ -20,9 +22,6 @@
     using Google.Apis.Drive.v2.Data;
 
     using Microsoft.AspNet.Identity;
-
-    using BlastOFF.Models;
-    using BlastOFF.Models.Enumerations;
 
     using Comment = BlastOFF.Models.Comment;
     using File = Google.Apis.Drive.v2.Data.File;
@@ -287,13 +286,13 @@
             foreach (var userId in user.FollowedBy.Select(u => u.Id))
             {
                 var notification = new Notification()
-                {
-                    MusicAlbumId = newMusicAlbum.Id,
-                    RecipientId = userId,
-                    NotificationType = NotificationType.CreatedMusicAlbum,
-                    DateCreated = DateTime.Now,
-                    Message = user.UserName + " created music album."
-                };
+                                       {
+                                           MusicAlbumId = newMusicAlbum.Id, 
+                                           RecipientId = userId, 
+                                           NotificationType = NotificationType.CreatedMusicAlbum, 
+                                           DateCreated = DateTime.Now, 
+                                           Message = user.UserName + " created music album."
+                                       };
 
                 this.Data.Notifications.Add(notification);
             }
@@ -344,7 +343,7 @@
                 return this.BadRequest(string.Format("Song size should be less than {0} kB.", SongKilobyteLimit));
             }
 
-            var metadataStart = song.FileDataUrl.IndexOf("data:audio/mp3;base64,");
+            var metadataStart = song.FileDataUrl.IndexOf("data:audio/mp3;base64,", StringComparison.Ordinal);
 
             if (metadataStart != -1)
             {
@@ -352,72 +351,84 @@
             }
 
             string googleDriveFileName = song.Artist + " - " + song.Title + ".mp3";
-            song.FileDataUrl = this.UploadSongToGoogleDrive(song.FileDataUrl, googleDriveFileName);
 
-            var newSong = new Song
-                              {
-                                  Title = song.Title, 
-                                  Artist = song.Artist, 
-                                  FilePath = song.FileDataUrl, 
-                                  MusicAlbumId = album.Id, 
-                                  UploaderId = album.AuthorId, 
-                                  DateAdded = DateTime.Now, 
-                                  TrackNumber = song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber), 
-                                  OriginalAlbumTitle = song.OriginalAlbumTitle, 
-                                  OriginalAlbumArtist = song.OriginalAlbumArtist, 
-                                  OriginalDate =
-                                      song.OriginalDate == null ? (DateTime?)null : DateTime.Parse(song.OriginalDate), 
-                                  Genre = song.Genre, 
-                                  Composer = song.Composer, 
-                                  Publisher = song.Publisher, 
-                                  Bpm = song.Bpm == null ? (int?)null : int.Parse(song.Bpm)
-                              };
+            string[] uploadResults = this.UploadSongToGoogleDrive(song.FileDataUrl, googleDriveFileName);
 
-            if (album.Songs.Contains(newSong))
+            if (uploadResults[0] == "success")
             {
-                return this.BadRequest("This song already exists in album.");
-            }
+                song.FileDataUrl = uploadResults[1];
 
-            this.Data.Songs.Add(newSong);
-            this.Data.SaveChanges();
+                var newSong = new Song
+                                  {
+                                      Title = song.Title, 
+                                      Artist = song.Artist, 
+                                      FilePath = song.FileDataUrl, 
+                                      MusicAlbumId = album.Id, 
+                                      UploaderId = album.AuthorId, 
+                                      DateAdded = DateTime.Now, 
+                                      TrackNumber =
+                                          song.TrackNumber == null ? (int?)null : int.Parse(song.TrackNumber), 
+                                      OriginalAlbumTitle = song.OriginalAlbumTitle, 
+                                      OriginalAlbumArtist = song.OriginalAlbumArtist, 
+                                      OriginalDate =
+                                          song.OriginalDate == null
+                                              ? (DateTime?)null
+                                              : DateTime.Parse(song.OriginalDate), 
+                                      Genre = song.Genre, 
+                                      Composer = song.Composer, 
+                                      Publisher = song.Publisher, 
+                                      Bpm = song.Bpm == null ? (int?)null : int.Parse(song.Bpm)
+                                  };
 
-            var userFollowers = user.FollowedBy.Select(u => u.Id);
-            var albumFollowers = album.Followers.Where(u => !userFollowers.Contains(u.Id))
-                .Select(u => u.Id);
-
-            foreach (var userId in user.FollowedBy.Select(u => u.Id))
-            {
-                var notification = new Notification()
+                if (album.Songs.Contains(newSong))
                 {
-                    SongId = newSong.Id,
-                    RecipientId = userId,
-                    NotificationType = NotificationType.AddedSong,
-                    DateCreated = DateTime.Now,
-                    Message = user.UserName + " added song."
-                };
+                    return this.BadRequest("This song already exists in album.");
+                }
 
-                this.Data.Notifications.Add(notification);
-            }
+                this.Data.Songs.Add(newSong);
+                this.Data.SaveChanges();
 
-            foreach (var userId in albumFollowers)
-            {
-                var notification = new Notification()
+                var userFollowers = user.FollowedBy.Select(u => u.Id);
+                var albumFollowers = album.Followers.Where(u => !userFollowers.Contains(u.Id)).Select(u => u.Id);
+
+                foreach (var userId in user.FollowedBy.Select(u => u.Id))
                 {
-                    SongId = newSong.Id,
-                    RecipientId = userId,
-                    NotificationType = NotificationType.AddedSong,
-                    DateCreated = DateTime.Now,
-                    Message = album.Title + " new song."
-                };
+                    var notification = new Notification()
+                                           {
+                                               SongId = newSong.Id, 
+                                               RecipientId = userId, 
+                                               NotificationType = NotificationType.AddedSong, 
+                                               DateCreated = DateTime.Now, 
+                                               Message = user.UserName + " added song."
+                                           };
 
-                this.Data.Notifications.Add(notification);
+                    this.Data.Notifications.Add(notification);
+                }
+
+                foreach (var userId in albumFollowers)
+                {
+                    var notification = new Notification()
+                                           {
+                                               SongId = newSong.Id, 
+                                               RecipientId = userId, 
+                                               NotificationType = NotificationType.AddedSong, 
+                                               DateCreated = DateTime.Now, 
+                                               Message = album.Title + " new song."
+                                           };
+
+                    this.Data.Notifications.Add(notification);
+                }
+
+                this.Data.SaveChanges();
+
+                var songToReturn = SongViewModel.Create(newSong, user);
+
+                return this.Ok(songToReturn);
             }
-
-            this.Data.SaveChanges();
-
-            var songToReturn = SongViewModel.Create(newSong, user);
-
-            return this.Ok(songToReturn);
+            else
+            {
+                return this.BadRequest(uploadResults[1]);
+            }
         }
 
         //// POST /api/music/albums/{id}/comments
@@ -608,7 +619,7 @@
             {
                 return this.Unauthorized();
             }
-            
+
             existingMusicAlbum.Comments.Clear();
 
             this.Data.MusicAlbums.Delete(existingMusicAlbum);
@@ -887,7 +898,7 @@
             return true;
         }
 
-        private string UploadSongToGoogleDrive(string fileDataUrl, string fileName)
+        private string[] UploadSongToGoogleDrive(string fileDataUrl, string fileName)
         {
             const string AudioMimeType = "audio/mpeg";
 
@@ -917,11 +928,11 @@
                 FilesResource.InsertMediaUpload request = service.Files.Insert(body, stream, AudioMimeType);
                 request.Upload();
 
-                return "http://docs.google.com/uc?export=open&id=" + request.ResponseBody.Id;
+                return new[] { "success", "http://docs.google.com/uc?export=open&id=" + request.ResponseBody.Id };
             }
             catch (Exception exception)
             {
-                return string.Format("An error occurred: " + exception.Message);
+                return new[] { "error", string.Format("Something happened.\r\n" + exception.Message) };
             }
         }
     }
