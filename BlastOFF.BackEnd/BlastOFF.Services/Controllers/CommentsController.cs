@@ -14,6 +14,8 @@
 
     using BlastOFF.Services.Constants;
     using BlastOFF.Services.Models.UserModels;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
 
     [SessionAuthorize]
     public class CommentsController : BaseApiController
@@ -43,7 +45,13 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var returnItem = CommentViewModel.Create(comment, currentUser);
+            var returnItem = Mapper.Map<CommentViewModel>(comment);
+
+            if (currentUser != null)
+            {
+                returnItem.IsLiked = comment.LikedBy.Any(l => l.Id == currentUser.Id);
+                returnItem.IsMine = comment.AuthorId == currentUser.Id;
+            }
 
             return this.Ok(returnItem);
         }
@@ -61,14 +69,13 @@
                 return this.NotFound();
             }
 
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var userLikes = comment.LikedBy
-                            .OrderByDescending(u => u.UserName)
-                            .Skip(CurrentPage * PageSize)
-                            .Take(PageSize)
-                            .ToList()
-                            .Select(u => UserPreviewViewModel.Create(u, currentUser));
+                .OrderByDescending(u => u.UserName)
+                .Skip(CurrentPage*PageSize)
+                .Take(PageSize)
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(userLikes);
         }
@@ -107,7 +114,8 @@
 
             this.Data.SaveChanges();
 
-            var returnItem = CommentViewModel.Create(existingComment, currentUser);
+            var returnItem = Mapper.Map<CommentViewModel>(existingComment);
+            returnItem.IsMine = true;
 
             return this.Ok(returnItem);
         }

@@ -5,26 +5,26 @@
     using System.Linq;
 
     using BlastOFF.Models.MusicModels;
-    using BlastOFF.Models.UserModel;
     using BlastOFF.Services.Models.CommentModels;
+    using AutoMapper;
+    using BlastOFF.Services.Constants;
+    using BlastOFF.Services.Mapping;
 
-    public class MusicAlbumViewModel
+    public class MusicAlbumViewModel : IMapFrom<MusicAlbum>, IHaveCustomMappings
     {
         public int Id { get; set; }
 
         public string Title { get; set; }
 
-        public string Author { get; set; }
-
         public DateTime DateCreated { get; set; }
 
+        public string Author { get; set; }
 
         public bool IsOwn { get; set; }
 
         public bool IsFollowed { get; set; }
 
         public bool IsLiked { get; set; }
-
 
         public int ViewsCount { get; set; }
 
@@ -44,36 +44,16 @@
         // Comments
         public IEnumerable<CommentViewModel> Comments { get; set; }
 
-
-        public bool AllSongsDisplayed { get; set; }
-
-        public bool AllCommentsDisplayed { get; set; }
-
-        public static MusicAlbumViewModel Create(MusicAlbum a, ApplicationUser user)
+        public void CreateMappings(IConfiguration configuration)
         {
-            return new MusicAlbumViewModel
-                       {
-                           Id = a.Id,
-                           Title = a.Title,
-                           Author = a.Author.UserName,
-                           DateCreated = a.DateCreated,
-                           CoverImageData = a.CoverImageData,
-                           ViewsCount = a.ViewsCount,
-                           LikesCount = a.UserLikes.Count,
-                           CommentsCount = a.Comments.Count,
-                           FollowersCount = a.Followers.Count,
-                           SongsCount = a.Songs.Count,
-
-                           Songs = a.Songs.OrderByDescending(s => s.DateAdded).ToList().Select(s => SongViewModel.Create(s, user)).Take(3),
-                           Comments = a.Comments.OrderByDescending(c => c.PostedOn).ToList().Select(c => CommentViewModel.Create(c, user)).Take(3),
-
-                           IsOwn = a.Author == user,
-                           IsFollowed = a.Author != user && a.Followers.Contains(user),
-                           IsLiked = a.Author != user && a.UserLikes.Contains(user),
-
-                           AllSongsDisplayed = false,
-                           AllCommentsDisplayed = false
-                       };
+            configuration.CreateMap<MusicAlbum, MusicAlbumViewModel>()
+              .ForMember(u => u.SongsCount, opt => opt.MapFrom(u => u.Songs.Count))
+              .ForMember(u => u.FollowersCount, opt => opt.MapFrom(u => u.Followers.Count))
+              .ForMember(u => u.CommentsCount, opt => opt.MapFrom(u => u.Comments.Count))
+              .ForMember(u => u.Author, opt => opt.MapFrom(u => u.Author.UserName))
+              .ForMember(u => u.Songs, opt => opt.MapFrom(u => u.Songs.Take(MainConstants.PageSize)))
+              .ForMember(u => u.Comments, opt => opt.MapFrom(u => u.Comments.Take(MainConstants.PageSize)))
+              .ReverseMap();
         }
     }
 }

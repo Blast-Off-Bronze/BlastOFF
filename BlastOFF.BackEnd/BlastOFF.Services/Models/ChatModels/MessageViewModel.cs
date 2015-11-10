@@ -1,9 +1,12 @@
-﻿namespace BlastOFF.Services.Models.ChatModels
+﻿using AutoMapper;
+using BlastOFF.Services.Mapping;
+
+namespace BlastOFF.Services.Models.ChatModels
 {
     using System;
     using BlastOFF.Models.ChatModels;
 
-    public class MessageViewModel
+    public class MessageViewModel : IMapFrom<Message>, IHaveCustomMappings
     {
         public static MessageViewModel Create(Message m)
         {
@@ -26,5 +29,10 @@
         public string Message { get; set; }
 
         public DateTime Time { get; set; }
+
+        public void CreateMappings(IConfiguration configuration)
+        {
+
+        }
     }
 }

@@ -54,16 +54,6 @@ namespace BlastOFF.Data
             return new BlastOFFContext();
         }
 
-        public new void SaveChanges()
-        {
-            base.SaveChanges();
-        }
-
-        public new IDbSet<TEntity> Set<TEntity>() where TEntity : class
-        {
-            return base.Set<TEntity>();
-        }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();

@@ -17,6 +17,8 @@
 
     using BlastOFF.Services.Models.UserModels;
     using BlastOFF.Models.Enumerations;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
 
     [SessionAuthorize]
     public class ImageAlbumController : BaseApiController
@@ -43,10 +45,15 @@
 
             var imageAlbums = this.Data.ImageAlbums.All()
                 .OrderByDescending(a => a.DateCreated)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(a => ImageAlbumViewModel.Create(a, currentUser));
+                .ProjectTo<ImageAlbumViewModel>()
+                .ToList();
+
+            if (currentUser != null)
+            {
+                imageAlbums.ForEach(ia => { ia.IsMine = ia.CreatedBy.Id == currentUser.Id; });
+            }
 
             return this.Ok(imageAlbums);
         }
@@ -65,7 +72,13 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var returnItem = ImageAlbumViewModel.Create(imageAlbum, currentUser);
+            var returnItem = Mapper.Map<ImageAlbumViewModel>(imageAlbum);
+
+            if (currentUser != null)
+            {
+                returnItem.IsMine = imageAlbum.CreatedById == currentUser.Id;
+                returnItem.IsLiked = imageAlbum.UserLikes.Any(l => l.Id == currentUser.Id);
+            }
 
             return this.Ok(returnItem);
         }
@@ -119,7 +132,8 @@
 
             this.Data.SaveChanges();
 
-            var returnItem = ImageAlbumViewModel.Create(imageAlbum, user);
+            var returnItem = Mapper.Map<ImageAlbumViewModel>(imageAlbum);
+            returnItem.IsMine = true;
 
             return this.Ok(returnItem);
         }
@@ -157,7 +171,8 @@
             this.Data.ImageAlbums.Update(imageAlbum);
             this.Data.SaveChanges();
 
-            var returnItem = ImageAlbumViewModel.Create(imageAlbum, currentUser);
+            var returnItem = Mapper.Map<ImageAlbumViewModel>(imageAlbum);
+            returnItem.IsMine = true;
 
             return Ok(returnItem);
         }
@@ -194,16 +209,22 @@
         [AllowAnonymous]
         public IHttpActionResult GetImageById([FromUri] int id)
         {
-            var imagе = this.Data.Images.Find(id);
+            var image = this.Data.Images.Find(id);
 
-            if (imagе == null)
+            if (image == null)
             {
                 return this.NotFound();
             }
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var returnItem = ImageViewModel.Create(imagе, currentUser);
+            var returnItem = Mapper.Map<ImageViewModel>(image);
+
+            if (currentUser != null)
+            {
+                returnItem.IsMine = image.UploadedById == currentUser.Id;
+                returnItem.IsLiked = image.UserLikes.Any(l => l.Id == currentUser.Id);
+            }
 
             return this.Ok(returnItem);
         }
@@ -276,7 +297,8 @@
 
             this.Data.SaveChanges();
 
-            var returnItem = ImageViewModel.Create(image, user);
+            var returnItem = Mapper.Map<ImageViewModel>(image);
+            returnItem.IsMine = true;
 
             return Ok(returnItem);
         }
@@ -314,7 +336,8 @@
             this.Data.Images.Update(image);
             this.Data.SaveChanges();
 
-            var returnItem = ImageViewModel.Create(image, currentUser);
+            var returnItem = Mapper.Map<ImageViewModel>(image);
+            returnItem.IsMine = true;
 
             return Ok(returnItem);
         }
@@ -356,14 +379,13 @@
                 return this.NotFound();
             }
 
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var userLikes = imageAlbum.UserLikes
                 .OrderByDescending(u => u.UserName)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(userLikes);
         }
@@ -447,14 +469,13 @@
                 return this.NotFound();
             }
 
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var followers = imageAlbum.Followers
                 .OrderByDescending(u => u.UserName)
                 .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(followers);
         }
@@ -543,10 +564,16 @@
 
             var comments = imageAlbum.Comments
                 .OrderByDescending(c => c.PostedOn)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(c => CommentViewModel.Create(c, currentUser));
+                .AsQueryable()
+                .ProjectTo<CommentViewModel>()
+                .ToList();
+
+            if (currentUser != null)
+            {
+                comments.ForEach(c => { c.IsMine = c.Author.Id == currentUser.Id; });
+            }
 
             return this.Ok(comments);
         }
@@ -569,10 +596,16 @@
 
             var comments = image.Comments
                 .OrderByDescending(c => c.PostedOn)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(c => CommentViewModel.Create(c, currentUser));
+                .AsQueryable()
+                .ProjectTo<CommentViewModel>()
+                .ToList();
+
+            if (currentUser != null)
+            {
+                comments.ForEach(c => { c.IsMine = c.Author.Id == currentUser.Id; });
+            }
 
             return this.Ok(comments);
         }
@@ -612,7 +645,8 @@
             this.Data.Comments.Add(newComment);
             this.Data.SaveChanges();
 
-            var commentToReturn = CommentViewModel.Create(newComment, user);
+            var commentToReturn = Mapper.Map<CommentViewModel>(newComment);
+            commentToReturn.IsMine = true;
 
             return this.Ok(commentToReturn);
         }
@@ -651,7 +685,8 @@
             this.Data.Comments.Add(newComment);
             this.Data.SaveChanges();
 
-            var commentToReturn = CommentViewModel.Create(newComment, user);
+            var commentToReturn = Mapper.Map<CommentViewModel>(newComment);
+            commentToReturn.IsMine = true;
 
             return this.Ok(commentToReturn);
         }
@@ -669,14 +704,13 @@
                 return this.NotFound();
             }
 
-            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
-
             var userLikes = image.UserLikes
                 .OrderByDescending(u => u.UserName)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(userLikes);
         }

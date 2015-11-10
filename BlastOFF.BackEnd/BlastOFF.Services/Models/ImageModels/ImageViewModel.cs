@@ -2,55 +2,17 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using BlastOFF.Models.UserModel;
     using BlastOFF.Services.Constants;
     using BlastOFF.Services.Models.CommentModels;
     using BlastOFF.Services.Models.UserModels;
 
     using System;
     using BlastOFF.Models.GalleryModels;
+    using AutoMapper;
+    using BlastOFF.Services.Mapping;
 
-    public class ImageViewModel
+    public class ImageViewModel : IMapFrom<Image>, IHaveCustomMappings
     {
-        public static ImageViewModel Create(Image model, ApplicationUser currentUser)
-        {
-            bool liked = false;
-            bool owner = false;
-
-            if (currentUser != null)
-            {
-                if (currentUser.LikedImages.Any(i => i.Id == model.Id))
-                {
-                    liked = true;
-                }
-
-                if (currentUser.Id == model.UploadedById)
-                {
-                    owner = true;
-                }
-            }
-
-            var result = new ImageViewModel()
-            {
-                Id = model.Id,
-                Title = model.Title,
-                ImageAlbumId = model.ImageAlbumId,
-                ImageAlbum = model.ImageAlbum.Title,
-                DateAdded = model.DateCreated,
-                Likes = model.UserLikes.Take(MainConstants.PageSize)
-                .Select(u => UserPreviewViewModel.Create(u, currentUser)).ToList(),
-                Comments = model.Comments.Take(MainConstants.PageSize)
-                .Select(c => CommentViewModel.Create(c, currentUser)).ToList(),
-                UploadedBy = UserPreviewViewModel.Create(model.UploadedBy, currentUser),
-                IsLiked = liked,
-                IsMine = owner,
-                LikesCount = model.UserLikes.Count,
-                CommentsCount = model.Comments.Count
-            };
-
-            return result;
-        }
-
         public int Id { get; set; }
 
         public string Title { get; set; }
@@ -76,5 +38,18 @@
         public bool IsLiked { get; set; }
 
         public bool IsMine { get; set; }
+
+        public void CreateMappings(IConfiguration configuration)
+        {
+            configuration.CreateMap<Image, ImageViewModel>()
+                .ForMember(u => u.LikesCount, opt => opt.MapFrom(u => u.UserLikes.Count))
+                .ForMember(u => u.CommentsCount, opt => opt.MapFrom(u => u.Comments.Count))
+                .ForMember(u => u.Comments, opt => opt.MapFrom(u => u.Comments.Take(MainConstants.PageSize)))
+                .ForMember(u => u.Likes, opt => opt.MapFrom(u => u.UserLikes.Take(MainConstants.PageSize)))
+                .ForMember(u => u.UploadedBy, opt => opt.MapFrom(u => u.UploadedBy))
+                .ForMember(u => u.DateAdded, opt => opt.MapFrom(u => u.DateCreated))
+                .ForMember(u => u.ImageAlbum, opt => opt.MapFrom(u => u.ImageAlbum.Title))
+                .ReverseMap();
+        }
     }
 }

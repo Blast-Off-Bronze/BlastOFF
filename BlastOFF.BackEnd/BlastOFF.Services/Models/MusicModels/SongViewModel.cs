@@ -1,16 +1,16 @@
-﻿using BlastOFF.Services.Constants;
-
-namespace BlastOFF.Services.Models.MusicModels
+﻿namespace BlastOFF.Services.Models.MusicModels
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using AutoMapper;
+    using BlastOFF.Services.Constants;
+    using BlastOFF.Services.Mapping;
 
     using BlastOFF.Models.MusicModels;
-    using BlastOFF.Models.UserModel;
     using BlastOFF.Services.Models.CommentModels;
 
-    public class SongViewModel
+    public class SongViewModel : IMapFrom<Song>, IHaveCustomMappings
     {
         public int Id { get; set; }
 
@@ -54,37 +54,13 @@ namespace BlastOFF.Services.Models.MusicModels
 
         public int? Bpm { get; set; }
 
-        public static SongViewModel Create(Song s, ApplicationUser user)
+        public void CreateMappings(IConfiguration configuration)
         {
-            return new SongViewModel
-                       {
-                           Id = s.Id, 
-                           Title = s.Title, 
-                           Artist = s.Artist, 
-                           FilePath = s.FilePath, 
-                           DateAdded = s.DateAdded,
-                           ViewsCount = s.ViewsCount, 
-                           LikesCount = s.UserLikes.Count, 
-                           CommentsCount = s.Comments.Count,
-
-                           Comments = s.Comments.OrderByDescending(c => c.PostedOn)
-                           .Take(MainConstants.PageSize).Select(c => CommentViewModel.Create(c, user))
-                           .ToList(),
-                           AllCommentsDisplayed = false,
-
-                           //Optional
-                           TrackNumber = s.TrackNumber, 
-                           OriginalAlbumTitle = s.OriginalAlbumTitle, 
-                           OriginalAlbumArtist = s.OriginalAlbumArtist, 
-                           OriginalDate = s.OriginalDate, 
-                           Genre = s.Genre, 
-                           Composer = s.Composer, 
-                           Publisher = s.Publisher, 
-                           Bpm = s.Bpm,
-
-                           IsOwn = s.Uploader == user,
-                           IsLiked = s.Uploader != user && s.UserLikes.Contains(user)
-                       };
+            configuration.CreateMap<Song, SongViewModel>()
+              .ForMember(u => u.LikesCount, opt => opt.MapFrom(u => u.UserLikes.Count))
+              .ForMember(u => u.CommentsCount, opt => opt.MapFrom(u => u.Comments.Count))
+              .ForMember(u => u.Comments, opt => opt.MapFrom(u => u.Comments.Take(MainConstants.PageSize)))
+              .ReverseMap();
         }
     }
 }

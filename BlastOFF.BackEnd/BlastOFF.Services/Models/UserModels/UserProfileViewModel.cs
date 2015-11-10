@@ -3,35 +3,20 @@
     using System.Collections.Generic;
     using System.Linq;
     using BlastOFF.Models.UserModel;
+    using AutoMapper;
+    using BlastOFF.Services.Mapping;
 
-    public class UserProfileViewModel
+    public class UserProfileViewModel : IMapFrom<ApplicationUser>, IHaveCustomMappings
     {
-        public static UserProfileViewModel Create(ApplicationUser model, ApplicationUser currentUser)
-        {
-            return new UserProfileViewModel
-            {
-                Id = model.Id,
-                Username = model.UserName,
-                FollowedUsers = model.FollowedUsers.Select(u => u.UserName),
-                FollowedBy = model.FollowedBy.Select(u => u.UserName),
-                FollowedImageAlbums = model.FollowedImageAlbums.Select(a => a.Title),
-                FollowedMusicAlbums = model.FollowedMusicAlbums.Select(a => a.Title),
-                ProfileImage = model.ProfileImage,
-                FollowedByMe = model.FollowedBy.Any(u => u.Id == currentUser.Id),
-                BlastsCount = model.Blasts.Count,
-                IsMe = model.Id == currentUser.Id
-            };
-        }
-
         public string Id { get; set; }
+
+        public string UserName { get; set; }
+
+        public string ProfileImage { get; set; }
 
         public bool FollowedByMe { get; set; }
 
         public bool IsMe { get; set; }
-
-        public string Username { get; set; }
-
-        public string ProfileImage { get; set; }
 
         public int BlastsCount { get; set; }
 
@@ -46,5 +31,16 @@
         public virtual IEnumerable<string> FollowedImageAlbums { get; set; }
 
         public virtual IEnumerable<string> FollowedMusicAlbums { get; set; }
+
+        public void CreateMappings(IConfiguration configuration)
+        {
+            configuration.CreateMap<ApplicationUser, UserProfileViewModel>()
+              .ForMember(u => u.BlastsCount, opt => opt.MapFrom(u => u.Blasts.Count))
+              .ForMember(u => u.FollowedBy, opt => opt.MapFrom(u => u.FollowedBy.Select(fu => fu.UserName)))
+              .ForMember(u => u.FollowedUsers, opt => opt.MapFrom(u => u.FollowedUsers.Select(fu => fu.UserName)))
+              .ForMember(u => u.FollowedImageAlbums, opt => opt.MapFrom(u => u.FollowedImageAlbums.Select(i => i.Title)))
+              .ForMember(u => u.FollowedMusicAlbums, opt => opt.MapFrom(u => u.FollowedMusicAlbums.Select(m => m.Title)))
+              .ReverseMap();
+        }
     }
 }

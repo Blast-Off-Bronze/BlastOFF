@@ -1,4 +1,7 @@
-﻿namespace BlastOFF.Services.Controllers
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
+namespace BlastOFF.Services.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -55,10 +58,10 @@
             var albums = this.Data.MusicAlbums.All()
                 .Where(a => a.IsPublic || a.AuthorId == currentUser.Id)
                 .OrderByDescending(a => a.DateCreated)
-
-                // .Skip(CurrentPage * PageSize)
-                // .Take(PageSize)
-                .ToList().Select(a => MusicAlbumViewModel.Create(a, currentUser));
+                .ProjectTo<MusicAlbumViewModel>()
+                .ToList();
+            // .Skip(CurrentPage * PageSize)
+            // .Take(PageSize)
 
             return this.Ok(albums);
         }
@@ -78,10 +81,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var songs =
-                album.Songs.OrderByDescending(s => s.DateAdded)
-                    .ToList()
-                    .Select(s => SongViewModel.Create(s, currentUser));
+            var songs = album.Songs
+                .OrderByDescending(s => s.DateAdded)
+                .AsQueryable()
+                .ProjectTo<SongViewModel>()
+                .ToList();
 
             return this.Ok(songs);
         }
@@ -101,10 +105,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var comments =
-                album.Comments.OrderByDescending(c => c.PostedOn)
-                    .ToList()
-                    .Select(a => CommentViewModel.Create(a, currentUser));
+            var comments = album.Comments
+                .OrderByDescending(c => c.PostedOn)
+                .AsQueryable()
+                .ProjectTo<CommentViewModel>()
+                .ToList();
 
             return this.Ok(comments);
         }
@@ -124,10 +129,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var comments =
-                song.Comments.OrderByDescending(c => c.PostedOn)
-                    .ToList()
-                    .Select(a => CommentViewModel.Create(a, currentUser));
+            var comments = song.Comments
+                .OrderByDescending(c => c.PostedOn)
+                .AsQueryable()
+                .ProjectTo<CommentViewModel>()
+                .ToList();
 
             return this.Ok(comments);
         }
@@ -149,7 +155,7 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var albumToReturn = MusicAlbumViewModel.Create(album, currentUser);
+            var albumToReturn = Mapper.Map<MusicAlbumViewModel>(album);
 
             return this.Ok(albumToReturn);
         }
@@ -168,10 +174,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var userLikes =
-                album.UserLikes.OrderByDescending(u => u.UserName)
-                    .ToList()
-                    .Select(u => UserPreviewViewModel.Create(u, currentUser));
+            var userLikes = album.UserLikes
+                .OrderByDescending(u => u.UserName)
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(userLikes);
         }
@@ -190,10 +197,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var followers =
-                album.Followers.OrderByDescending(u => u.UserName)
-                    .ToList()
-                    .Select(u => UserPreviewViewModel.Create(u, currentUser));
+            var followers = album.Followers
+                .OrderByDescending(u => u.UserName)
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(followers);
         }
@@ -213,7 +221,7 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var songToReturn = SongViewModel.Create(song, currentUser);
+            var songToReturn = Mapper.Map<SongViewModel>(song);
 
             return this.Ok(songToReturn);
         }
@@ -232,10 +240,11 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var userLikes =
-                song.UserLikes.OrderByDescending(u => u.UserName)
-                    .ToList()
-                    .Select(u => UserPreviewViewModel.Create(u, currentUser));
+            var userLikes = song.UserLikes
+                .OrderByDescending(u => u.UserName)
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(userLikes);
         }
@@ -301,7 +310,7 @@
 
             this.Data.SaveChanges();
 
-            var musicAlbumToReturn = MusicAlbumViewModel.Create(newMusicAlbum, user);
+            var musicAlbumToReturn = Mapper.Map<MusicAlbumViewModel>(newMusicAlbum);
 
             return this.Ok(musicAlbumToReturn);
         }
@@ -423,7 +432,7 @@
 
                 this.Data.SaveChanges();
 
-                var songToReturn = SongViewModel.Create(newSong, user);
+                var songToReturn = Mapper.Map<SongViewModel>(newSong);
 
                 return this.Ok(songToReturn);
             }
@@ -468,7 +477,7 @@
             this.Data.Comments.Add(newMusicAlbumComment);
             this.Data.SaveChanges();
 
-            var commentToReturn = CommentViewModel.Create(newMusicAlbumComment, user);
+            var commentToReturn = Mapper.Map<CommentViewModel>(newMusicAlbumComment); 
 
             return this.Ok(commentToReturn);
         }
@@ -508,7 +517,7 @@
             this.Data.Comments.Add(newSongComment);
             this.Data.SaveChanges();
 
-            var commentToReturn = CommentViewModel.Create(newSongComment, user);
+            var commentToReturn = Mapper.Map<CommentViewModel>(newSongComment);
 
             return this.Ok(commentToReturn);
         }
@@ -548,7 +557,7 @@
 
             this.Data.SaveChanges();
 
-            var musicAlbumToReturn = MusicAlbumViewModel.Create(existingMusicAlbum, currentUser);
+            var musicAlbumToReturn = Mapper.Map<MusicAlbumViewModel>(existingMusicAlbum);
 
             return this.Ok(musicAlbumToReturn);
         }
@@ -596,7 +605,7 @@
 
             this.Data.SaveChanges();
 
-            var songToReturn = SongViewModel.Create(existingSong, currentUser);
+            var songToReturn = Mapper.Map<SongViewModel>(existingSong);
 
             return this.Ok(songToReturn);
         }

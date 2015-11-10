@@ -1,51 +1,19 @@
 ﻿namespace BlastOFF.Services.Models.CommentModels
 {
-    using System.Linq;
-    using BlastOFF.Models.UserModel;
     using BlastOFF.Services.Models.UserModels;
 
     using System;
 
     using BlastOFF.Models;
+    using AutoMapper;
+    using BlastOFF.Services.Mapping;
 
-    public class CommentViewModel
+    public class CommentViewModel : IMapFrom<Comment>, IHaveCustomMappings
     {
-        public static CommentViewModel Create(Comment model, ApplicationUser currentUser)
+        public CommentViewModel()
         {
-            bool liked = false;
-
-            bool owner = false;
-
-            if (currentUser != null)
-            {
-                if (currentUser.LikedComments.Any(c => c.Id == model.Id))
-                {
-                    liked = true;
-                }
-
-                if (currentUser.Id == model.AuthorId)
-                {
-                    owner = true;
-                }
-            }
-
-            var result = new CommentViewModel()
-            {
-                Id = model.Id,
-                Content = model.Content,
-                PostedOn = model.PostedOn,
-                Author = UserPreviewViewModel.Create(model.Author, currentUser),
-                LikesCount = model.LikedBy.Count,
-                IsLiked = liked,
-                IsMine = owner
-            };
-
-            if (result.Author.ProfileImage == null || result.Author.ProfileImage.Length <= 0)
-            {
-                result.Author.ProfileImage = "http://www.filecluster.com/howto/wp-content/uploads/2014/07/User-Default.jpg";
-            }
-
-            return result;
+            this.IsLiked = false;
+            this.IsMine = false;
         }
 
         public int Id { get; set; }
@@ -61,5 +29,13 @@
         public bool IsLiked { get; set; }
 
         public bool IsMine { get; set; }
+
+        public void CreateMappings(IConfiguration configuration)
+        {
+            configuration.CreateMap<Comment, CommentViewModel>()
+               .ForMember(b => b.LikesCount, opt => opt.MapFrom(b => b.LikedBy.Count))
+               .ForMember(b => b.Author, opt => opt.MapFrom(b => b.Author))
+               .ReverseMap();
+        }
     }
 }

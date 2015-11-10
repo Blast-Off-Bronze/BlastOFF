@@ -42,8 +42,6 @@
 
         //// END - Repositories
 
-        void SaveChanges();
-
-        void Dispose();
+        int SaveChanges();
     }
 }

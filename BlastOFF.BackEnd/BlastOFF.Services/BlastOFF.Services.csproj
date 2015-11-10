@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=4.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.4.1.1\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="BouncyCastle.Crypto, Version=1.7.4137.9688, Culture=neutral, PublicKeyToken=a4292a325f69b123, processorArchitecture=MSIL">
       <HintPath>..\packages\BouncyCastle.1.7.0\lib\Net40-Client\BouncyCastle.Crypto.dll</HintPath>
       <Private>True</Private>
@@ -305,6 +309,9 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Constants\MainConstants.cs" />
     <Compile Include="Constants\MusicConstants.cs" />
+    <Compile Include="Mapping\AutoMapperConfig.cs" />
+    <Compile Include="Mapping\IHaveCustomMappings.cs" />
+    <Compile Include="Mapping\IMapFrom.cs" />
     <Compile Include="Models\BlastModels\BlastEditBindingModel.cs" />
     <Compile Include="Models\ImageModels\ImageAlbumViewModel.cs" />
     <Compile Include="Models\ImageModels\ImageViewModel.cs" />

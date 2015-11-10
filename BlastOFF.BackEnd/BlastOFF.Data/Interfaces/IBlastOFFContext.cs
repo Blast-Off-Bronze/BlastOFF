@@ -2,17 +2,30 @@
 {
     using System;
     using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
+    using BlastOFF.Models;
+    using BlastOFF.Models.BlastModels;
+    using BlastOFF.Models.ChatModels;
+    using BlastOFF.Models.GalleryModels;
+    using BlastOFF.Models.MusicModels;
+    using BlastOFF.Models.UserModels;
 
     public interface IBlastOFFContext : IDisposable
     {
-        //// Service methods
-        void SaveChanges();
+        IDbSet<Blast> Blasts { get; }
 
-        IDbSet<TEntity> Set<TEntity>() where TEntity : class;
+        IDbSet<Comment> Comments { get; }
 
-        DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
+        IDbSet<Message> Messages { get; }
 
-        new void Dispose();
+        IDbSet<ImageAlbum> ImageAlbums { get; }
+
+        IDbSet<Image> Images { get; }
+
+        IDbSet<MusicAlbum> MusicAlbums { get; }
+
+        IDbSet<Song> Songs { get; }
+
+        IDbSet<UserSession> UserSessions { get; }
+        IDbSet<Notification> Notifications { get; }
     }
 }

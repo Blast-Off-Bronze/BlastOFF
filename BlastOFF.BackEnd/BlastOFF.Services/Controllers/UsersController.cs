@@ -24,6 +24,8 @@
     using BlastOFF.Services.Models.ImageModels;
 
     using BlastOFF.Services.Models.MusicModels;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
 
     [SessionAuthorize]
     public class UsersController : BaseApiController
@@ -198,10 +200,10 @@
             var blasts = this.Data.Blasts.All()
                 .Where(b => b.AuthorId == searchedUser.Id)
                 .OrderByDescending(b => b.PostedOn)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(b => BlastViewModel.Create(b, currentUser));
+                .ProjectTo<BlastViewModel>()
+                .ToList();
 
             return this.Ok(blasts);
         }
@@ -223,10 +225,10 @@
             var imageAlbums = this.Data.ImageAlbums.All()
                 .Where(a => a.CreatedBy.Id == searchedUser.Id)
                 .OrderByDescending(a => a.DateCreated)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(b => ImageAlbumViewModel.Create(b, currentUser));
+                .ProjectTo<ImageAlbumViewModel>()
+                .ToList();
 
             return this.Ok(imageAlbums);
         }
@@ -265,10 +267,10 @@
             var musicAlbums = this.Data.MusicAlbums.All()
                 .Where(a => a.Author.Id == searchedUser.Id)
                 .OrderByDescending(a => a.DateCreated)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(a => MusicAlbumViewModel.Create(a, currentUser));
+                .ProjectTo<MusicAlbumViewModel>()
+                .ToList();
 
             return this.Ok(musicAlbums);
         }
@@ -286,7 +288,7 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var userProfile = UserProfileViewModel.Create(searchedUser, currentUser);
+            var userProfile = Mapper.Map<UserProfileViewModel>(searchedUser); 
 
             return this.Ok(userProfile);
         }
@@ -307,10 +309,11 @@
 
             var followers = searchedUser.FollowedBy
                 .OrderByDescending(u => u.UserName)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(followers);
         }
@@ -331,10 +334,11 @@
 
             var followers = searchedUser.FollowedUsers
                 .OrderByDescending(u => u.UserName)
-                .Skip(CurrentPage * PageSize)
+                .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(u => UserPreviewViewModel.Create(u, currentUser));
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
 
             return this.Ok(followers);
         }

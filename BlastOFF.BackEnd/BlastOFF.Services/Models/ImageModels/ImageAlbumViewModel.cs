@@ -5,56 +5,14 @@
     using System.Linq;
     using BlastOFF.Models.GalleryModels;
 
-    using BlastOFF.Models.UserModel;
     using BlastOFF.Services.Constants;
     using BlastOFF.Services.Models.CommentModels;
     using BlastOFF.Services.Models.UserModels;
+    using AutoMapper;
+    using BlastOFF.Services.Mapping;
 
-    public class ImageAlbumViewModel
+    public class ImageAlbumViewModel : IMapFrom<ImageAlbum>, IHaveCustomMappings
     {
-        public static ImageAlbumViewModel Create(ImageAlbum model, ApplicationUser currentUser)
-        {
-            bool liked = false;
-            bool owner = false;
-
-            if (currentUser != null)
-            {
-                if (currentUser.LikedImageAlbums.Any(b => b.Id == model.Id))
-                {
-                    liked = true;
-                }
-
-                if (currentUser.Id == model.CreatedById)
-                {
-                    owner = true;
-                }
-            }
-
-            var result = new ImageAlbumViewModel()
-            {
-                Id = model.Id,
-                Title = model.Title,
-                CreatedBy = UserPreviewViewModel.Create(model.CreatedBy, currentUser),
-                DateCreated = model.DateCreated,
-                Likes = model.UserLikes.Take(MainConstants.PageSize)
-                .ToList().Select(u => UserPreviewViewModel.Create(u, currentUser)),
-                LikesCount = model.UserLikes.Count,
-                Followers = model.Followers.Take(MainConstants.PageSize)
-                .ToList().Select(u => UserPreviewViewModel.Create(u, currentUser)),
-                FollowersCount = model.Followers.Count,
-                CommentsCount = model.Comments.Count,
-                ImagesCount = model.Images.Count,
-                Comments = model.Comments.Take(MainConstants.PageSize).ToList()
-                .Select(c => CommentViewModel.Create(c, currentUser)),
-                IsLiked = liked,
-                IsMine = owner,
-                Images = model.Images.Take(MainConstants.PageSize).ToList()
-                .Select(i => ImageViewModel.Create(i, currentUser))
-            };
-
-            return result;
-        }
-
         public int Id { get; set; }
 
         public string Title { get; set; }
@@ -82,5 +40,20 @@
         public IEnumerable<ImageViewModel> Images { get; set; }
 
         public IEnumerable<CommentViewModel> Comments { get; set; }
+
+        public void CreateMappings(IConfiguration configuration)
+        {
+            configuration.CreateMap<ImageAlbum, ImageAlbumViewModel>()
+               .ForMember(u => u.LikesCount, opt => opt.MapFrom(u => u.UserLikes.Count))
+               .ForMember(u => u.CommentsCount, opt => opt.MapFrom(u => u.Comments.Count))
+               .ForMember(u => u.Comments, opt => opt.MapFrom(u => u.Comments.Take(MainConstants.PageSize)))
+               .ForMember(u => u.Likes, opt => opt.MapFrom(u => u.UserLikes.Take(MainConstants.PageSize)))
+               .ForMember(u => u.FollowersCount, opt => opt.MapFrom(u => u.Followers.Count))
+               .ForMember(u => u.Followers, opt => opt.MapFrom(u => u.Followers.Take(MainConstants.PageSize)))
+               .ForMember(u => u.ImagesCount, opt => opt.MapFrom(u => u.Images.Count))
+               .ForMember(u => u.Images, opt => opt.MapFrom(u => u.Images.Take(MainConstants.PageSize)))
+               .ForMember(u => u.CreatedBy, opt => opt.MapFrom(u => u.CreatedBy))
+               .ReverseMap();
+        }
     }
 }

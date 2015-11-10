@@ -10,14 +10,10 @@
 
         void Add(T entity);
 
-        void Update(T entity);
+        T Update(T entity);
 
-        void Delete(T entity);
+        T Delete(T entity);
 
-        T Delete(int id);
-
-        void Detach(T entity);
-
-        void SaveChanges();
+        T Delete(object id);
     }
 }

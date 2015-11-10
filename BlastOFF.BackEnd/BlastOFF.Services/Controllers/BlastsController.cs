@@ -19,6 +19,8 @@
     using BlastOFF.Services.Constants;
 
     using BlastOFF.Services.Models.UserModels;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
 
     [SessionAuthorize]
     public class BlastsController : BaseApiController
@@ -41,14 +43,19 @@
         public IHttpActionResult GetAll([FromUri] int CurrentPage = MainConstants.DefaultPage,
             [FromUri] int PageSize = MainConstants.PageSize)
         {
-            var user = this.Data.Users.Find(this.User.Identity.GetUserId());
+            var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blasts = this.Data.Blasts.All()
                 .OrderByDescending(b => b.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(b => BlastViewModel.Create(b, user));
+                .ProjectTo<BlastViewModel>()
+                .ToList();
+
+            if (currentUser != null)
+            {
+                blasts.ForEach(b => { b.IsMine = currentUser.Id == b.Author.Id; });
+            }
 
             return this.Ok(blasts);
         }
@@ -72,8 +79,14 @@
                 .OrderByDescending(b => b.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(b => BlastViewModel.Create(b, currentUser));
+                .AsQueryable()
+                .ProjectTo<BlastViewModel>()
+                .ToList();
+
+            if (currentUser != null)
+            {
+                blasts.ForEach(b => { b.IsMine = currentUser.Id == b.Author.Id; });
+            }
 
             return this.Ok(blasts);
         }
@@ -87,12 +100,17 @@
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
             var blasts = this.Data.Blasts.All()
-                .Where(b => b.IsPublic == true)
+                .Where(b => b.IsPublic)
                 .OrderByDescending(b => b.PostedOn)
                 .Skip(CurrentPage * PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(b => BlastViewModel.Create(b, currentUser));
+                .ProjectTo<BlastViewModel>()
+                .ToList();
+
+            if (currentUser != null)
+            {
+                blasts.ForEach(b => { b.IsMine = currentUser.Id == b.Author.Id; });
+            }
 
             return this.Ok(blasts);
         }
@@ -111,14 +129,19 @@
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
 
-            var blastToReturn = BlastViewModel.Create(blast, currentUser);
+            var blastToReturn = Mapper.Map< BlastViewModel>(blast);
+
+            if (currentUser != null)
+            {
+                blastToReturn.IsMine = blastToReturn.Author.Id == currentUser.Id;
+                blastToReturn.IsLiked = blast.UserLikes.Any(u => u.Id == currentUser.Id);
+            }
 
             return this.Ok(blastToReturn);
         }
 
         [HttpDelete]
         [Route("api/blasts/{id}")]
-        [AllowAnonymous]
         public IHttpActionResult DeleteById([FromUri] int id)
         {
             var blast = this.Data.Blasts.Find(id);
@@ -129,6 +152,11 @@
             }
 
             var currentUser = this.Data.Users.Find(this.User.Identity.GetUserId());
+
+            if(blast.AuthorId != currentUser.Id)
+            {
+                return this.BadRequest("Yuo are not the author of this blast");
+            }
 
             this.Data.Blasts.Delete(blast);
 
@@ -156,8 +184,14 @@
                 .OrderByDescending(u => u.UserName)
                 .Skip(CurrentPage*PageSize)
                 .Take(PageSize)
-                .ToList()
-                .Select(u => UserPreviewViewModel.Create(u, currentUser)); ;
+                .AsQueryable()
+                .ProjectTo<UserPreviewViewModel>()
+                .ToList();
+
+            if (currentUser != null)
+            {
+                userLikes.ForEach(u => u.IsMe = currentUser.UserName == u.Username);
+            }
 
             return this.Ok(userLikes);
         }
@@ -242,7 +276,8 @@
             this.Data.Blasts.Add(newBlast);
             this.Data.SaveChanges();
          
-            var blastToReturn = BlastViewModel.Create(newBlast, user);
+            var blastToReturn = Mapper.Map<BlastViewModel>(newBlast);
+            blastToReturn.IsMine = true;
 
             return Ok(blastToReturn);
         }
@@ -279,7 +314,8 @@
 
             this.Data.SaveChanges();
 
-            var blastToReturn = BlastViewModel.Create(oldBlast, currentUser);
+            var blastToReturn = Mapper.Map<BlastViewModel>(oldBlast);
+            blastToReturn.IsMine = true;
 
             return Ok(blastToReturn);
         }
@@ -318,7 +354,9 @@
             this.Data.Comments.Add(newComment);
             this.Data.SaveChanges();
 
-            var returnItem = CommentViewModel.Create(newComment, currentUser);
+            var returnItem = Mapper.Map<CommentViewModel>(newComment);
+
+            returnItem.IsMine = true;
 
             return this.Ok(returnItem);
         }

@@ -12,32 +12,25 @@
 
     using BlastOFF.Models.ChatModels;
     using BlastOFF.Models.UserModels;
+    using System.Collections.Generic;
+    using System.Data.Entity;
 
-    public class BlastOFFData : IBlastOFFData, IDisposable
+    public class BlastOFFData : IBlastOFFData//, IDisposable
     {
         //// Repositories
-        private IRepository<ApplicationUser> users;
-        private IRepository<Message> messages;
-        private IRepository<Comment> comments;
-        private IRepository<Blast> blasts;
-        private IRepository<ImageAlbum> imageAlbums;
-        private IRepository<Image> images;
-        private IRepository<MusicAlbum> musicAlbums;
-        private IRepository<Song> songs;
-        private IRepository<UserSession> userSessions;
-        private IRepository<Notification> notifications;
 
-        private IBlastOFFContext context;
-        private bool disposed = false;
+        private readonly DbContext context;
+        private readonly IDictionary<Type, object> repositories;
 
         public BlastOFFData()
             : this(new BlastOFFContext())
         {
         }
 
-        public BlastOFFData(IBlastOFFContext context)
+        public BlastOFFData(DbContext context)
         {
             this.context = context;
+            this.repositories = new Dictionary<Type, object>();
         }
 
         //// START - Repsotiories
@@ -47,12 +40,8 @@
         {
             get
             {
-                if (this.users == null)
-                {
-                    this.users = new Repository<ApplicationUser>(this.context);
-                }
+                return this.GetRepository<ApplicationUser>();
 
-                return this.users;
             }
         }
 
@@ -60,12 +49,7 @@
         {
             get
             {
-                if (this.notifications == null)
-                {
-                    this.notifications = new Repository<Notification>(this.context);
-                }
-
-                return this.notifications;
+                return this.GetRepository<Notification>();
             }
         }
 
@@ -74,11 +58,7 @@
         {
             get
             {
-                if (this.messages == null)
-                {
-                    this.messages = new Repository<Message>(this.context);
-                }
-                return this.messages;
+                return this.GetRepository<Message>();
             }
         }
 
@@ -86,11 +66,7 @@
         {
             get
             {
-                if (this.userSessions == null)
-                {
-                    this.userSessions = new Repository<UserSession>(this.context);
-                }
-                return this.userSessions;
+                return this.GetRepository<UserSession>();
             }
         }
 
@@ -99,12 +75,7 @@
         {
             get
             {
-                if (this.comments == null)
-                {
-                    this.comments = new Repository<Comment>(this.context);
-                }
-
-                return this.comments;
+                return this.GetRepository<Comment>();
             }
         }
 
@@ -113,12 +84,7 @@
         {
             get
             {
-                if (this.blasts == null)
-                {
-                    this.blasts = new Repository<Blast>(this.context);
-                }
-
-                return this.blasts;
+                return this.GetRepository<Blast>();
             }
         }
 
@@ -127,12 +93,7 @@
         {
             get
             {
-                if (this.imageAlbums == null)
-                {
-                    this.imageAlbums = new Repository<ImageAlbum>(this.context);
-                }
-
-                return this.imageAlbums;
+                return this.GetRepository<ImageAlbum>();
             }
         }
 
@@ -140,12 +101,7 @@
         {
             get
             {
-                if (this.images == null)
-                {
-                    this.images = new Repository<Image>(this.context);
-                }
-
-                return this.images;
+                return this.GetRepository<Image>();
             }
         }
 
@@ -154,12 +110,7 @@
         {
             get
             {
-                if (this.musicAlbums == null)
-                {
-                    this.musicAlbums = new Repository<MusicAlbum>(this.context);
-                }
-
-                return this.musicAlbums;
+                return this.GetRepository<MusicAlbum>();
             }
         }
 
@@ -167,40 +118,34 @@
         {
             get
             {
-                if (this.songs == null)
-                {
-                    this.songs = new Repository<Song>(this.context);
-                }
-
-                return this.songs;
+                return this.GetRepository<Song>();
             }
         }
 
         //// END - Repsotiories
 
-        //// Service methods
-        public void SaveChanges()
+        public int SaveChanges()
         {
-            this.context.SaveChanges();
+            return this.context.SaveChanges();
         }
 
-        public void Dispose()
+        private IRepository<T> GetRepository<T>() where T : class
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
+            var typeOfRepository = typeof(T);
+            if (!this.repositories.ContainsKey(typeOfRepository))
             {
-                if (disposing)
-                {
-                    this.context.Dispose();
-                }
+                var newRepository = Activator.CreateInstance(typeof(GenericRepository<T>), this.context);
+                this.repositories.Add(typeOfRepository, newRepository);
             }
 
-            this.disposed = true;
+            return (IRepository<T>)this.repositories[typeOfRepository];
         }
+
+        //// Service methods
+        //public void Dispose()
+        //{
+        //    this.Dispose(true);
+        //    GC.SuppressFinalize(this);
+        //}
     }
 }
